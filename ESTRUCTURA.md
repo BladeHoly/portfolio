@@ -4,7 +4,7 @@ Portfolio/
 	/index.html
 	/src/
 		/otros.html ** Otros archivos HTML que sean separados del index.html , por ejemplo el Login.
-		/traducciones/
+		/idiomas/
 			/lenguajes.json ** Español , Inglés , etc.
 	/scripts/
 		/js/
@@ -13,4 +13,4 @@ Portfolio/
 		/estilos.css ** index.css , main.css , navbar.css , etc.
 	/imagenes/
 		/index/
-		/iniciar_sesion/
+		/globales/
