@@ -1,12 +1,25 @@
-* {
-	margin: 0;
-	padding: 0;
-	box-sizing: border-box;
-}
+@import url("https://fonts.googleapis.com/css2?family=Tinos:ital,wght@0,400;0,700;1,400;1,700&display=swap"); /* Importar Fuente Tinos */
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,100..1000&display=swap"); /* Importar Fuente Roboto Flex */
+
 :root {
+	/* Colores */
 	--color-principal: hsl(0, 0%, 0%);
 	--color-secundario: hsl(0, 100%, 12%);
 	--color-extra: hsl(0, 99%, 29%);
 	--color-contraste: hsl(0, 100%, 50%);
 	--color-texto: hsl(0, 0%, 100%);
+
+	/* Fuentes */
+	--fuente-principal: "Tinos", serif;
+	--fuente-secundaria: "Roboto Flex", sans-serif;
+}
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	font-family: var(--fuente-principal);
+	font-size: 24px;
+	color: var(--color-texto);
+	background-color: var(--color-principal);
 }
