@@ -8,6 +8,7 @@
 	--color-extra: hsl(0, 99%, 29%);
 	--color-contraste: hsl(0, 100%, 50%);
 	--color-texto: hsl(0, 0%, 100%);
+	--links: hsl(0, 0%, 80%);
 
 	/* Fuentes */
 	--fuente-principal: "Tinos", serif;

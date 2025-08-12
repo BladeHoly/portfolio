@@ -2,6 +2,8 @@
 
 ## En Index:
 
+.header || No ID // navbar.css
+.menu || No ID // navbar.css
 .nombre || #nombre_nav // navbar.css
 .lista_nav || #lista_nav // navbar.css
 .link_nav || No ID // navbar.css
