@@ -7,7 +7,7 @@
   <title>Portfolio Renzo - Desarrollador Web</title>
   <link rel="stylesheet" href="estilos/index.css">
   <link rel="shortcut icon" href="imagenes/globales/icon.png" type="image/x-icon">
-  <script src="scripts/index.js"></script>
+  <link rel="preconnect" href="https://fonts.gstatic.com/">
 </head>
 
 <body>
@@ -15,23 +15,36 @@
     <div class="nombre">
       <h1 id="nombre_nav">{Renzo}</h1>
     </div>
-    <div class="menu">
-      <nav>
-        <ul class="lista_nav" id="lista_nav">
-          <li>
-            <a href="#inicio" class="link_nav">Inicio</a>
-          </li>
-          <li>
-            <a href="#proyectos" class="link_nav">Proyectos</a>
-          </li>
-          <li>
-            <a href="#contacto" class="link_nav">Contacto</a>
-          </li>
-        </ul>
-      </nav>
-    </div>
+    <nav class="nav_delabarra">
+      <ul class="lista_nav" id="lista_nav">
+        <li>
+          <a href="#inicio" class="link_nav">Inicio</a>
+        </li>
+        <li>
+          <a href="#proyectos" class="link_nav">Proyectos</a>
+        </li>
+        <li>
+          <a href="#contacto" class="link_nav">Contacto</a>
+        </li>
+      </ul>
+    </nav>
+
     <button class="boton_nav" id="boton_nav">Iniciar Sesión</button>
   </header>
+
+  <main>
+    <section id="inicio" class="container">
+      <!-- Contenido de la sección de inicio -->
+    </section>
+
+    <section id="proyectos" class="container">
+      <!-- Contenido de la sección de proyectos -->
+    </section>
+
+    <section id="contacto" class="container">
+      <!-- Contenido de la sección de contacto -->
+    </section>
+  </main>
 </body>
 
 </html>

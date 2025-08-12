@@ -9,18 +9,85 @@
 	--color-contraste: hsl(0, 100%, 50%);
 	--color-texto: hsl(0, 0%, 100%);
 	--links: hsl(0, 0%, 80%);
+	--cristal: rgba(255, 255, 255, 0.401);
+	--sombra: rgba(0, 0, 0, 0.1);
 
 	/* Fuentes */
 	--fuente-principal: "Tinos", serif;
 	--fuente-secundaria: "Roboto Flex", sans-serif;
+
+	/* Transiciones */
+	--transicion-rapida: 0.15s ease;
+	--transicion-normal: 0.3s ease;
+	--transicion-lenta: 0.5s ease;
+
+	/* Z-index */
+	--z-index-bajo: 1;
+	--z-index-medio: 5;
+	--z-index-alto: 10;
 }
 
 * {
 	margin: 0;
 	padding: 0;
 	box-sizing: border-box;
+}
+/* Estilos generales */
+
+body,
+html {
 	font-family: var(--fuente-principal);
-	font-size: 24px;
+	font-size: 16px;
 	color: var(--color-texto);
 	background-color: var(--color-principal);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-weight: 700;
+}
+
+h1 {
+	font-size: clamp(28px, 5vw, 42px);
+}
+
+h2 {
+	font-size: clamp(24px, 4vw, 36px);
+}
+
+h3 {
+	font-size: clamp(20px, 3.5vw, 30px);
+}
+
+p,
+li,
+a,
+button,
+input,
+textarea {
+	font-size: clamp(16px, 2.5vw, 20px);
+}
+/* Animaciones */
+@keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+
+/* Contenedor responsivo */
+.container {
+	width: 100%;
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 0 15px;
 }
