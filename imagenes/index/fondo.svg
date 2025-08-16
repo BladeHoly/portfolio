@@ -1,0 +1,307 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+  <!-- Definiciones optimizadas y limpias -->
+  <defs>
+    <!-- GRADIENTE BASE MEJORADO -->
+    <radialGradient id="baseBg" cx="50%" cy="40%" r="80%">
+      <stop offset="0%" style="stop-color:#0f0f23;stop-opacity:1" />
+      <stop offset="60%" style="stop-color:#1a1a2e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#16213e;stop-opacity:1" />
+    </radialGradient>
+    
+    <!-- GRADIENTES COLORIDOS OPTIMIZADOS -->
+    <radialGradient id="pinkBlob" cx="25%" cy="25%" r="75%">
+      <stop offset="0%" style="stop-color:#ff0080;stop-opacity:1" />
+      <stop offset="40%" style="stop-color:#ff4081;stop-opacity:0.8" />
+      <stop offset="80%" style="stop-color:#e91e63;stop-opacity:0.5" />
+      <stop offset="100%" style="stop-color:#ad1457;stop-opacity:0.2" />
+    </radialGradient>
+    
+    <radialGradient id="blueBlob" cx="25%" cy="25%" r="75%">
+      <stop offset="0%" style="stop-color:#00a8ff;stop-opacity:1" />
+      <stop offset="40%" style="stop-color:#0078d4;stop-opacity:0.8" />
+      <stop offset="80%" style="stop-color:#005a9f;stop-opacity:0.5" />
+      <stop offset="100%" style="stop-color:#003d71;stop-opacity:0.2" />
+    </radialGradient>
+    
+    <radialGradient id="greenBlob" cx="25%" cy="25%" r="75%">
+      <stop offset="0%" style="stop-color:#00ff88;stop-opacity:1" />
+      <stop offset="40%" style="stop-color:#00d68f;stop-opacity:0.8" />
+      <stop offset="80%" style="stop-color:#00a86b;stop-opacity:0.5" />
+      <stop offset="100%" style="stop-color:#007a4d;stop-opacity:0.2" />
+    </radialGradient>
+    
+    <radialGradient id="purpleBlob" cx="25%" cy="25%" r="75%">
+      <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+      <stop offset="40%" style="stop-color:#7c3aed;stop-opacity:0.8" />
+      <stop offset="80%" style="stop-color:#6d28d9;stop-opacity:0.5" />
+      <stop offset="100%" style="stop-color:#5b21b6;stop-opacity:0.2" />
+    </radialGradient>
+    
+    <radialGradient id="orangeBlob" cx="25%" cy="25%" r="75%">
+      <stop offset="0%" style="stop-color:#ff8c00;stop-opacity:1" />
+      <stop offset="40%" style="stop-color:#ff7b00;stop-opacity:0.8" />
+      <stop offset="80%" style="stop-color:#e55d00;stop-opacity:0.5" />
+      <stop offset="100%" style="stop-color:#cc4400;stop-opacity:0.2" />
+    </radialGradient>
+    
+    <radialGradient id="cyanBlob" cx="25%" cy="25%" r="75%">
+      <stop offset="0%" style="stop-color:#00f5ff;stop-opacity:1" />
+      <stop offset="40%" style="stop-color:#00d4ff;stop-opacity:0.8" />
+      <stop offset="80%" style="stop-color:#0099cc;stop-opacity:0.5" />
+      <stop offset="100%" style="stop-color:#006699;stop-opacity:0.2" />
+    </radialGradient>
+    
+    <!-- FILTROS DE BLUR EXTREMOS -->
+    <filter id="ultraBlur" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="80" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.4 0"/>
+    </filter>
+    
+    <filter id="megaBlur" x="-150%" y="-150%" width="400%" height="400%">
+      <feGaussianBlur stdDeviation="120" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.3 0"/>
+    </filter>
+    
+    <filter id="hyperBlur" x="-200%" y="-200%" width="500%" height="500%">
+      <feGaussianBlur stdDeviation="180" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.2 0"/>
+    </filter>
+    
+    <!-- FILTRO DE GRANULADO PREMIUM -->
+    <filter id="filmGrain" x="0%" y="0%" width="100%" height="100%">
+      <feTurbulence baseFrequency="0.9" numOctaves="1" result="grain" seed="2"/>
+      <feColorMatrix in="grain" type="saturate" values="0" result="bwGrain"/>
+      <feComponentTransfer in="bwGrain" result="adjustedGrain">
+        <feFuncA type="discrete" tableValues="0.05 0.1 0.08 0.06 0.04 0.07 0.09"/>
+      </feComponentTransfer>
+      <feComposite operator="multiply" in="adjustedGrain" in2="SourceGraphic" result="grainedGraphic"/>
+      <feComposite operator="screen" in="grainedGraphic" in2="SourceGraphic"/>
+    </filter>
+    
+    <!-- GLASSMORPHISM AVANZADO -->
+    <filter id="glassEffect" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="20" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.15 0"/>
+    </filter>
+    
+    <linearGradient id="glassGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.12" />
+      <stop offset="25%" style="stop-color:#ffffff;stop-opacity:0.08" />
+      <stop offset="50%" style="stop-color:#ffffff;stop-opacity:0.04" />
+      <stop offset="75%" style="stop-color:#ffffff;stop-opacity:0.08" />
+      <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0.12" />
+    </linearGradient>
+    
+    <!-- PATRÓN DE TEXTURA SUTIL -->
+    <pattern id="subtleTexture" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
+      <circle cx="30" cy="30" r="0.8" fill="#ffffff" opacity="0.03"/>
+    </pattern>
+  </defs>
+  
+  <!-- FONDO BASE CON TEXTURA -->
+  <rect width="100%" height="100%" fill="url(#baseBg)"/>
+  <rect width="100%" height="100%" fill="url(#subtleTexture)"/>
+  
+  <!-- CAPA DE OBJETOS DE FONDO CON ULTRA BLUR -->
+  
+  <!-- Blobs gigantes con blur extremo y velocidades dinámicas -->
+  <circle cx="300" cy="250" r="400" fill="url(#pinkBlob)" filter="url(#hyperBlur)" opacity="0.6">
+    <!-- Animación principal con cambios de velocidad -->
+    <animateTransform attributeName="transform" attributeType="XML" 
+                      type="translate" 
+                      values="0,0;800,400;1200,200;600,600;1000,100;400,500;0,0" 
+                      dur="80s" repeatCount="indefinite">
+      <animate attributeName="dur" values="80s;45s;120s;60s;90s;35s;80s" dur="300s" repeatCount="indefinite"/>
+    </animateTransform>
+    <!-- Animación secundaria de aceleración/desaceleración -->
+    <animateTransform attributeName="transform" attributeType="XML" additive="sum"
+                      type="translate" 
+                      values="0,0;50,30;-30,40;60,-20;-40,50;20,-30;0,0" 
+                      dur="25s" repeatCount="indefinite">
+      <animate attributeName="dur" values="25s;15s;40s;20s;35s;12s;25s" dur="180s" repeatCount="indefinite"/>
+    </animateTransform>
+  </circle>
+  
+  <circle cx="1400" cy="200" r="450" fill="url(#blueBlob)" filter="url(#hyperBlur)" opacity="0.5">
+    <!-- Animación principal con variación de timing -->
+    <animateTransform attributeName="transform" attributeType="XML" 
+                      type="translate" 
+                      values="0,0;-600,400;-1000,600;-400,300;-800,500;-200,200;0,0" 
+                      dur="95s" repeatCount="indefinite">
+      <animate attributeName="dur" values="95s;60s;140s;75s;110s;50s;95s" dur="350s" repeatCount="indefinite"/>
+    </animateTransform>
+    <!-- Micro-movimientos con velocidad variable -->
+    <animateTransform attributeName="transform" attributeType="XML" additive="sum"
+                      type="translate" 
+                      values="0,0;-40,60;70,-30;-50,80;40,-60;-70,20;0,0" 
+                      dur="30s" repeatCount="indefinite">
+      <animate attributeName="dur" values="30s;18s;45s;25s;40s;14s;30s" dur="220s" repeatCount="indefinite"/>
+    </animateTransform>
+  </circle>
+  
+  <circle cx="800" cy="800" r="500" fill="url(#greenBlob)" filter="url(#hyperBlur)" opacity="0.4">
+    <!-- Movimiento principal con aceleración dinámica -->
+    <animateTransform attributeName="transform" attributeType="XML" 
+                      type="translate" 
+                      values="0,0;600,-400;-400,-200;800,-600;-600,100;400,-500;0,0" 
+                      dur="110s" repeatCount="indefinite">
+      <animate attributeName="dur" values="110s;70s;160s;85s;125s;55s;110s" dur="400s" repeatCount="indefinite"/>
+    </animateTransform>
+    <!-- Ondulaciones sutiles con timing variable -->
+    <animateTransform attributeName="transform" attributeType="XML" additive="sum"
+                      type="translate" 
+                      values="0,0;80,-50;-60,70;90,-40;-70,60;50,-80;0,0" 
+                      dur="35s" repeatCount="indefinite">
+      <animate attributeName="dur" values="35s;22s;50s;28s;42s;16s;35s" dur="260s" repeatCount="indefinite"/>
+    </animateTransform>
+  </circle>
+  
+  <!-- Blobs medianos con mega blur y velocidades dinámicas -->
+  <circle cx="600" cy="400" r="250" fill="url(#purpleBlob)" filter="url(#megaBlur)" opacity="0.7">
+    <!-- Movimiento principal con cambios de ritmo -->
+    <animateTransform attributeName="transform" attributeType="XML" 
+                      type="translate" 
+                      values="0,0;700,300;400,600;900,200;300,500;800,100;0,0" 
+                      dur="65s" repeatCount="indefinite">
+      <animate attributeName="dur" values="65s;40s;95s;55s;80s;35s;65s" dur="320s" repeatCount="indefinite"/>
+    </animateTransform>
+    <!-- Pulsos de velocidad -->
+    <animateTransform attributeName="transform" attributeType="XML" additive="sum"
+                      type="translate" 
+                      values="0,0;60,80;-80,40;70,-60;-40,90;80,-40;0,0" 
+                      dur="20s" repeatCount="indefinite">
+      <animate attributeName="dur" values="20s;12s;32s;18s;28s;10s;20s" dur="150s" repeatCount="indefinite"/>
+    </animateTransform>
+  </circle>
+  
+  <circle cx="1200" cy="600" r="200" fill="url(#orangeBlob)" filter="url(#megaBlur)" opacity="0.6">
+    <!-- Animación base con aceleración variable -->
+    <animateTransform attributeName="transform" attributeType="XML" 
+                      type="translate" 
+                      values="0,0;-500,200;-800,400;-300,100;-700,300;-200,250;0,0" 
+                      dur="55s" repeatCount="indefinite">
+      <animate attributeName="dur" values="55s;35s;80s;45s;70s;25s;55s" dur="280s" repeatCount="indefinite"/>
+    </animateTransform>
+    <!-- Vibración sutil con timing caótico -->
+    <animateTransform attributeName="transform" attributeType="XML" additive="sum"
+                      type="translate" 
+                      values="0,0;-30,50;60,-40;-70,30;40,-70;-50,60;0,0" 
+                      dur="28s" repeatCount="indefinite">
+      <animate attributeName="dur" values="28s;16s;42s;22s;36s;13s;28s" dur="200s" repeatCount="indefinite"/>
+    </animateTransform>
+  </circle>
+  
+  <circle cx="400" cy="700" r="180" fill="url(#cyanBlob)" filter="url(#megaBlur)" opacity="0.8">
+    <!-- Movimiento errático con cambios bruscos -->
+    <animateTransform attributeName="transform" attributeType="XML" 
+                      type="translate" 
+                      values="0,0;600,-300;300,-500;800,-200;200,-400;700,-100;0,0" 
+                      dur="45s" repeatCount="indefinite">
+      <animate attributeName="dur" values="45s;28s;68s;38s;58s;22s;45s" dur="240s" repeatCount="indefinite"/>
+    </animateTransform>
+    <!-- Oscilaciones rápidas -->
+    <animateTransform attributeName="transform" attributeType="XML" additive="sum"
+                      type="translate" 
+                      values="0,0;50,-70;-60,50;80,-30;-70,80;30,-60;0,0" 
+                      dur="15s" repeatCount="indefinite">
+      <animate attributeName="dur" values="15s;8s;25s;12s;20s;6s;15s" dur="120s" repeatCount="indefinite"/>
+    </animateTransform>
+  </circle>
+  
+  <!-- Elementos pequeños con ultra blur y velocidades caóticas -->
+  <circle cx="1000" cy="300" r="100" fill="url(#pinkBlob)" filter="url(#ultraBlur)" opacity="0.9">
+    <!-- Movimiento principal con aceleración impredecible -->
+    <animateTransform attributeName="transform" attributeType="XML" 
+                      type="translate" 
+                      values="0,0;-400,200;-200,400;-600,150;-100,350;-500,250;0,0" 
+                      dur="35s" repeatCount="indefinite">
+      <animate attributeName="dur" values="35s;20s;55s;30s;48s;18s;35s" dur="180s" repeatCount="indefinite"/>
+    </animateTransform>
+    <!-- Temblores micro con velocidad variable -->
+    <animateTransform attributeName="transform" attributeType="XML" additive="sum"
+                      type="translate" 
+                      values="0,0;25,-35;-40,25;35,-45;-25,40;45,-25;0,0" 
+                      dur="8s" repeatCount="indefinite">
+      <animate attributeName="dur" values="8s;4s;15s;6s;12s;3s;8s" dur="80s" repeatCount="indefinite"/>
+    </animateTransform>
+  </circle>
+  
+  <circle cx="1600" cy="700" r="120" fill="url(#blueBlob)" filter="url(#ultraBlur)" opacity="0.8">
+    <!-- Trayectoria con pausas y aceleraciones -->
+    <animateTransform attributeName="transform" attributeType="XML" 
+                      type="translate" 
+                      values="0,0;-700,-300;-400,-500;-900,-200;-300,-400;-800,-150;0,0" 
+                      dur="42s" repeatCount="indefinite">
+      <animate attributeName="dur" values="42s;25s;65s;35s;55s;20s;42s" dur="210s" repeatCount="indefinite"/>
+    </animateTransform>
+    <!-- Ondas rápidas superpuestas -->
+    <animateTransform attributeName="transform" attributeType="XML" additive="sum"
+                      type="translate" 
+                      values="0,0;-35,55;70,-25;-60,75;35,-65;-75,35;0,0" 
+                      dur="12s" repeatCount="indefinite">
+      <animate attributeName="dur" values="12s;7s;20s;10s;17s;5s;12s" dur="90s" repeatCount="indefinite"/>
+    </animateTransform>
+  </circle>
+  
+  <circle cx="200" cy="500" r="90" fill="url(#greenBlob)" filter="url(#ultraBlur)" opacity="0.7">
+    <!-- Movimiento espasmódico con cambios extremos -->
+    <animateTransform attributeName="transform" attributeType="XML" 
+                      type="translate" 
+                      values="0,0;800,200;500,400;1000,100;400,300;900,250;0,0" 
+                      dur="38s" repeatCount="indefinite">
+      <animate attributeName="dur" values="38s;22s;62s;32s;50s;16s;38s" dur="190s" repeatCount="indefinite"/>
+    </animateTransform>
+    <!-- Sacudidas nerviosas -->
+    <animateTransform attributeName="transform" attributeType="XML" additive="sum"
+                      type="translate" 
+                      values="0,0;55,-40;-45,65;60,-55;-65,45;40,-60;0,0" 
+                      dur="6s" repeatCount="indefinite">
+      <animate attributeName="dur" values="6s;3s;12s;5s;9s;2s;6s" dur="60s" repeatCount="indefinite"/>
+    </animateTransform>
+  </circle>
+  
+  <!-- CAPA DE GLASSMORPHISM LIMPIA Y ELEGANTE -->
+  
+  <!-- Overlay principal glassmorphism -->
+  <rect width="100%" height="100%" fill="url(#glassGradient)" filter="url(#glassEffect)"/>
+  
+  <!-- Elementos de cristal flotantes grandes y limpios -->
+  <ellipse cx="500" cy="350" rx="300" ry="150" fill="url(#glassGradient)" opacity="0.3" 
+           transform="rotate(20 500 350)" filter="url(#glassEffect)">
+    <animateTransform attributeName="transform" attributeType="XML" 
+                      type="rotate" values="20 500 350;30 500 350;20 500 350" 
+                      dur="60s" repeatCount="indefinite"/>
+  </ellipse>
+  
+  <ellipse cx="1300" cy="650" rx="250" ry="120" fill="url(#glassGradient)" opacity="0.25" 
+           transform="rotate(-25 1300 650)" filter="url(#glassEffect)">
+    <animateTransform attributeName="transform" attributeType="XML" 
+                      type="rotate" values="-25 1300 650;-15 1300 650;-25 1300 650" 
+                      dur="75s" repeatCount="indefinite"/>
+  </ellipse>
+  
+  <!-- Formas geométricas de cristal minimalistas -->
+  <polygon points="900,200 950,250 900,300 850,250" fill="url(#glassGradient)" 
+           opacity="0.2" filter="url(#glassEffect)">
+    <animateTransform attributeName="transform" attributeType="XML" 
+                      type="rotate" from="0 900 250" to="360 900 250" 
+                      dur="120s" repeatCount="indefinite"/>
+  </polygon>
+  
+  <circle cx="1500" cy="300" r="80" fill="url(#glassGradient)" opacity="0.18" 
+          filter="url(#glassEffect)">
+    <animate attributeName="opacity" values="0.18;0.28;0.18" dur="40s" repeatCount="indefinite"/>
+  </circle>
+  
+  <!-- Líneas conectoras glassmorphism muy sutiles -->
+  <path d="M300,500 Q700,300 1100,600 Q1400,400 1600,700" 
+        stroke="url(#glassGradient)" stroke-width="2" fill="none" 
+        opacity="0.15" filter="url(#glassEffect)"/>
+  
+  <!-- CAPA DE GRANULADO CINEMATOGRÁFICO -->
+  <rect width="100%" height="100%" fill="rgba(255,255,255,0.02)" filter="url(#filmGrain)"/>
+  
+  <!-- OVERLAY FINAL UNIFICADOR -->
+  <rect width="100%" height="100%" fill="url(#baseBg)" opacity="0.03"/>
+  
+</svg>

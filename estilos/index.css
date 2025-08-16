@@ -1,20 +1,28 @@
 @import url("general.css");
 @import url("navbar.css");
 
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	font-family: var(--fuente-principal);
+	font-size: 24px;
+	color: var(--color-texto);
+	background-color: transparent;
+}
+
 body {
 	min-height: 100dvh;
-	background: linear-gradient(
-		45deg,
-		var(--color-principal),
-		var(--color-secundario),
-		var(--color-principal)
-	);
+	background-image: url(../imagenes/index/fondo.svg);
+	background-size: cover;
+	background-position: center;
 	background-repeat: no-repeat;
-	background-size: 400% 100%;
-	animation: gradient 15s ease infinite;
-	backdrop-filter: blur(250px);
-	overflow-x: hidden;
-	padding-top: 100px;
+	background-attachment: fixed;
+	min-height: 100vh;
+	width: 100%;
+	will-change: transform;
+	transform: translateZ(0);
+	backface-visibility: hidden;
 }
 
 /* Secciones de contenido principal */
@@ -33,5 +41,12 @@ section {
 @media screen and (max-width: 480px) {
 	section {
 		padding: 1rem;
+	}
+}
+
+@media (max-width: 768px) {
+	body {
+		background-attachment: scroll;
+		background-size: cover;
 	}
 }
