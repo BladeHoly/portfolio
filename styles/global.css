@@ -1,0 +1,27 @@
+:root {
+	/* Colores Genericos */
+	--color-fondo: hsl(0, 0%, 0%);
+	--color-texto: hsl(0, 0%, 100%);
+
+	/* Paletas de Colores */
+	/* https://colorhunt.co/palette/f3e2d4c5b0cd415e7217313e */
+	--paleta-uno-principal: #f3e2d4;
+	--paleta-uno-secundario: #c5b0cd;
+	--paleta-uno-terciario: #415e72;
+	--paleta-uno-contraste: #17313e;
+	/* https://colorhunt.co/palette/0b1d51725cad8ccdebffe3a9 */
+	--paleta-dos-principal: #0b1d51;
+	--paleta-dos-secundario: #725cad;
+	--paleta-dos-terciario: #8ccdeb;
+	--paleta-dos-contraste: #ffe3a9;
+	/* https://colorhunt.co/palette/2e073f7a1cacad49e1ebd3f8 */
+	--paleta-tres-principal: #2e073f;
+	--paleta-tres-secundario: #7a1cac;
+	--paleta-tres-terciario: #ad49e1;
+	--paleta-tres-contraste: #ebd3f8;
+	/* https://colorhunt.co/palette/17153b2e236c433d8bc8acd6 */
+	--paleta-cuatro-principal: #17153b;
+	--paleta-cuatro-secundario: #2e236c;
+	--paleta-cuatro-terciario: #433d8b;
+	--paleta-cuatro-contraste: #c8acd6;
+}
