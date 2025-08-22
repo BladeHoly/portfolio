@@ -5,11 +5,12 @@
 	min-width: 100dvw;
 	width: 100%;
 	height: 70px;
-	background-color: var(--paleta-cuatro-principal); /* Cambiar Mas Tarde */
+	background-color: transparent;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	font-size: 1rem;
+	border-radius: 50px;
 }
 
 #footer-contenido {
@@ -18,6 +19,9 @@
 	justify-content: space-between;
 	width: 90%;
 	max-width: 1200px;
+	background-color: var(--paleta-uno-contraste); /* Cambiar Mas Tarde */
+	border: 1px dotted var(--paleta-cuatro-contraste); /* Cambiar Mas Tarde */
+	padding: 10px 10px;
 }
 
 #footer-contenido p {
