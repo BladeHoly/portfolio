@@ -7,6 +7,6 @@
 body {
 	margin: 0;
 	padding: 0;
-	background-color: rgb(5, 5, 5);
-	color: white;
+	background-color: var(--color-fondo);
+	color: var(--color-texto);
 }
