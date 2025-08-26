@@ -10,3 +10,23 @@ body {
 	background-color: var(--color-fondo);
 	color: var(--color-texto);
 }
+
+/* Secciones */
+
+.seccion {
+	width: 100%;
+	margin: 0 auto;
+	padding: 1rem 0 2rem 0;
+	background-color: #86888759;
+	color: var(--color-texto);
+}
+
+#inicio {
+	background-color: transparent;
+	background: linear-gradient(
+		85deg,
+		var(--paleta-dos-principal) 50%,
+		var(--paleta-dos-contraste) 100%
+	);
+	color: var(--color-texto);
+}

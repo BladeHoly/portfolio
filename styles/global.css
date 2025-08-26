@@ -59,10 +59,12 @@
 }
 
 .container {
-	max-width: 960px;
-	margin: 0 auto;
+	/* Modificar después para las cartas de proyectos */
+	width: 100%;
+	margin: 1rem auto;
 	padding: 20px;
-	background-color: #fff;
+	background-color: #86888759;
+	color: var(--color-texto);
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 	border-radius: 8px;
 }
