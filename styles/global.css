@@ -25,4 +25,44 @@
 	--paleta-cuatro-secundario: #2e236c;
 	--paleta-cuatro-terciario: #433d8b;
 	--paleta-cuatro-contraste: #c8acd6;
+
+	/* Por hacer:
+  Elegir una paleta de colores fija para la página */
+
+	/* Tipografía */
+	h1,
+	h2,
+	h3,
+	h4 {
+		margin: 0.1rem 0;
+	}
+
+	h1 {
+		font-size: 2rem;
+	}
+
+	h2 {
+		font-size: 1.5rem;
+		padding-left: 20px;
+	}
+
+	h3 {
+		font-size: 1.2rem;
+		padding-left: 40px;
+	}
+
+	h4 {
+		font-size: 1rem;
+		font-style: italic;
+		padding-left: 60px;
+	}
+}
+
+.container {
+	max-width: 960px;
+	margin: 0 auto;
+	padding: 20px;
+	background-color: #fff;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	border-radius: 8px;
 }
