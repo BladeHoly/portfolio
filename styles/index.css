@@ -15,13 +15,15 @@ body {
 
 .seccion {
 	width: 100%;
+	max-width: 100%;
 	margin: 0 auto;
-	padding: 1rem 0 2rem 0;
+	padding: 0;
 	background-color: #86888759;
 	color: var(--color-texto);
 }
 
 #inicio {
+	
 	background-color: transparent;
 	background: linear-gradient(
 		85deg,
