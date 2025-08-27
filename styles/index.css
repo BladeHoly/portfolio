@@ -5,22 +5,29 @@
 }
 
 body {
-	margin: 0;
 	padding: 0;
+	margin: 0 auto;
 	background-color: var(--color-fondo);
 	color: var(--color-texto);
+	overflow-x: hidden;
+	max-width: 100%;
+	max-height: 100%;
 }
 
 /* Secciones */
 
 .seccion {
-	width: 100%;
-	max-width: 100%;
-	margin: 0 auto;
 	padding: 0;
+	margin: 0;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
 	background-color: #86888759;
 	color: var(--color-texto);
-}
+} /* A lo mejor lo puedo pasar al CSS Global en un futuro*/
 
 #inicio {
 	background-color: transparent;
@@ -29,5 +36,14 @@ body {
 		var(--paleta-dos-principal) 50%,
 		var(--paleta-dos-contraste) 100%
 	);
+}
+
+#inicio-contenido {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
 	color: var(--color-texto);
 }
