@@ -16,8 +16,7 @@ body {
 
 /* Secciones */
 
-
-
+/* Inicio */
 #inicio {
 	background-color: none;
 	background: linear-gradient(
@@ -39,4 +38,10 @@ body {
 	color: var(--color-texto);
 	margin: 25px;
 	font-size: 24px;
+}
+
+/* Acerca de */
+
+#acerca-de {
+	background-color: hsla(0, 0%, 100%, 0.312);
 }
