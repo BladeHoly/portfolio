@@ -1,6 +1,6 @@
 /* Header */
 #header {
-	position: sticky;
+	position: relative; /* Testear */
 	top: 0;
 	z-index: 100;
 	min-width: 100dvw;

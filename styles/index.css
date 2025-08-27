@@ -30,7 +30,7 @@ body {
 } /* A lo mejor lo puedo pasar al CSS Global en un futuro*/
 
 #inicio {
-	background-color: transparent;
+	background-color: none;
 	background: linear-gradient(
 		85deg,
 		var(--paleta-dos-principal) 50%,
