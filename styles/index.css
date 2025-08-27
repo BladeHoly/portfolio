@@ -16,18 +16,7 @@ body {
 
 /* Secciones */
 
-.seccion {
-	padding: 0;
-	margin: 0;
-	width: 100%;
-	height: 100%;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	background-color: #86888759;
-	color: var(--color-texto);
-} /* A lo mejor lo puedo pasar al CSS Global en un futuro*/
+
 
 #inicio {
 	background-color: none;
@@ -49,4 +38,5 @@ body {
 	gap: 21px;
 	color: var(--color-texto);
 	margin: 25px;
+	font-size: 24px;
 }
