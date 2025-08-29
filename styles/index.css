@@ -8,6 +8,12 @@ body {
 	padding: 0;
 	margin: 0 auto;
 	background-color: var(--color-fondo);
+	background: linear-gradient(
+		85deg,
+		var(--paleta-cuatro-secundario) 0%,
+		var(--paleta-dos-principal) 50%,
+		var(--paleta-cuatro-secundario) 100%
+	);
 	color: var(--color-texto);
 	overflow-x: hidden;
 	max-width: 100%;
@@ -18,12 +24,12 @@ body {
 
 /* Inicio */
 #inicio {
-	background-color: none;
-	background: linear-gradient(
-		85deg,
-		var(--paleta-dos-principal) 50%,
-		var(--paleta-dos-contraste) 100%
-	);
+	background: rgba(255, 255, 255, 0.2);
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 10px;
+	box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
 }
 
 #inicio-contenido {
@@ -43,5 +49,70 @@ body {
 /* Acerca de */
 
 #acerca-de {
-	background-color: hsla(0, 0%, 100%, 0.312);
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+	align-items: flex-start;
+	width: 80%;
+	margin: 0 auto;
+	background: #8000ff43;
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	border: 1px solid rgba(224, 152, 152, 0.1);
+	border-radius: 50px;
+	box-shadow: 0 8px 32px 0 rgba(16, 16, 16, 0.941);
+	padding: 20px;
+}
+
+#acerca-de-titulo {
+	font-size: 36px;
+	font-weight: bold;
+	background: linear-gradient(
+		90deg,
+		var(--color-texto) 0%,
+		rgba(217, 12, 12, 0.948) 100%
+	);
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
+	text-align: center;
+	position: relative;
+	padding-bottom: 10px;
+	margin-top: 20px;
+}
+
+#acerca-de-titulo::after {
+	content: "";
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	width: 50%;
+	height: 5px;
+	background: linear-gradient(90deg, var(--color-texto) 0%, transparent 100%);
+}
+#acerca-de-contenido {
+	display: flex;
+	flex: 1;
+	width: 100%;
+	height: fit-content;
+	flex-direction: column;
+	justify-content: center;
+	align-items: flex-start;
+	gap: 25px;
+	color: var(--color-texto);
+	margin: 25px;
+	font-size: 24px;
+}
+
+#acerca-de-imagen {
+	width: 360px;
+	height: 360px;
+	overflow: hidden;
+}
+
+#acerca-de-imagen img {
+	filter: grayscale(50%);
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
 }

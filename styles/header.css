@@ -81,12 +81,6 @@
 	color: red;
 }
 
-#header-navbar a:focus {
-	outline: 2px solid var(--paleta-tres-contraste);
-	outline-offset: 2px;
-	background-color: var(--paleta-uno-contraste);
-}
-
 /* Media Queries */
 
 @media (max-width: 900px) {
