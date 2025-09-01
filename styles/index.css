@@ -385,18 +385,26 @@ body {
 }
 
 .btn_proyecto {
-	background: #03401e;
+	background: rgba(255, 255, 255, 0.13);
 	color: var(--color-texto);
 	padding: 10px 20px;
-	border-radius: 5px;
+	border-radius: 18px;
 	font-size: 16px;
 	font-weight: bold;
-	transition: background-color 0.3s ease;
+	border: 1.5px solid rgba(172, 73, 225, 0.18);
+	box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	transition: background 0.3s, color 0.3s, box-shadow 0.3s, border 0.3s;
 	text-decoration: none;
 }
 
 .btn_proyecto:hover {
-	background: #06371b;
+	background: rgba(172, 73, 225, 0.18);
+	color: var(--paleta-tres-terciario);
+	border: 1.5px solid var(--paleta-tres-terciario);
+	box-shadow: 0 10px 24px 0 rgba(172, 73, 225, 0.25);
+	transform: translateY(-2px) scale(1.04);
 }
 
 /* Contacto */
@@ -503,23 +511,29 @@ body {
 }
 
 #contacto-formulario form button {
-	background: linear-gradient(to right, #03401e, #065d2c);
-	color: var(--color-texto);
-	padding: 12px 24px;
-	border-radius: 8px;
-	font-size: 16px;
-	font-weight: 600;
-	border: none;
-	cursor: pointer;
-	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-	transition: all 0.3s ease;
-	text-transform: uppercase;
-	letter-spacing: 0.5px;
+  background: rgba(255, 255, 255, 0.13);
+  color: var(--color-texto);
+  padding: 12px 24px;
+  border-radius: 18px;
+  font-size: 16px;
+  font-weight: 600;
+  border: 1.5px solid rgba(172, 73, 225, 0.18);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: background 0.3s, color 0.3s, box-shadow 0.3s, border 0.3s;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  text-decoration: none;
 }
 
-#contacto-formulario form button:active {
-	transform: translateY(1px);
-	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+#contacto-formulario form button:hover {
+  background: rgba(172, 73, 225, 0.18);
+  color: var(--paleta-tres-terciario);
+  border: 1.5px solid var(--paleta-tres-terciario);
+  box-shadow: 0 10px 24px 0 rgba(172, 73, 225, 0.25);
+  transform: translateY(-2px) scale(1.04);
 }
 
 /* Media Queries */
