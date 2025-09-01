@@ -6,6 +6,8 @@ document.addEventListener("DOMContentLoaded", function () {
 	const emailInput = document.getElementById("email");
 	const mensajeInput = document.getElementById("mensaje");
 
+	/* Esto para testearr nomas */
+	/*
 	nombreInput.addEventListener("input", () => {
 		console.log("Nombre:", nombreInput.value);
 	});
@@ -17,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	mensajeInput.addEventListener("input", () => {
 		console.log("Mensaje:", mensajeInput.value);
 	});
-
+  */
 	function validarFormulario(e) {
 		e.preventDefault();
 
