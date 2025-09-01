@@ -145,7 +145,7 @@
 
     <!-- Inicio de la Sección Proyectos -->
     <section id="proyectos" class="seccion">
-      <h1>Proyectos</h1>
+      <h1 id="proyectos-titulo">Proyectos</h1>
       <div id="proyectos-contenido">
         <div class="grid-proyectos">
           <div class="tarjeta-proyecto">
@@ -182,7 +182,7 @@
             <div class="descripcion-proyecto">Por ahora no hay contenido que poner aca.</div>
             <a rel="noopener noreferrer" href="#proyectos" target="_blank" class="btn_proyecto">Ver</a>
           </div>
-          
+
         </div>
       </div>
 
@@ -192,7 +192,35 @@
 
     <!-- Inicio de la Sección Contacto -->
     <section id="contacto" class="seccion">
-      <h1>Contacto</h1>
+      <h1 id="contacto-titulo">Contacto</h1>
+      <div id="contacto-contenido">
+        <div id="contacto-datos">
+          <h2>Contactame</h2>
+
+          <p>Email:</p>
+          <p>renzohpg@gmail.com</p>
+
+          <p>Celular:</p>
+          <p>+598 092 968 645</p>
+
+          <p>Paysandú , Uruguay</p>
+        </div>
+        <div id="contacto-formulario">
+          <form>
+            <label for="nombre">Nombre</label>
+            <input type="text" id="nombre" name="nombre" required>
+
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="mensaje">Mensaje</label>
+            <textarea id="mensaje" name="mensaje" rows="4" required></textarea>
+
+            <button type="submit" id="boton_formulario">Enviar</button>
+          </form>
+        </div>
+
+      </div>
     </section>
     <!-- Fin de la Sección Contacto -->
   </main>
