@@ -18,9 +18,11 @@
 	height: 100%;
 	margin: 0 auto;
 	padding: 0 20px;
-	background-color: var(--paleta-uno-contraste);
-	border: 1px solid var(--paleta-tres-contraste);
+	background-color: rgba(255, 255, 255, 0.1);
+	border: 1px solid rgba(255, 255, 255, 0.2);
 	border-radius: 25px;
+	backdrop-filter: blur(10px);
+	box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
 	transition: all 0.3s ease-in-out;
 }
 
@@ -121,9 +123,10 @@
 		flex-direction: column;
 		gap: 0;
 		width: 100%;
-		background-color: var(--paleta-uno-contraste);
-		border-radius: 0 0 15px 15px;
-		box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+		background-color: rgba(255, 255, 255, 0.1);
+	border-radius: 0 0 15px 15px;
+	backdrop-filter: blur(10px);
+	box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
 		padding: 10px 0;
 		max-height: 0;
 		overflow: hidden;
