@@ -18,23 +18,70 @@ body {
 	overflow-x: hidden;
 	max-width: 100%;
 	max-height: 100%;
+	width: 100%;
 }
 
-/* Secciones */
-
-/* Inicio */
-#inicio {
+/* Regla común para todas las secciones principales */
+#inicio, #acerca-de, #habilidades, #proyectos, #contacto {
 	display: flex;
 	flex-direction: column;
 	background-color: rgba(20, 16, 16, 0.67);
-	backdrop-filter: blur(10px);
-	-webkit-backdrop-filter: blur(10px);
-	border: 1px solid rgba(224, 152, 152, 0.1);
-	border-radius: 50px;
-	box-shadow: 0 8px 32px 0 rgba(16, 16, 16, 0.941);
+	max-width: 1200px;
 	width: 80%;
 	margin: 30px auto;
 	padding: 20px;
+	border-radius: 50px;
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	border: 1px solid rgba(224, 152, 152, 0.1);
+	box-shadow: 0 8px 32px 0 rgba(16, 16, 16, 0.941);
+	overflow: hidden;
+}
+
+/* Excepción para acerca-de que tiene flex-direction: row */
+#acerca-de {
+	flex-direction: row;
+	justify-content: flex-start;
+	align-items: flex-start;
+}
+
+/* Media queries para responsividad */
+@media (max-width: 1400px) {
+	#inicio, #acerca-de, #habilidades, #proyectos, #contacto {
+		max-width: 1000px;
+	}
+}
+
+@media (max-width: 1100px) {
+	#inicio, #acerca-de, #habilidades, #proyectos, #contacto {
+		max-width: 90%;
+		width: 90%;
+	}
+}
+
+@media (max-width: 768px) {
+	#inicio, #acerca-de, #habilidades, #proyectos, #contacto {
+		max-width: 95%;
+		width: 95%;
+		margin: 20px auto;
+		padding: 15px;
+		border-radius: 30px;
+	}
+	
+	#acerca-de {
+		flex-direction: column;
+		align-items: center;
+	}
+}
+
+@media (max-width: 480px) {
+	#inicio, #acerca-de, #habilidades, #proyectos, #contacto {
+		max-width: 100%;
+		width: 100%;
+		margin: 10px auto;
+		padding: 10px;
+		border-radius: 20px;
+	}
 }
 
 #inicio-contenido {
