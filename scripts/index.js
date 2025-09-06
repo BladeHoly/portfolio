@@ -20,6 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		console.log("Mensaje:", mensajeInput.value);
 	});
   */
+
 	function validarFormulario(e) {
 		e.preventDefault();
 
