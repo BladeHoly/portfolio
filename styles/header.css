@@ -86,9 +86,17 @@
 
 /* Media Queries */
 
+/* Large screens */
+@media (max-width: 1200px) {
+	#header-contenido {
+		max-width: 95%;
+	}
+}
+
+/* Medium screens */
 @media (max-width: 900px) {
 	#header-contenido {
-		padding: 0 10px;
+		padding: 0 15px;
 	}
 	#header-navbar {
 		gap: 15px;
@@ -98,6 +106,7 @@
 	}
 }
 
+/* Tablet and mobile */
 @media (max-width: 768px) {
 	#menu-hamburguesa {
 		display: flex;
@@ -105,7 +114,8 @@
 
 	#header {
 		height: 75px;
-		min-width: 100vw;
+		width: 100%;
+		position: relative;
 	}
 
 	#header-contenido {
@@ -114,6 +124,7 @@
 		align-items: center;
 		padding: 0 20px;
 		border-radius: 25px;
+		width: 95%;
 	}
 
 	#header-navbar {
@@ -124,16 +135,17 @@
 		flex-direction: column;
 		gap: 0;
 		width: 100%;
-		background-color: rgba(56, 56, 56, 0.689);
+		background-color: rgba(56, 56, 56, 0.95);
 		border-radius: 0 0 15px 15px;
 		backdrop-filter: blur(10px);
 		box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
 		padding: 0;
 		height: 0;
-		transition: height 0.3s ease-in-out, padding 0.3s ease-in-out;
+		transition: all 0.3s ease-in-out;
 		opacity: 0;
 		visibility: hidden;
-		z-index: 999; 
+		z-index: 999;
+		overflow: hidden;
 	}
 
 	#header-navbar.activo {
@@ -146,12 +158,29 @@
 	#header-navbar a {
 		font-size: 18px;
 		width: 100%;
-		padding: 12px 20px;
+		padding: 15px 20px;
 		text-align: left;
 		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+		transition: background-color 0.2s ease;
+	}
+
+	#header-navbar a:hover {
+		background-color: rgba(255, 255, 255, 0.1);
 	}
 
 	#header-navbar a:last-child {
 		border-bottom: none;
+	}
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+	#header-contenido {
+		padding: 0 10px;
+	}
+
+	#header-navbar a {
+		font-size: 16px;
+		padding: 12px 15px;
 	}
 }
