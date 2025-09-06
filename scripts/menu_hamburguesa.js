@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", function () {
-	// Elementos del DOM
 	const menuHamburguesa = document.getElementById("menu-hamburguesa");
 	const headerNavbar = document.getElementById("header-navbar");
 
@@ -13,7 +12,6 @@ document.addEventListener("DOMContentLoaded", function () {
 		menuHamburguesa.setAttribute("aria-expanded", expandido);
 	}
 
-	// Evento de clic para el botón de hamburguesa
 	menuHamburguesa.addEventListener("click", toggleMenu);
 
 	// Cerrar el menú al hacer clic en un enlace

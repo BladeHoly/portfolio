@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
 	console.log("DOM Cargado");
-	/* Peligroso dejar esto asi */
+
 	const formulario = document.querySelector("#contacto-formulario form");
 	const nombreInput = document.getElementById("nombre");
 	const emailInput = document.getElementById("email");

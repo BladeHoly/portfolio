@@ -21,14 +21,7 @@ body {
 	width: 100%;
 }
 
-/* Regla común para todas las secciones principales */
-#inicio,
-#acerca-de,
-#habilidades,
-#proyectos,
-#contacto {
-	display: flex;
-	flex-direction: column;
+.seccion-principal {
 	background-color: rgba(20, 16, 16, 0.67);
 	max-width: 1200px;
 	width: 80%;
@@ -42,97 +35,34 @@ body {
 	overflow: hidden;
 }
 
-/* Excepción para acerca-de que tiene flex-direction: row */
-#acerca-de {
-	flex-direction: row;
-	justify-content: flex-start;
-	align-items: flex-start;
-}
-
-/* Media queries para responsividad */
-@media (max-width: 1400px) {
-	#inicio,
-	#acerca-de,
-	#habilidades,
-	#proyectos,
-	#contacto {
-		max-width: 1000px;
-	}
-}
-
-@media (max-width: 1100px) {
-	#inicio,
-	#acerca-de,
-	#habilidades,
-	#proyectos,
-	#contacto {
-		max-width: 90%;
-		width: 90%;
-	}
-}
-
-@media (max-width: 768px) {
-	#inicio,
-	#acerca-de,
-	#habilidades,
-	#proyectos,
-	#contacto {
-		max-width: 95%;
-		width: 95%;
-		margin: 20px auto;
-		padding: 15px;
-		border-radius: 30px;
-	}
-
-	#acerca-de {
-		flex-direction: column;
-		align-items: center;
-	}
-}
-
-@media (max-width: 480px) {
-	#inicio,
-	#acerca-de,
-	#habilidades,
-	#proyectos,
-	#contacto {
-		max-width: 100%;
-		width: 100%;
-		margin: 10px auto;
-		padding: 10px;
-		border-radius: 20px;
-	}
+#inicio,
+#proyectos,
+#contacto {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 }
 
 #inicio-contenido {
 	display: flex;
 	width: 100%;
 	height: 250px;
-	display: flex;
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
 	gap: 21px;
 	color: var(--color-texto);
-	margin: 25px;
+	margin: 0 auto;
+	padding: 25px;
 	font-size: 24px;
 }
 
 /* Acerca de */
-
 #acerca-de {
 	display: flex;
 	flex-direction: row;
 	justify-content: flex-start;
 	align-items: flex-start;
-	margin: 30px auto;
-	background-color: rgba(20, 16, 16, 0.67);
-	backdrop-filter: blur(10px);
-	-webkit-backdrop-filter: blur(10px);
-	border: 1px solid rgba(224, 152, 152, 0.1);
-	border-radius: 50px;
-	box-shadow: 0 8px 32px 0 rgba(16, 16, 16, 0.941);
-	padding: 20px;
 }
 
 #acerca-de-titulo {
@@ -193,14 +123,6 @@ body {
 #habilidades {
 	display: flex;
 	flex-direction: column;
-	background-color: rgba(20, 16, 16, 0.67);
-	margin: 30px auto;
-	padding: 20px;
-	border-radius: 50px;
-	backdrop-filter: blur(10px);
-	-webkit-backdrop-filter: blur(10px);
-	border: 1px solid rgba(224, 152, 152, 0.1);
-	box-shadow: 0 8px 32px 0 rgba(16, 16, 16, 0.941);
 }
 
 #habilidades-titulo {
@@ -363,16 +285,6 @@ body {
 /* Proyectos */
 
 #proyectos {
-	display: flex;
-	flex-direction: column;
-	background-color: rgba(20, 16, 16, 0.67);
-	margin: 30px auto;
-	padding: 20px;
-	border-radius: 50px;
-	backdrop-filter: blur(10px);
-	-webkit-backdrop-filter: blur(10px);
-	border: 1px solid rgba(224, 152, 152, 0.1);
-	box-shadow: 0 8px 32px 0 rgba(16, 16, 16, 0.941);
 	min-height: fit-content;
 }
 
@@ -474,9 +386,6 @@ body {
 /* Contacto */
 
 #contacto {
-	display: flex;
-	flex-direction: column;
-	background-color: rgba(20, 16, 16, 0.67);
 	min-height: fit-content;
 }
 
@@ -532,13 +441,6 @@ body {
 	text-align: center;
 }
 
-@media (max-width: 480px) {
-	#contacto-datos p {
-		font-size: 16px;
-		margin-bottom: 15px;
-	}
-}
-
 #contacto-formulario {
 	display: flex;
 	flex-direction: column;
@@ -580,33 +482,46 @@ body {
 	margin-top: 10px;
 }
 
-@media (min-width: 769px) {
-	#boton_formulario {
-		width: auto;
-	}
-}
-
 /* Media Queries */
 
 @media (max-width: 1400px) {
+	.seccion-principal {
+		max-width: 1000px;
+	}
+
 	.grid-proyectos {
 		grid-template-columns: repeat(3, 1fr);
 	}
 }
 
 @media (max-width: 1100px) {
+	.seccion-principal {
+		max-width: 90%;
+		width: 90%;
+	}
+
 	.grid-proyectos {
 		grid-template-columns: repeat(2, 1fr);
 	}
 }
 
 @media (max-width: 768px) {
+	.seccion-principal {
+		max-width: 95%;
+		width: 95%;
+		margin: 20px auto;
+		padding: 15px;
+		border-radius: 30px;
+	}
+	
+	#inicio-contenido {
+		padding: 15px;
+	}
+
 	.grid-proyectos {
 		grid-template-columns: 1fr;
 	}
-}
 
-@media (max-width: 768px) {
 	.grid-habilidades {
 		grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
 	}
@@ -646,6 +561,43 @@ body {
 }
 
 @media (max-width: 480px) {
+	.seccion-principal {
+		max-width: 100%;
+		width: 100%;
+		margin: 10px auto;
+		padding: 10px;
+		border-radius: 20px;
+	}
+	
+	#inicio-contenido {
+		padding: 10px;
+	}
+
+	#contacto-datos p {
+		font-size: 16px;
+		margin-bottom: 15px;
+	}
+
+	#contacto-titulo {
+		font-size: 28px;
+	}
+
+	#contacto-contenido {
+		flex-direction: column;
+		gap: 20px;
+	}
+
+	#contacto-datos,
+	#contacto-formulario {
+		width: 100%;
+	}
+
+	#contacto-formulario form input,
+	#contacto-formulario form textarea {
+		padding: 8px;
+		margin-bottom: 10px;
+	}
+
 	.grid-habilidades {
 		grid-template-columns: 1fr;
 	}
@@ -677,24 +629,10 @@ body {
 		width: 250px;
 		height: 250px;
 	}
+}
 
-	#contacto-titulo {
-		font-size: 28px;
-	}
-
-	#contacto-contenido {
-		flex-direction: column;
-		gap: 20px;
-	}
-
-	#contacto-datos,
-	#contacto-formulario {
-		width: 100%;
-	}
-
-	#contacto-formulario form input,
-	#contacto-formulario form textarea {
-		padding: 8px;
-		margin-bottom: 10px;
+@media (min-width: 769px) {
+	#boton_formulario {
+		width: auto;
 	}
 }
