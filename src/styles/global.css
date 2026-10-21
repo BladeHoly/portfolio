@@ -491,3 +491,15 @@ p {
 .footer a {
   color: inherit;
 }
+
+/* On narrow screens the hint goes under the name, so names don't wrap. */
+@media (max-width: 40rem) {
+  .nav-result {
+    flex-direction: column;
+    gap: 0.1rem;
+  }
+
+  .nav-result small {
+    text-align: left;
+  }
+}
