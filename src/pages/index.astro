@@ -1,6 +1,8 @@
 ---
 import Backdrop from '../components/Backdrop';
 import GlassBox from '../components/GlassBox';
+import GlassScrollbar from '../components/GlassScrollbar';
+import Motion from '../components/Motion';
 import Navbar, { slug } from '../components/Navbar';
 import { contact, jobs, projects, stack } from '../data/content';
 import '../styles/global.css';
@@ -9,6 +11,11 @@ import '../styles/global.css';
 const base = import.meta.env.BASE_URL.endsWith('/')
   ? import.meta.env.BASE_URL
   : `${import.meta.env.BASE_URL}/`;
+
+// Large panels barely move against what's behind them and cover most of the page, so they use
+// the browser's own blur with a CSS rim (see .panel in the stylesheet). Full refraction is kept
+// for the small, interactive glass: the navbar, search, scroll thumb and buttons.
+const lite = { tier: 'blur', blur: '14px' } as const;
 
 const STATUS = {
   público: 'Código abierto',
@@ -39,6 +46,8 @@ const STATUS = {
     <a class="skip" href="#trabajo">Saltar al contenido</a>
     <Backdrop client:only="react" />
     <Navbar client:load projects={projects} />
+    <GlassScrollbar client:only="react" />
+    <Motion client:only="react" />
 
     <header id="top" class="hero">
       <h1>Renzo</h1>
@@ -70,7 +79,7 @@ const STATUS = {
           {
             jobs.map((job) => (
               <li>
-                <GlassBox client:visible as="article" className="panel job">
+                <GlassBox client:visible as="article" className="panel job" glass={lite}>
                   <p class="job-dates">
                     Desde {job.start}
                     {job.end && ` hasta ${job.end}`}
@@ -98,6 +107,7 @@ const STATUS = {
                   as="article"
                   id={`proyecto-${slug(p.name)}`}
                   className="panel project"
+                  glass={lite}
                 >
                   <h3>
                     {p.url ? (
@@ -124,7 +134,7 @@ const STATUS = {
 
       <section id="stack" aria-labelledby="stack-titulo">
         <h2 id="stack-titulo">Stack</h2>
-        <GlassBox client:visible className="panel">
+        <GlassBox client:visible className="panel" glass={lite}>
           <dl class="stack">
             {
               stack.map((group) => (
