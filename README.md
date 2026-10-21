@@ -9,15 +9,14 @@ La versión anterior, la del curso, está en el tag [`v1-curso`](https://github.
 
 ## Desarrollo
 
-glass-midas vive como submódulo en `vendor/glass-midas` y se usa directo desde su código fuente, sin
-compilar ni publicar nada.
+glass-midas llega desde npm, como `@glass-midas/react`.
 
 ```sh
-git clone --recurse-submodules https://github.com/BladeHoly/portfolio.git
+git clone https://github.com/BladeHoly/portfolio.git
 pnpm install
-pnpm dev            # http://localhost:4321/portfolio/
+pnpm dev                        # http://localhost:4321/portfolio/
 pnpm build
-pnpm glass:update   # trae la última versión de glass-midas
+pnpm update "@glass-midas/*"    # trae la última versión de glass-midas
 ```
 
 Todo el contenido (experiencia, proyectos, stack, contacto) está en `src/data/content.ts`.
