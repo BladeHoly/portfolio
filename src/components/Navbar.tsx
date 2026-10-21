@@ -215,7 +215,7 @@ export default function Navbar({ projects }: { projects: Project[] }) {
   const links = useRef<(HTMLAnchorElement | null)[]>([]);
 
   useGlass(pill, { radius: 28, bezel: 18, thickness: 36 });
-  // The search bar is kube.io's search box, as glass-midas renders it by default.
+  // The search bar: glass-midas's default glass, a crisp rim over a thin squircle bezel.
   useGlass(search, { radius: 999 });
   useGlass(results, { radius: 24, bezel: 18, thickness: 32, blur: '6px' });
 
