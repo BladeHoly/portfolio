@@ -19,8 +19,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: true # glass-midas lives in vendor/glass-midas
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:

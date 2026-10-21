@@ -6,11 +6,11 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview",
-    "glass:update": "git submodule update --remote vendor/glass-midas"
+    "preview": "astro preview"
   },
   "dependencies": {
     "@astrojs/react": "^7.1.0",
+    "@glass-midas/react": "^0.1.0",
     "astro": "^7.4.1",
     "gsap": "^3.15.0",
     "lenis": "^1.3.27",
