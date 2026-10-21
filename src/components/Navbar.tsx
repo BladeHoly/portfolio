@@ -62,7 +62,7 @@ function useActiveSection() {
   return active;
 }
 
-/** The top bar, like iOS 26: minimized on small screens and while scrolling down. */
+/** The bottom bar on small screens, like iOS 26: minimized while scrolling down. */
 function useCollapsed(side: boolean) {
   const [collapsed, setCollapsed] = useState(false);
   useEffect(() => {
@@ -71,21 +71,17 @@ function useCollapsed(side: boolean) {
       return;
     }
     let last = scrollY;
-    const narrow = matchMedia('(max-width: 40rem)');
     const update = () => {
       const y = scrollY;
-      if (narrow.matches) setCollapsed(true);
-      else if (y < 120) setCollapsed(false);
+      if (y < 120) setCollapsed(false);
       else if (y - last > 6) setCollapsed(true);
       else if (last - y > 6) setCollapsed(false);
       last = y;
     };
     update();
     addEventListener('scroll', update, { passive: true });
-    narrow.addEventListener('change', update);
     return () => {
       removeEventListener('scroll', update);
-      narrow.removeEventListener('change', update);
     };
   }, [side]);
   return collapsed;
@@ -199,7 +195,7 @@ export default function Navbar({ projects }: { projects: Project[] }) {
   const active = useActiveSection();
   const collapsed = useCollapsed(side);
   const [hovered, setHovered] = useState<number | null>(null);
-  const [open, setOpen] = useState(false);
+  const [focused, setFocused] = useState(false);
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState(0);
 
@@ -210,7 +206,8 @@ export default function Navbar({ projects }: { projects: Project[] }) {
   const links = useRef<(HTMLAnchorElement | null)[]>([]);
 
   useGlass(pill, { radius: 28, bezel: 18, thickness: 36 });
-  useGlass(search, { radius: 999, bezel: 18, thickness: 36 });
+  // The search bar is kube.io's search box, as glass-midas renders it by default.
+  useGlass(search, { radius: 999 });
   useGlass(results, { radius: 24, bezel: 18, thickness: 32, blur: '6px' });
 
   const marked = hovered ?? active;
@@ -239,34 +236,26 @@ export default function Navbar({ projects }: { projects: Project[] }) {
 
   useEffect(() => setSelected(0), [query]);
 
-  // Ctrl/⌘ K opens the search from anywhere; Escape closes it.
+  // Ctrl/⌘ K jumps to the search bar from anywhere.
   useEffect(() => {
     const onKey = (e: globalThis.KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
-        setOpen((o) => !o);
-      } else if (e.key === 'Escape') setOpen(false);
-    };
-    const onPointer = (e: PointerEvent) => {
-      const t = e.target as Node;
-      if (!search.current?.contains(t) && !results.current?.contains(t)) setOpen(false);
+        input.current?.focus();
+      }
     };
     addEventListener('keydown', onKey);
-    addEventListener('pointerdown', onPointer);
-    return () => {
-      removeEventListener('keydown', onKey);
-      removeEventListener('pointerdown', onPointer);
-    };
+    return () => removeEventListener('keydown', onKey);
   }, []);
 
-  useEffect(() => {
-    if (open) input.current?.focus();
-    else setQuery('');
-  }, [open]);
+  const close = () => {
+    setQuery('');
+    input.current?.blur();
+  };
 
   const go = (r: Result | undefined) => {
     if (!r) return;
-    setOpen(false);
+    close();
     const target = document.querySelector<HTMLElement>(r.href);
     if (!target) return;
     scrollToTarget(target);
@@ -285,44 +274,74 @@ export default function Navbar({ projects }: { projects: Project[] }) {
     } else if (e.key === 'Enter') {
       e.preventDefault();
       go(matches[selected]);
-    }
+    } else if (e.key === 'Escape') close();
   };
 
-  const classes = ['navbar', side && 'is-side', collapsed && 'is-collapsed', open && 'is-searching'];
+  const open = focused;
+  const navClasses = ['nav-rail', side && 'is-side', collapsed && 'is-collapsed'];
 
   return (
-    <header className={classes.filter(Boolean).join(' ')}>
-      <div ref={search} className="nav-search">
-        <button
-          type="button"
-          className="nav-search-button"
-          aria-label="Buscar (Ctrl+K)"
-          aria-expanded={open}
-          aria-controls="nav-results"
-          onClick={() => setOpen((o) => !o)}
-        >
+    <>
+      <div
+        className={`searchbar${side ? ' is-side' : ''}`}
+        // Results close when focus leaves the bar and its list, not on every click inside.
+        onBlur={(e) => {
+          if (!e.currentTarget.contains(e.relatedTarget as Node)) setFocused(false);
+        }}
+      >
+        <div ref={search} className="search">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <circle cx="11" cy="11" r="7" />
             <path d="m20 20-4-4" />
           </svg>
-        </button>
-        <input
-          ref={input}
-          type="search"
-          role="combobox"
-          aria-label="Buscar proyectos y secciones"
-          aria-expanded={open}
-          aria-controls="nav-results"
-          aria-activedescendant={open && matches[selected] ? `result-${selected}` : undefined}
-          placeholder="Buscar proyectos o tecnologías"
-          tabIndex={open ? 0 : -1}
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onKeyDown={onInputKey}
-        />
+          <input
+            ref={input}
+            type="search"
+            role="combobox"
+            aria-label="Buscar proyectos y secciones"
+            aria-expanded={open}
+            aria-controls="search-results"
+            aria-activedescendant={open && matches[selected] ? `result-${selected}` : undefined}
+            placeholder="Buscar proyectos o tecnologías"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onFocus={() => setFocused(true)}
+            onKeyDown={onInputKey}
+          />
+          <kbd aria-hidden="true">Ctrl K</kbd>
+        </div>
+
+        <div ref={results} id="search-results" className="search-results" role="listbox" hidden={!open}>
+          {matches.length ? (
+            matches.map((r, i) => (
+              <div
+                key={r.href}
+                id={`result-${i}`}
+                role="option"
+                aria-selected={i === selected}
+                className="search-result"
+                tabIndex={-1}
+                onPointerEnter={() => setSelected(i)}
+                // Keep focus in the bar until the click lands.
+                onPointerDown={(e) => e.preventDefault()}
+                onClick={() => go(r)}
+              >
+                <span>{r.label}</span>
+                <small>{r.hint}</small>
+              </div>
+            ))
+          ) : (
+            <p className="search-empty">Nada coincide con “{query}”. Probá con un lenguaje, como Rust.</p>
+          )}
+        </div>
       </div>
 
-      <nav ref={pill} className="nav-pill" aria-label="Secciones" onPointerLeave={() => setHovered(null)}>
+      <nav
+        ref={pill}
+        className={navClasses.filter(Boolean).join(' ')}
+        aria-label="Secciones"
+        onPointerLeave={() => setHovered(null)}
+      >
         <span ref={droplet} className="nav-droplet" aria-hidden="true" />
         {SECTIONS.map(([id, label], i) => (
           <a
@@ -341,27 +360,6 @@ export default function Navbar({ projects }: { projects: Project[] }) {
           </a>
         ))}
       </nav>
-
-      <div ref={results} id="nav-results" className="nav-results" role="listbox" hidden={!open}>
-        {matches.length ? (
-          matches.map((r, i) => (
-            <div
-              key={r.href}
-              id={`result-${i}`}
-              role="option"
-              aria-selected={i === selected}
-              className="nav-result"
-              onPointerEnter={() => setSelected(i)}
-              onClick={() => go(r)}
-            >
-              <span>{r.label}</span>
-              <small>{r.hint}</small>
-            </div>
-          ))
-        ) : (
-          <p className="nav-empty">Nada coincide con “{query}”. Probá con un lenguaje, como Rust.</p>
-        )}
-      </div>
-    </header>
+    </>
   );
 }

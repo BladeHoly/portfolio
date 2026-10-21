@@ -36,7 +36,8 @@ export default function Motion() {
           { y: 18, opacity: 0, duration: 0.7, stagger: 0.08, clearProps: 'all' },
           '-=0.6',
         )
-        .from('.navbar', { x: -28, opacity: 0, duration: 0.9, clearProps: 'all' }, 0.25);
+        .from('.nav-rail', { opacity: 0, duration: 0.9, clearProps: 'opacity' }, 0.25)
+        .from('.searchbar', { y: -16, opacity: 0, duration: 0.9, clearProps: 'transform,opacity' }, 0.35);
 
       // The name drifts up slower than the page as you leave the hero.
       gsap.to('.hero h1', {

@@ -165,20 +165,128 @@ a:hover {
   scale: 0.97;
 }
 
-/* Navbar: a section pill with a sliding glass droplet, and a separate search that opens. */
-.navbar {
+/* Search: a full glass bar fixed along the top, kube.io's search box. */
+.searchbar {
   position: fixed;
   top: 1rem;
   left: 50%;
   translate: -50% 0;
   z-index: 10;
-  display: flex;
-  align-items: flex-start;
-  gap: 0.6rem;
+  width: min(30rem, calc(100vw - 2rem));
 }
 
-.nav-pill {
-  position: relative;
+/* Next to the sidebar, center it over the content instead of the window. */
+.searchbar.is-side {
+  left: calc(50% + 5.75rem);
+  width: min(30rem, calc(100vw - 14.5rem));
+}
+
+.search {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  height: 3.5rem;
+  padding: 0 1.25rem;
+  border-radius: 999px;
+  /* More tint than kube.io's 5%: page text scrolls under it and the input has to stay readable. */
+  background: rgb(236 242 240 / 0.55);
+  box-shadow: 0 4px 16px rgb(0 0 0 / 0.16);
+}
+
+.search svg {
+  flex: none;
+  width: 1.2rem;
+  height: 1.2rem;
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.search input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+}
+
+.search input::placeholder {
+  color: var(--sage);
+}
+
+.search input:focus {
+  outline: none;
+}
+
+.search:has(input:focus-visible) {
+  outline: 2px solid var(--cobalt);
+  outline-offset: 3px;
+}
+
+.search kbd {
+  flex: none;
+  padding: 0.15rem 0.5rem;
+  border-radius: 6px;
+  box-shadow: inset 0 0 0 1px rgb(18 48 47 / 0.18);
+  color: var(--sage);
+  font: 500 var(--step--1) / 1.4 inherit;
+}
+
+@media (pointer: coarse) {
+  .search kbd {
+    display: none;
+  }
+}
+
+.search-results {
+  margin-top: 0.6rem;
+  padding: 0.5rem;
+  border-radius: 24px;
+  background: rgb(236 242 240 / 0.7);
+  box-shadow: var(--glass-edge), var(--glass-lift);
+}
+
+.search-results[hidden] {
+  display: none;
+}
+
+.search-result {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  padding: 0.6rem 0.9rem;
+  border-radius: 16px;
+  cursor: pointer;
+}
+
+.search-result[aria-selected='true'] {
+  background: rgb(47 85 201 / 0.1);
+  color: var(--cobalt);
+}
+
+.search-result small {
+  color: var(--sage);
+  font-size: var(--step--1);
+  text-align: right;
+}
+
+.search-empty {
+  margin: 0;
+  padding: 0.6rem 0.9rem;
+  color: var(--sage);
+}
+
+/* Sections: a glass rail with a droplet under the current one. A sidebar on wide screens, a
+   bottom bar on narrow ones (like iOS), where it minimizes while scrolling down. */
+.nav-rail {
+  position: fixed;
+  bottom: 1rem;
+  left: 50%;
+  translate: -50% 0;
+  z-index: 10;
   display: flex;
   padding: 0.35rem;
   border-radius: 999px;
@@ -186,11 +294,20 @@ a:hover {
   box-shadow: var(--glass-edge), var(--glass-lift);
 }
 
-.nav-pill a {
+.nav-rail.is-side {
+  top: 50%;
+  bottom: auto;
+  left: clamp(1rem, 2vw, 1.75rem);
+  translate: 0 -50%;
+  flex-direction: column;
+  border-radius: 28px;
+}
+
+.nav-rail a {
   position: relative;
   z-index: 1;
   max-width: 10rem;
-  padding: 0.55rem 1rem;
+  padding: 0.55rem 0.8rem;
   border-radius: 999px;
   color: var(--ink);
   font-size: var(--step--1);
@@ -204,17 +321,21 @@ a:hover {
     opacity 0.3s var(--ease-out);
 }
 
-.nav-pill a.is-active {
+.nav-rail.is-side a {
+  padding: 0.6rem 1.1rem;
+}
+
+.nav-rail a.is-active {
   color: var(--cobalt);
 }
 
-.nav-pill a.is-hidden {
+.nav-rail a.is-hidden {
   max-width: 0;
   padding-inline: 0;
   opacity: 0;
 }
 
-/* Under the links (z-index 0 vs 1): it bends the pill behind, never the text. JS sets its
+/* Under the links (z-index 0 vs 1): it bends the rail behind, never the text. JS sets its
    position and size. */
 .nav-droplet {
   position: absolute;
@@ -228,144 +349,6 @@ a:hover {
     0 2px 8px rgb(18 48 47 / 0.12);
   transform-origin: center;
   pointer-events: none;
-}
-
-.nav-search {
-  position: relative;
-  display: flex;
-  align-items: center;
-  width: 3.1rem;
-  height: 3.1rem;
-  border-radius: 999px;
-  background: var(--glass-tint);
-  box-shadow: var(--glass-edge), var(--glass-lift);
-  overflow: hidden;
-  transition: width 0.5s var(--ease-out);
-}
-
-.is-searching .nav-search {
-  width: min(22rem, calc(100vw - 2rem));
-}
-
-.navbar:not(.is-side).is-searching .nav-pill {
-  display: none;
-}
-
-/* On top, the search sits after the sections. */
-.navbar:not(.is-side) .nav-search {
-  order: 2;
-}
-
-/* Sidebar: the same glass, stacked down the left edge, with search on top. */
-.navbar.is-side {
-  top: 50%;
-  left: clamp(1rem, 2vw, 1.75rem);
-  translate: 0 -50%;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.is-side .nav-pill {
-  flex-direction: column;
-  border-radius: 28px;
-}
-
-.is-side .nav-pill a {
-  padding: 0.6rem 1.1rem;
-}
-
-.is-side .nav-results {
-  top: 3.75rem;
-  right: auto;
-  width: min(22rem, calc(100vw - 2rem));
-}
-
-
-.nav-search-button {
-  flex: none;
-  display: grid;
-  place-items: center;
-  width: 3.1rem;
-  height: 3.1rem;
-  border: 0;
-  border-radius: 999px;
-  background: none;
-  color: var(--ink);
-  cursor: pointer;
-}
-
-.nav-search svg {
-  width: 1.2rem;
-  height: 1.2rem;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
-}
-
-.nav-search input {
-  flex: 1;
-  min-width: 0;
-  padding-right: 1.25rem;
-  border: 0;
-  background: none;
-  color: var(--ink);
-  font: inherit;
-}
-
-.nav-search input::placeholder {
-  color: var(--sage);
-}
-
-.nav-search input:focus {
-  outline: none;
-}
-
-.nav-search:has(input:focus-visible) {
-  outline: 2px solid var(--cobalt);
-  outline-offset: 3px;
-}
-
-.nav-results {
-  position: absolute;
-  top: calc(100% + 0.6rem);
-  left: 0;
-  right: 0;
-  padding: 0.5rem;
-  border-radius: 24px;
-  background: rgb(236 242 240 / 0.7);
-  box-shadow: var(--glass-edge), var(--glass-lift);
-}
-
-.nav-results[hidden] {
-  display: none;
-}
-
-.nav-result {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 1rem;
-  padding: 0.6rem 0.9rem;
-  border-radius: 16px;
-  cursor: pointer;
-}
-
-.nav-result[aria-selected='true'] {
-  background: rgb(47 85 201 / 0.1);
-  color: var(--cobalt);
-}
-
-.nav-result small {
-  color: var(--sage);
-  font-size: var(--step--1);
-  text-align: right;
-}
-
-.nav-empty {
-  margin: 0;
-  padding: 0.6rem 0.9rem;
-  color: var(--sage);
 }
 
 /* Hero */
@@ -559,7 +542,8 @@ p {
 }
 
 .footer {
-  padding: 2rem var(--gutter) 3rem;
+  /* Clears the bottom bar on narrow screens. */
+  padding: 2rem var(--gutter) 6rem;
   color: var(--sage);
   font-size: var(--step--1);
 }
@@ -570,12 +554,12 @@ p {
 
 /* On narrow screens the hint goes under the name, so names don't wrap. */
 @media (max-width: 40rem) {
-  .nav-result {
+  .search-result {
     flex-direction: column;
     gap: 0.1rem;
   }
 
-  .nav-result small {
+  .search-result small {
     text-align: left;
   }
 }
