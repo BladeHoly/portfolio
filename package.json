@@ -1,0 +1,23 @@
+{
+  "name": "portfolio",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.34.7",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "glass:update": "git submodule update --remote vendor/glass-midas"
+  },
+  "dependencies": {
+    "@astrojs/react": "^7.1.0",
+    "astro": "^7.4.1",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "typescript": "^6.0.3"
+  }
+}

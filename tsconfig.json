@@ -1,0 +1,14 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "include": [".astro/types.d.ts", "src/**/*"],
+  "exclude": ["dist", "vendor"],
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
+    "paths": {
+      "@glass-midas/core": ["./vendor/glass-midas/packages/core/src/index.ts"],
+      "@glass-midas/webgl": ["./vendor/glass-midas/packages/webgl/src/index.ts"],
+      "@glass-midas/react": ["./vendor/glass-midas/packages/react/src/index.tsx"]
+    }
+  }
+}
