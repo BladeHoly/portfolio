@@ -7,16 +7,32 @@ const MIN_THUMB = 56;
 /**
  * A glass scroll thumb in place of the native scrollbar, which the stylesheet hides. It only
  * mirrors and drives the page's own scroll, so the keyboard, wheel and touch work as always.
+ * It should go almost unnoticed: no rim (a rim marks what deserves attention), faint while the
+ * page rests, clear while it scrolls or under the pointer.
  */
 export default function GlassScrollbar() {
   const thumb = useRef<HTMLDivElement>(null);
   const drag = useRef<{ startY: number; startScroll: number } | null>(null);
 
-  useGlass(thumb, { radius: 999, bezel: 5, thickness: 10, blur: '0px', specular: 0.5 });
+  useGlass(thumb, {
+    radius: 999,
+    bezel: 4,
+    thickness: 8,
+    blur: '2px',
+    specular: 0,
+    specularSaturation: 1,
+  });
 
   useEffect(() => {
     const el = thumb.current!;
     let frame = 0;
+    let rest: ReturnType<typeof setTimeout> | undefined;
+    const onScroll = () => {
+      sync();
+      el.classList.add('is-active');
+      clearTimeout(rest);
+      rest = setTimeout(() => el.classList.remove('is-active'), 900);
+    };
     const sync = () => {
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => {
@@ -32,13 +48,14 @@ export default function GlassScrollbar() {
       });
     };
     sync();
-    addEventListener('scroll', sync, { passive: true });
+    addEventListener('scroll', onScroll, { passive: true });
     addEventListener('resize', sync);
     const observer = new ResizeObserver(sync);
     observer.observe(document.body);
     return () => {
       cancelAnimationFrame(frame);
-      removeEventListener('scroll', sync);
+      clearTimeout(rest);
+      removeEventListener('scroll', onScroll);
       removeEventListener('resize', sync);
       observer.disconnect();
     };

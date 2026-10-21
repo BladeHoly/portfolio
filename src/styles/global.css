@@ -37,7 +37,7 @@ html {
 }
 
 /* With a mouse, the glass thumb replaces the native scrollbar; touch keeps the system's. */
-@media (pointer: fine) {
+@media (pointer: fine) and (hover: hover) {
   html {
     scrollbar-width: none;
   }
@@ -55,10 +55,22 @@ html {
   width: 9px;
   border-radius: 999px;
   background: rgb(255 255 255 / 0.3);
-  box-shadow: var(--glass-edge), 0 2px 10px rgb(18 48 47 / 0.18);
+  opacity: 0.35;
   cursor: grab;
-  transition: scale 0.25s var(--ease-out);
+  transition:
+    scale 0.25s var(--ease-out),
+    opacity 0.4s;
   transform-origin: right center;
+}
+
+/* Clear while the page scrolls or under the pointer, faint again once it rests. */
+.scroll-thumb.is-active,
+.scroll-thumb:hover,
+.scroll-thumb.is-dragging {
+  opacity: 1;
+  transition:
+    scale 0.25s var(--ease-out),
+    opacity 0.15s;
 }
 
 .scroll-thumb:hover,
@@ -70,7 +82,7 @@ html {
   cursor: grabbing;
 }
 
-@media (pointer: coarse) {
+@media (pointer: coarse), (hover: none) {
   .scroll-thumb {
     display: none;
   }
@@ -80,7 +92,10 @@ body {
   margin: 0;
   background: var(--mist);
   color: var(--ink);
-  font: 400 var(--step-0) / 1.6 'Archivo', system-ui, sans-serif;
+  font:
+    400 var(--step-0) / 1.6 'Archivo',
+    system-ui,
+    sans-serif;
 }
 
 a {
