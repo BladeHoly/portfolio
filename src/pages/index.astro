@@ -1,7 +1,7 @@
 ---
-import Hero from '../components/Hero';
-import Nav from '../components/Nav';
-import Projects from '../components/Projects';
+import Backdrop from '../components/Backdrop';
+import GlassBox from '../components/GlassBox';
+import Navbar, { slug } from '../components/Navbar';
 import { contact, jobs, projects, stack } from '../data/content';
 import '../styles/global.css';
 
@@ -9,6 +9,12 @@ import '../styles/global.css';
 const base = import.meta.env.BASE_URL.endsWith('/')
   ? import.meta.env.BASE_URL
   : `${import.meta.env.BASE_URL}/`;
+
+const STATUS = {
+  público: 'Código abierto',
+  'pronto público': 'Código abierto pronto',
+  privado: 'Código privado',
+} as const;
 ---
 
 <!doctype html>
@@ -16,7 +22,7 @@ const base = import.meta.env.BASE_URL.endsWith('/')
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Renzo — desarrollador</title>
+    <title>Renzo, desarrollador</title>
     <meta
       name="description"
       content="Renzo, desarrollador en Paysandú, Uruguay. Proyectos en TypeScript y Rust, y glass-midas, vidrio líquido para la web."
@@ -31,16 +37,30 @@ const base = import.meta.env.BASE_URL.endsWith('/')
   </head>
   <body>
     <a class="skip" href="#trabajo">Saltar al contenido</a>
-    <Nav client:load />
+    <Backdrop client:only="react" />
+    <Navbar client:load projects={projects} />
 
     <header id="top" class="hero">
-      <h1 class="visually-hidden">Renzo, desarrollador</h1>
-      <Hero client:only="react" />
+      <h1>Renzo</h1>
       <p class="intro">
         Desarrollador en Paysandú, Uruguay. Trabajo en Mozart Fintech, y en mi tiempo libre construyo
         herramientas: desde desarmar los archivos de un videojuego hasta vidrio que refracta en el
         navegador.
       </p>
+      <div class="actions">
+        <GlassBox client:load as="a" href="#proyectos" className="button" glass={{ radius: 999 }}>
+          Ver proyectos
+        </GlassBox>
+        <GlassBox
+          client:load
+          as="a"
+          href={`mailto:${contact.email}`}
+          className="button"
+          glass={{ radius: 999 }}
+        >
+          Escribime
+        </GlassBox>
+      </div>
     </header>
 
     <main>
@@ -49,16 +69,18 @@ const base = import.meta.env.BASE_URL.endsWith('/')
         <ol class="jobs">
           {
             jobs.map((job) => (
-              <li class="job">
-                <p class="job-dates">
-                  Desde {job.start}
-                  {job.end && ` hasta ${job.end}`}
-                </p>
-                <h3>
-                  {job.role ? `${job.role} en ` : ''}
-                  {job.company}
-                </h3>
-                {job.summary && <p>{job.summary}</p>}
+              <li>
+                <GlassBox client:visible as="article" className="panel job">
+                  <p class="job-dates">
+                    Desde {job.start}
+                    {job.end && ` hasta ${job.end}`}
+                  </p>
+                  <h3>
+                    {job.role ? `${job.role} en ` : ''}
+                    {job.company}
+                  </h3>
+                  {job.summary && <p>{job.summary}</p>}
+                </GlassBox>
               </li>
             ))
           }
@@ -67,39 +89,81 @@ const base = import.meta.env.BASE_URL.endsWith('/')
 
       <section id="proyectos" aria-labelledby="proyectos-titulo">
         <h2 id="proyectos-titulo">Proyectos</h2>
-        <Projects client:load projects={projects} />
+        <ul class="projects">
+          {
+            projects.map((p, i) => (
+              <li class={i === 0 ? 'featured' : undefined}>
+                <GlassBox
+                  client:visible
+                  as="article"
+                  id={`proyecto-${slug(p.name)}`}
+                  className="panel project"
+                >
+                  <h3>
+                    {p.url ? (
+                      <a href={p.url} target="_blank" rel="noopener noreferrer">
+                        {p.name}
+                      </a>
+                    ) : (
+                      p.name
+                    )}
+                  </h3>
+                  <p>{p.what}</p>
+                  <p class="project-meta">
+                    <span>{p.stack.join(', ')}</span>
+                    <span class={p.status === 'público' ? 'status-open' : undefined}>
+                      {STATUS[p.status]}
+                    </span>
+                  </p>
+                </GlassBox>
+              </li>
+            ))
+          }
+        </ul>
       </section>
 
       <section id="stack" aria-labelledby="stack-titulo">
         <h2 id="stack-titulo">Stack</h2>
-        <dl class="stack">
-          {
-            stack.map((group) => (
-              <div>
-                <dt>{group.area}</dt>
-                <dd>{group.items.join(', ')}</dd>
-              </div>
-            ))
-          }
-        </dl>
+        <GlassBox client:visible className="panel">
+          <dl class="stack">
+            {
+              stack.map((group) => (
+                <div>
+                  <dt>{group.area}</dt>
+                  <dd>{group.items.join(', ')}</dd>
+                </div>
+              ))
+            }
+          </dl>
+        </GlassBox>
       </section>
 
       <section id="contacto" aria-labelledby="contacto-titulo">
         <h2 id="contacto-titulo">Contacto</h2>
-        <p class="contact-lead">
-          ¿Un proyecto, una pregunta o una oferta? Escribime y te respondo.
-        </p>
+        <p class="contact-lead">¿Un proyecto, una pregunta o una oferta? Escribime y te respondo.</p>
         <ul class="contact">
-          <li><a href={`mailto:${contact.email}`}>{contact.email}</a></li>
-          <li><a href={contact.github} target="_blank" rel="noopener noreferrer">GitHub</a></li>
-          <li><a href={contact.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+          <li>
+            <GlassBox client:visible as="a" href={`mailto:${contact.email}`} className="button" glass={{ radius: 999 }}>
+              {contact.email}
+            </GlassBox>
+          </li>
+          <li>
+            <GlassBox client:visible as="a" href={contact.github} className="button" glass={{ radius: 999 }}>
+              GitHub
+            </GlassBox>
+          </li>
+          <li>
+            <GlassBox client:visible as="a" href={contact.linkedin} className="button" glass={{ radius: 999 }}>
+              LinkedIn
+            </GlassBox>
+          </li>
         </ul>
       </section>
     </main>
 
     <footer class="footer">
       <p>
-        Hecho con <a href="https://github.com/BladeHoly/glass-midas">glass-midas</a>. El vidrio de
+        Hecho con <a href="https://github.com/BladeHoly/glass-midas">glass-midas</a>. Cada vidrio de
         esta página refracta de verdad lo que tiene detrás.
       </p>
     </footer>
