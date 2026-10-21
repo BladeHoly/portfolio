@@ -15,9 +15,14 @@ export interface Job {
   summary: string;
 }
 
-// TODO: a one-line summary of the work at Mozart, from the LinkedIn profile.
 export const jobs: Job[] = [
-  { company: 'Mozart Fintech', role: 'AI Engineer', start: 'octubre de 2025', summary: '' },
+  {
+    company: 'Mozart Fintech',
+    role: 'AI Engineer',
+    start: 'octubre de 2025',
+    summary:
+      'Construyo agentes de voz con LiveKit sobre telefonía SIP, con detección de turnos y de contestadores; funciones con los modelos de OpenAI y Anthropic, con RAG, tool calling y MCP; y la infraestructura en AWS que los sostiene, de Lambda y ECS a EKS, con SST, OpenTofu y Pulumi. Del front en Next.js al deploy, un poco de todo.',
+  },
 ];
 
 export interface Project {
@@ -65,8 +70,81 @@ export const projects: Project[] = [
 ];
 
 export const stack = [
-  { area: 'Lenguajes', items: ['TypeScript', 'JavaScript', 'Rust', 'HTML', 'CSS'] },
-  { area: 'Frontend', items: ['React', 'Astro', 'Vite', 'WebGL', 'SVG'] },
-  { area: 'Backend', items: ['Node.js', 'Cloudflare Workers', 'D1'] },
-  { area: 'Herramientas', items: ['Git', 'GitHub', 'pnpm', 'Vitest'] },
+  { area: 'Lenguajes', items: ['TypeScript', 'JavaScript', 'Python', 'Rust', 'HTML', 'CSS'] },
+  {
+    area: 'IA y voz',
+    items: [
+      'Modelos de OpenAI y Anthropic',
+      'RAG y embeddings',
+      'MCP y tool calling',
+      'LiveKit Agents',
+      'WebRTC',
+      'SIP y Twilio',
+      'Deepgram',
+      'ElevenLabs',
+      'Detección de turnos y de contestadores',
+    ],
+  },
+  {
+    area: 'Frontend',
+    items: ['Next.js', 'React', 'Astro', 'Tailwind', 'shadcn/ui', 'Radix', 'TanStack', 'WebGL'],
+  },
+  {
+    area: 'Backend',
+    items: [
+      'Node.js',
+      'Bun',
+      'ElysiaJS y Eden',
+      'Fastify',
+      'FastAPI',
+      'Zod',
+      'Drizzle',
+      'Prisma',
+      'ElectroDB',
+      'PostgreSQL (Aurora)',
+      'DynamoDB',
+      'Cloudflare Workers',
+    ],
+  },
+  {
+    area: 'AWS',
+    items: [
+      'Lambda',
+      'API Gateway',
+      'EC2',
+      'ECS y Fargate',
+      'EKS',
+      'S3',
+      'CloudFront',
+      'Route 53',
+      'SQS',
+      'SNS',
+      'EventBridge',
+      'Step Functions',
+      'Cognito',
+      'Bedrock',
+      'Amplify',
+      'IAM',
+      'KMS',
+      'Secrets Manager',
+      'SSM',
+      'CloudWatch',
+    ],
+  },
+  {
+    area: 'Infraestructura',
+    items: [
+      'Docker y Docker Compose',
+      'SST',
+      'OpenTofu',
+      'Pulumi',
+      'AWS CDK',
+      'GitHub Actions',
+      'Cloudflare',
+      'Vercel',
+      'Grafana',
+    ],
+  },
+  { area: 'Testing', items: ['Vitest', 'Jest', 'Pytest', 'Playwright'] },
+  { area: 'Herramientas', items: ['Git', 'GitHub', 'pnpm'] },
 ];
