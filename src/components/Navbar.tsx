@@ -1,6 +1,7 @@
 import { useGlass } from '@glass-midas/react';
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
 import type { Project } from '../data/content';
+import { scrollToTarget } from '../lib/scroll';
 
 const SECTIONS = [
   ['top', 'Inicio'],
@@ -19,6 +20,19 @@ export const slug = (s: string) =>
     .replace(/^-|-$/g, '');
 
 const reduceMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/** Wide screens get a sidebar; narrow ones keep a bar along the top. */
+function useSidebar() {
+  const [side, setSide] = useState(false);
+  useEffect(() => {
+    const wide = matchMedia('(min-width: 48rem)');
+    const update = () => setSide(wide.matches);
+    update();
+    wide.addEventListener('change', update);
+    return () => wide.removeEventListener('change', update);
+  }, []);
+  return side;
+}
 
 /** The section whose top has passed a line a third of the way down the viewport. */
 function useActiveSection() {
@@ -48,10 +62,14 @@ function useActiveSection() {
   return active;
 }
 
-/** Like iOS 26: minimize while scrolling down, expand when scrolling back up. */
-function useCollapsed() {
+/** The top bar, like iOS 26: minimized on small screens and while scrolling down. */
+function useCollapsed(side: boolean) {
   const [collapsed, setCollapsed] = useState(false);
   useEffect(() => {
+    if (side) {
+      setCollapsed(false);
+      return;
+    }
     let last = scrollY;
     const narrow = matchMedia('(max-width: 40rem)');
     const update = () => {
@@ -69,63 +87,103 @@ function useCollapsed() {
       removeEventListener('scroll', update);
       narrow.removeEventListener('change', update);
     };
-  }, []);
+  }, [side]);
   return collapsed;
 }
 
+interface Box {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
+
 /**
- * A glass droplet that slides to the link it marks on a spring, stretching with its speed,
- * the way a drop of liquid would. It's a lens: the link under it shows magnified.
+ * A glass droplet under the link it marks. It slides there on a spring and stretches along
+ * the way it moves, like a drop of liquid. It sits under the text, like the selected tab on
+ * iOS: thin clear glass that bends the pill behind it and leaves the text crisp.
  */
-function useDroplet(target: () => { x: number; width: number } | undefined, deps: unknown[]) {
+function useDroplet(target: () => Box | undefined, deps: unknown[]) {
   const droplet = useRef<HTMLSpanElement>(null);
-  const state = useRef({ x: 0, w: 0, vx: 0, vw: 0, running: false, placed: false });
+  const targetRef = useRef(target);
+  targetRef.current = target;
+  const s = useRef({ x: 0, y: 0, w: 0, h: 0, vx: 0, vy: 0, vw: 0, vh: 0 }).current;
+  const run = useRef({ running: false, placed: false, until: 0 }).current;
 
   useGlass(droplet, {
     radius: 999,
-    bezel: 14,
-    thickness: 26,
-    magnify: 0.16,
-    specular: 0.5,
+    bezel: 10,
+    thickness: 16,
+    caustics: false,
+    blur: '0px',
+    specular: 0.45,
     specularSaturation: 3,
   });
 
-  useEffect(() => {
+  const apply = (sx: number, sy: number) => {
     const el = droplet.current;
-    const goal = target();
-    if (!el || !goal) return;
-    const s = state.current;
-    const apply = (stretch: number) => {
-      el.style.width = `${s.w}px`;
-      el.style.transform = `translateX(${s.x}px) scaleX(${1 + stretch})`;
-    };
-    if (!s.placed || reduceMotion()) {
-      Object.assign(s, { x: goal.x, w: goal.width, vx: 0, vw: 0, placed: true });
-      apply(0);
+    if (!el) return;
+    el.style.width = `${s.w}px`;
+    el.style.height = `${s.h}px`;
+    el.style.transform = `translate(${s.x}px, ${s.y}px) scale(${sx}, ${sy})`;
+  };
+
+  // Starts the spring and keeps it following the target for at least `ms`: the links
+  // themselves move while the bar animates its size.
+  const follow = (ms: number) => {
+    const goal = targetRef.current();
+    if (!droplet.current || !goal) return;
+    if (!run.placed || reduceMotion()) {
+      Object.assign(s, goal, { vx: 0, vy: 0, vw: 0, vh: 0 });
+      run.placed = true;
+      apply(1, 1);
       return;
     }
-    if (s.running) return;
-    s.running = true;
+    run.until = Math.max(run.until, performance.now() + ms);
+    if (run.running) return;
+    run.running = true;
     let last = performance.now();
     const step = (now: number) => {
-      const t = target() ?? goal;
+      const t = targetRef.current() ?? goal;
       const dt = Math.min((now - last) / 1000, 1 / 30);
       last = now;
       const k = 320; // stiffness
       const c = 28; // damping: a little bounce at the end
-      s.vx += (k * (t.x - s.x) - c * s.vx) * dt;
-      s.vw += (k * (t.width - s.w) - c * s.vw) * dt;
-      s.x += s.vx * dt;
-      s.w += s.vw * dt;
-      apply(Math.min(0.35, Math.abs(s.vx) / 2600));
-      const settled = Math.abs(t.x - s.x) < 0.3 && Math.abs(s.vx) < 8 && Math.abs(t.width - s.w) < 0.3;
-      if (settled) {
-        Object.assign(s, { x: t.x, w: t.width, vx: 0, vw: 0, running: false });
-        apply(0);
+      for (const [p, v] of [
+        ['x', 'vx'],
+        ['y', 'vy'],
+        ['w', 'vw'],
+        ['h', 'vh'],
+      ] as const) {
+        s[v] += (k * (t[p] - s[p]) - c * s[v]) * dt;
+        s[p] += s[v] * dt;
+      }
+      apply(1 + Math.min(0.3, Math.abs(s.vx) / 2600), 1 + Math.min(0.3, Math.abs(s.vy) / 2600));
+      const close =
+        Math.abs(t.x - s.x) + Math.abs(t.y - s.y) + Math.abs(t.w - s.w) + Math.abs(t.h - s.h) < 0.6 &&
+        Math.abs(s.vx) + Math.abs(s.vy) < 10;
+      if (close && now > run.until) {
+        Object.assign(s, t, { vx: 0, vy: 0, vw: 0, vh: 0 });
+        run.running = false;
+        apply(1, 1);
       } else requestAnimationFrame(step);
     };
     requestAnimationFrame(step);
-  }, deps);
+  };
+  const followRef = useRef(follow);
+  followRef.current = follow;
+
+  // Long enough to cover the bar's 0.45 s size transition.
+  useEffect(() => followRef.current(600), deps);
+
+  // Any other size change of the bar (fonts loading, a resized window) moves the links too.
+  useEffect(() => {
+    const bar = droplet.current?.parentElement;
+    if (!bar) return;
+    const observer = new ResizeObserver(() => followRef.current(200));
+    observer.observe(bar);
+    return () => observer.disconnect();
+  }, []);
 
   return droplet;
 }
@@ -137,8 +195,9 @@ interface Result {
 }
 
 export default function Navbar({ projects }: { projects: Project[] }) {
+  const side = useSidebar();
   const active = useActiveSection();
-  const collapsed = useCollapsed();
+  const collapsed = useCollapsed(side);
   const [hovered, setHovered] = useState<number | null>(null);
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
@@ -150,7 +209,7 @@ export default function Navbar({ projects }: { projects: Project[] }) {
   const input = useRef<HTMLInputElement>(null);
   const links = useRef<(HTMLAnchorElement | null)[]>([]);
 
-  useGlass(pill, { radius: 999, bezel: 18, thickness: 36 });
+  useGlass(pill, { radius: 28, bezel: 18, thickness: 36 });
   useGlass(search, { radius: 999, bezel: 18, thickness: 36 });
   useGlass(results, { radius: 24, bezel: 18, thickness: 32, blur: '6px' });
 
@@ -158,9 +217,9 @@ export default function Navbar({ projects }: { projects: Project[] }) {
   const droplet = useDroplet(
     () => {
       const a = links.current[marked];
-      return a ? { x: a.offsetLeft, width: a.offsetWidth } : undefined;
+      return a ? { x: a.offsetLeft, y: a.offsetTop, w: a.offsetWidth, h: a.offsetHeight } : undefined;
     },
-    [marked, collapsed],
+    [marked, collapsed, side],
   );
 
   const matches: Result[] = useMemo(() => {
@@ -208,13 +267,12 @@ export default function Navbar({ projects }: { projects: Project[] }) {
   const go = (r: Result | undefined) => {
     if (!r) return;
     setOpen(false);
-    const target = document.querySelector(r.href);
-    target?.scrollIntoView({ behavior: reduceMotion() ? 'auto' : 'smooth', block: 'center' });
-    if (target instanceof HTMLElement) {
-      target.classList.remove('is-found');
-      void target.offsetWidth; // restart the highlight
-      target.classList.add('is-found');
-    }
+    const target = document.querySelector<HTMLElement>(r.href);
+    if (!target) return;
+    scrollToTarget(target);
+    target.classList.remove('is-found');
+    void target.offsetWidth; // restart the highlight
+    target.classList.add('is-found');
   };
 
   const onInputKey = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -230,28 +288,10 @@ export default function Navbar({ projects }: { projects: Project[] }) {
     }
   };
 
-  return (
-    <header className={`navbar${collapsed ? ' is-collapsed' : ''}${open ? ' is-searching' : ''}`}>
-      <nav ref={pill} className="nav-pill" aria-label="Secciones" onPointerLeave={() => setHovered(null)}>
-        <span ref={droplet} className="nav-droplet" aria-hidden="true" />
-        {SECTIONS.map(([id, label], i) => (
-          <a
-            key={id}
-            ref={(a) => {
-              links.current[i] = a;
-            }}
-            href={`#${id}`}
-            className={i === active ? 'is-active' : collapsed ? 'is-hidden' : undefined}
-            aria-current={i === active ? 'location' : undefined}
-            onPointerEnter={() => setHovered(i)}
-            onFocus={() => setHovered(i)}
-            onBlur={() => setHovered(null)}
-          >
-            {label}
-          </a>
-        ))}
-      </nav>
+  const classes = ['navbar', side && 'is-side', collapsed && 'is-collapsed', open && 'is-searching'];
 
+  return (
+    <header className={classes.filter(Boolean).join(' ')}>
       <div ref={search} className="nav-search">
         <button
           type="button"
@@ -281,6 +321,26 @@ export default function Navbar({ projects }: { projects: Project[] }) {
           onKeyDown={onInputKey}
         />
       </div>
+
+      <nav ref={pill} className="nav-pill" aria-label="Secciones" onPointerLeave={() => setHovered(null)}>
+        <span ref={droplet} className="nav-droplet" aria-hidden="true" />
+        {SECTIONS.map(([id, label], i) => (
+          <a
+            key={id}
+            ref={(a) => {
+              links.current[i] = a;
+            }}
+            href={`#${id}`}
+            className={i === active ? 'is-active' : collapsed ? 'is-hidden' : undefined}
+            aria-current={i === active ? 'location' : undefined}
+            onPointerEnter={() => setHovered(i)}
+            onFocus={() => setHovered(i)}
+            onBlur={() => setHovered(null)}
+          >
+            {label}
+          </a>
+        ))}
+      </nav>
 
       <div ref={results} id="nav-results" className="nav-results" role="listbox" hidden={!open}>
         {matches.length ? (

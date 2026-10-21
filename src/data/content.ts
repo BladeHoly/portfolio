@@ -15,9 +15,9 @@ export interface Job {
   summary: string;
 }
 
-// TODO: role and summary from the LinkedIn profile.
+// TODO: a one-line summary of the work at Mozart, from the LinkedIn profile.
 export const jobs: Job[] = [
-  { company: 'Mozart Fintech', role: '', start: 'octubre de 2025', summary: '' },
+  { company: 'Mozart Fintech', role: 'AI Engineer', start: 'octubre de 2025', summary: '' },
 ];
 
 export interface Project {

@@ -31,14 +31,48 @@
   box-sizing: border-box;
 }
 
+/* Scrolling is smoothed by Lenis (see Motion.tsx), so no CSS smooth scrolling on top of it. */
 html {
-  scroll-behavior: smooth;
   scroll-padding-top: 6rem;
 }
 
-@media (prefers-reduced-motion: reduce) {
+/* With a mouse, the glass thumb replaces the native scrollbar; touch keeps the system's. */
+@media (pointer: fine) {
   html {
-    scroll-behavior: auto;
+    scrollbar-width: none;
+  }
+
+  html::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.scroll-thumb {
+  position: fixed;
+  top: 0;
+  right: 5px;
+  z-index: 30;
+  width: 9px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.3);
+  box-shadow: var(--glass-edge), 0 2px 10px rgb(18 48 47 / 0.18);
+  cursor: grab;
+  transition: scale 0.25s var(--ease-out);
+  transform-origin: right center;
+}
+
+.scroll-thumb:hover,
+.scroll-thumb.is-dragging {
+  scale: 1.5 1;
+}
+
+.scroll-thumb.is-dragging {
+  cursor: grabbing;
+}
+
+@media (pointer: coarse) {
+  .scroll-thumb {
+    display: none;
   }
 }
 
@@ -100,6 +134,17 @@ a:hover {
   padding: clamp(1.25rem, 3vw, 2rem);
 }
 
+/* Panels use the light blur tier; this CSS rim stands in for the refracted one, lit from the
+   top right like the rest of the glass: bright on top, softer on the right, faint below. */
+.panel[data-glass-tier='blur'] {
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.75),
+    inset -1px 0 0 rgb(255 255 255 / 0.4),
+    inset 0 -1px 0 rgb(255 255 255 / 0.25),
+    var(--glass-edge),
+    var(--glass-lift);
+}
+
 .button {
   display: inline-flex;
   align-items: center;
@@ -143,7 +188,7 @@ a:hover {
 
 .nav-pill a {
   position: relative;
-  z-index: 0;
+  z-index: 1;
   max-width: 10rem;
   padding: 0.55rem 1rem;
   border-radius: 999px;
@@ -169,12 +214,13 @@ a:hover {
   opacity: 0;
 }
 
+/* Under the links (z-index 0 vs 1): it bends the pill behind, never the text. JS sets its
+   position and size. */
 .nav-droplet {
   position: absolute;
-  top: 0.35rem;
-  bottom: 0.35rem;
+  top: 0;
   left: 0;
-  z-index: 1;
+  z-index: 0;
   border-radius: 999px;
   background: rgb(255 255 255 / 0.18);
   box-shadow:
@@ -201,9 +247,39 @@ a:hover {
   width: min(22rem, calc(100vw - 2rem));
 }
 
-.is-searching .nav-pill {
+.navbar:not(.is-side).is-searching .nav-pill {
   display: none;
 }
+
+/* On top, the search sits after the sections. */
+.navbar:not(.is-side) .nav-search {
+  order: 2;
+}
+
+/* Sidebar: the same glass, stacked down the left edge, with search on top. */
+.navbar.is-side {
+  top: 50%;
+  left: clamp(1rem, 2vw, 1.75rem);
+  translate: 0 -50%;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.is-side .nav-pill {
+  flex-direction: column;
+  border-radius: 28px;
+}
+
+.is-side .nav-pill a {
+  padding: 0.6rem 1.1rem;
+}
+
+.is-side .nav-results {
+  top: 3.75rem;
+  right: auto;
+  width: min(22rem, calc(100vw - 2rem));
+}
+
 
 .nav-search-button {
   flex: none;
@@ -501,5 +577,14 @@ p {
 
   .nav-result small {
     text-align: left;
+  }
+}
+
+/* Room for the sidebar. Last in the file so it overrides the sections' own padding. */
+@media (min-width: 48rem) {
+  .hero,
+  main,
+  .footer {
+    padding-left: 11.5rem;
   }
 }
