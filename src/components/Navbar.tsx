@@ -1,5 +1,5 @@
 import { useGlass } from '@glass-midas/react';
-import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent, type MouseEvent } from 'react';
 import type { Project } from '../data/content';
 import { scrollToTarget } from '../lib/scroll';
 
@@ -103,7 +103,16 @@ function useDroplet(target: () => Box | undefined, deps: unknown[]) {
   const droplet = useRef<HTMLSpanElement>(null);
   const targetRef = useRef(target);
   targetRef.current = target;
-  const s = useRef({ x: 0, y: 0, w: 0, h: 0, vx: 0, vy: 0, vw: 0, vh: 0 }).current;
+  const s = useRef({
+    x: 0,
+    y: 0,
+    w: 0,
+    h: 0,
+    vx: 0,
+    vy: 0,
+    vw: 0,
+    vh: 0,
+  }).current;
   const run = useRef({ running: false, placed: false, until: 0 }).current;
 
   useGlass(droplet, {
@@ -156,8 +165,8 @@ function useDroplet(target: () => Box | undefined, deps: unknown[]) {
       }
       apply(1 + Math.min(0.3, Math.abs(s.vx) / 2600), 1 + Math.min(0.3, Math.abs(s.vy) / 2600));
       const close =
-        Math.abs(t.x - s.x) + Math.abs(t.y - s.y) + Math.abs(t.w - s.w) + Math.abs(t.h - s.h) < 0.6 &&
-        Math.abs(s.vx) + Math.abs(s.vy) < 10;
+        Math.abs(t.x - s.x) + Math.abs(t.y - s.y) + Math.abs(t.w - s.w) + Math.abs(t.h - s.h) <
+          0.6 && Math.abs(s.vx) + Math.abs(s.vy) < 10;
       if (close && now > run.until) {
         Object.assign(s, t, { vx: 0, vy: 0, vw: 0, vh: 0 });
         run.running = false;
@@ -210,14 +219,33 @@ export default function Navbar({ projects }: { projects: Project[] }) {
   useGlass(search, { radius: 999 });
   useGlass(results, { radius: 24, bezel: 18, thickness: 32, blur: '6px' });
 
-  const marked = hovered ?? active;
-  const droplet = useDroplet(
-    () => {
-      const a = links.current[marked];
-      return a ? { x: a.offsetLeft, y: a.offsetTop, w: a.offsetWidth, h: a.offsetHeight } : undefined;
-    },
-    [marked, collapsed, side],
-  );
+  // A clicked section wins until the smooth scroll gets there, so the droplet and the active
+  // color don't step back through the sections the scroll passes on the way.
+  const [pinned, setPinned] = useState<number | null>(null);
+  useEffect(() => {
+    if (pinned === null) return;
+    // Release once the scroll has rested on the target for a moment, or give up after a while
+    // if the scroll was interrupted.
+    const timeout = setTimeout(() => setPinned(null), active === pinned ? 300 : 2500);
+    return () => clearTimeout(timeout);
+  }, [active, pinned]);
+  const current = pinned ?? active;
+
+  // Section links scroll with Lenis only. The browser's own jump to the anchor would land first
+  // and then smooth scrolling would start over from the old position.
+  const goToSection = (e: MouseEvent<HTMLAnchorElement>, i: number) => {
+    const target = document.getElementById(SECTIONS[i][0]);
+    if (!target) return;
+    e.preventDefault();
+    setPinned(i);
+    scrollToTarget(target);
+    history.replaceState(null, '', `#${SECTIONS[i][0]}`);
+  };
+  const marked = hovered ?? current;
+  const droplet = useDroplet(() => {
+    const a = links.current[marked];
+    return a ? { x: a.offsetLeft, y: a.offsetTop, w: a.offsetWidth, h: a.offsetHeight } : undefined;
+  }, [marked, collapsed, side]);
 
   const matches: Result[] = useMemo(() => {
     const norm = (s: string) => slug(s).replace(/-/g, ' ');
@@ -228,7 +256,11 @@ export default function Navbar({ projects }: { projects: Project[] }) {
         hint: p.stack.join(', '),
         href: `#proyecto-${slug(p.name)}`,
       })),
-      ...SECTIONS.map(([id, label]) => ({ label, hint: 'Sección', href: `#${id}` })),
+      ...SECTIONS.map(([id, label]) => ({
+        label,
+        hint: 'Sección',
+        href: `#${id}`,
+      })),
     ];
     if (!q) return all.slice(0, 7);
     return all.filter((r) => norm(`${r.label} ${r.hint}`).includes(q)).slice(0, 7);
@@ -311,7 +343,13 @@ export default function Navbar({ projects }: { projects: Project[] }) {
           <kbd aria-hidden="true">Ctrl K</kbd>
         </div>
 
-        <div ref={results} id="search-results" className="search-results" role="listbox" hidden={!open}>
+        <div
+          ref={results}
+          id="search-results"
+          className="search-results"
+          role="listbox"
+          hidden={!open}
+        >
           {matches.length ? (
             matches.map((r, i) => (
               <div
@@ -331,7 +369,9 @@ export default function Navbar({ projects }: { projects: Project[] }) {
               </div>
             ))
           ) : (
-            <p className="search-empty">Nada coincide con “{query}”. Probá con un lenguaje, como Rust.</p>
+            <p className="search-empty">
+              Nada coincide con “{query}”. Probá con un lenguaje, como Rust.
+            </p>
           )}
         </div>
       </div>
@@ -350,8 +390,9 @@ export default function Navbar({ projects }: { projects: Project[] }) {
               links.current[i] = a;
             }}
             href={`#${id}`}
-            className={i === active ? 'is-active' : collapsed ? 'is-hidden' : undefined}
-            aria-current={i === active ? 'location' : undefined}
+            className={i === current ? 'is-active' : collapsed ? 'is-hidden' : undefined}
+            aria-current={i === current ? 'location' : undefined}
+            onClick={(e) => goToSection(e, i)}
             onPointerEnter={() => setHovered(i)}
             onFocus={() => setHovered(i)}
             onBlur={() => setHovered(null)}
