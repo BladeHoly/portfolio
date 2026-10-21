@@ -1,0 +1,505 @@
+/* Sea-glass palette: frosted mist, bottle green ink, sage, and cobalt glass as the one accent. */
+:root {
+  --mist: #dce5e1;
+  --mist-deep: #cbd8d3;
+  --ink: #12302f;
+  --sage: #5e7f7a;
+  --cobalt: #2f55c9;
+
+  /* Glass surfaces: a light tint over the refraction, a hairline edge, a soft lift. */
+  --glass-tint: rgb(255 255 255 / 0.2);
+  --glass-edge: inset 0 0 0 0.5px rgb(255 255 255 / 0.55);
+  --glass-lift: 0 6px 24px rgb(18 48 47 / 0.12), 0 1px 3px rgb(18 48 47 / 0.08);
+
+  /* Modular scale, ratio 1.25 */
+  --step--1: 0.8rem;
+  --step-0: 1rem;
+  --step-1: 1.25rem;
+  --step-2: 1.563rem;
+  --step-3: 1.953rem;
+  --step-4: 2.441rem;
+
+  --measure: 68ch;
+  --gutter: clamp(1rem, 4vw, 3rem);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  color-scheme: light;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 6rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--mist);
+  color: var(--ink);
+  font: 400 var(--step-0) / 1.6 'Archivo', system-ui, sans-serif;
+}
+
+a {
+  color: var(--cobalt);
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: 1px;
+}
+
+a:hover {
+  text-decoration-thickness: 2px;
+}
+
+:focus-visible {
+  outline: 2px solid var(--cobalt);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+.skip {
+  position: absolute;
+  left: var(--gutter);
+  top: -3rem;
+  z-index: 20;
+  padding: 0.5rem 1rem;
+  background: var(--ink);
+  color: var(--mist);
+}
+
+.skip:focus {
+  top: 1rem;
+}
+
+/* What the glass refracts: fixed behind everything, so surfaces slide over it as you scroll. */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+}
+
+/* Glass surfaces */
+.panel,
+.button {
+  background: var(--glass-tint);
+  box-shadow: var(--glass-edge), var(--glass-lift);
+}
+
+.panel {
+  border-radius: 24px;
+  padding: clamp(1.25rem, 3vw, 2rem);
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  min-height: 3rem;
+  padding: 0 1.4rem;
+  border-radius: 999px;
+  color: var(--ink);
+  font-weight: 600;
+  text-decoration: none;
+  transition: scale 0.2s var(--ease-out);
+}
+
+.button:hover {
+  scale: 1.03;
+}
+
+.button:active {
+  scale: 0.97;
+}
+
+/* Navbar: a section pill with a sliding glass droplet, and a separate search that opens. */
+.navbar {
+  position: fixed;
+  top: 1rem;
+  left: 50%;
+  translate: -50% 0;
+  z-index: 10;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+}
+
+.nav-pill {
+  position: relative;
+  display: flex;
+  padding: 0.35rem;
+  border-radius: 999px;
+  background: var(--glass-tint);
+  box-shadow: var(--glass-edge), var(--glass-lift);
+}
+
+.nav-pill a {
+  position: relative;
+  z-index: 0;
+  max-width: 10rem;
+  padding: 0.55rem 1rem;
+  border-radius: 999px;
+  color: var(--ink);
+  font-size: var(--step--1);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  transition:
+    max-width 0.45s var(--ease-out),
+    padding 0.45s var(--ease-out),
+    opacity 0.3s var(--ease-out);
+}
+
+.nav-pill a.is-active {
+  color: var(--cobalt);
+}
+
+.nav-pill a.is-hidden {
+  max-width: 0;
+  padding-inline: 0;
+  opacity: 0;
+}
+
+.nav-droplet {
+  position: absolute;
+  top: 0.35rem;
+  bottom: 0.35rem;
+  left: 0;
+  z-index: 1;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.18);
+  box-shadow:
+    inset 0 0 0 0.5px rgb(255 255 255 / 0.7),
+    0 2px 8px rgb(18 48 47 / 0.12);
+  transform-origin: center;
+  pointer-events: none;
+}
+
+.nav-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 3.1rem;
+  height: 3.1rem;
+  border-radius: 999px;
+  background: var(--glass-tint);
+  box-shadow: var(--glass-edge), var(--glass-lift);
+  overflow: hidden;
+  transition: width 0.5s var(--ease-out);
+}
+
+.is-searching .nav-search {
+  width: min(22rem, calc(100vw - 2rem));
+}
+
+.is-searching .nav-pill {
+  display: none;
+}
+
+.nav-search-button {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 3.1rem;
+  height: 3.1rem;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.nav-search svg {
+  width: 1.2rem;
+  height: 1.2rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.nav-search input {
+  flex: 1;
+  min-width: 0;
+  padding-right: 1.25rem;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+}
+
+.nav-search input::placeholder {
+  color: var(--sage);
+}
+
+.nav-search input:focus {
+  outline: none;
+}
+
+.nav-search:has(input:focus-visible) {
+  outline: 2px solid var(--cobalt);
+  outline-offset: 3px;
+}
+
+.nav-results {
+  position: absolute;
+  top: calc(100% + 0.6rem);
+  left: 0;
+  right: 0;
+  padding: 0.5rem;
+  border-radius: 24px;
+  background: rgb(236 242 240 / 0.7);
+  box-shadow: var(--glass-edge), var(--glass-lift);
+}
+
+.nav-results[hidden] {
+  display: none;
+}
+
+.nav-result {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  padding: 0.6rem 0.9rem;
+  border-radius: 16px;
+  cursor: pointer;
+}
+
+.nav-result[aria-selected='true'] {
+  background: rgb(47 85 201 / 0.1);
+  color: var(--cobalt);
+}
+
+.nav-result small {
+  color: var(--sage);
+  font-size: var(--step--1);
+  text-align: right;
+}
+
+.nav-empty {
+  margin: 0;
+  padding: 0.6rem 0.9rem;
+  color: var(--sage);
+}
+
+/* Hero */
+.hero {
+  padding: clamp(8rem, 22vh, 13rem) var(--gutter) clamp(4rem, 10vw, 7rem);
+}
+
+.hero h1 {
+  margin: 0;
+  font-size: clamp(5rem, 21vw, 17rem);
+  font-weight: 900;
+  font-stretch: 125%;
+  line-height: 0.85;
+  letter-spacing: -0.035em;
+}
+
+.intro {
+  max-width: 36rem;
+  margin: clamp(1.5rem, 4vw, 2.5rem) 0 0;
+  font-size: var(--step-2);
+  line-height: 1.4;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+/* Sections */
+main {
+  padding: 0 var(--gutter);
+}
+
+section {
+  max-width: 64rem;
+  padding-block: clamp(3rem, 8vw, 5.5rem);
+}
+
+h2 {
+  margin: 0 0 1.75rem;
+  font-size: var(--step-4);
+  font-weight: 800;
+  font-stretch: 125%;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+h3 {
+  margin: 0;
+  font-size: var(--step-2);
+  font-weight: 700;
+  font-stretch: 112%;
+  line-height: 1.25;
+}
+
+p {
+  max-width: var(--measure);
+}
+
+/* Work: a timeline, newest first */
+.jobs {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-width: 40rem;
+}
+
+.jobs li + li {
+  margin-top: 1rem;
+}
+
+.job-dates {
+  margin: 0 0 0.25rem;
+  color: var(--sage);
+  font-size: var(--step--1);
+}
+
+.job p:last-child {
+  margin-bottom: 0;
+}
+
+/* Projects */
+.projects {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.projects li,
+.projects .project {
+  height: 100%;
+}
+
+.projects .featured {
+  grid-column: 1 / -1;
+}
+
+.featured h3 {
+  font-size: var(--step-3);
+}
+
+@media (max-width: 44rem) {
+  .projects {
+    grid-template-columns: 1fr;
+  }
+}
+
+.project h3 a {
+  color: var(--ink);
+}
+
+.project h3 a:hover {
+  color: var(--cobalt);
+}
+
+.project p {
+  margin: 0.5rem 0 0;
+}
+
+.project-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.5rem;
+  color: var(--sage);
+  font-size: var(--step--1);
+}
+
+.status-open {
+  color: var(--cobalt);
+}
+
+/* Set when the search jumps to a project. */
+.is-found {
+  animation: found 1.6s var(--ease-out);
+}
+
+@keyframes found {
+  0%,
+  30% {
+    box-shadow:
+      var(--glass-edge),
+      0 0 0 3px var(--cobalt),
+      var(--glass-lift);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .is-found {
+    animation: none;
+    box-shadow:
+      var(--glass-edge),
+      0 0 0 3px var(--cobalt),
+      var(--glass-lift);
+  }
+}
+
+/* Stack */
+.stack {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 1.25rem 2.5rem;
+  margin: 0;
+}
+
+.stack dt {
+  font-weight: 700;
+  font-stretch: 112%;
+}
+
+.stack dd {
+  margin: 0.25rem 0 0;
+}
+
+/* Contact */
+.contact-lead {
+  font-size: var(--step-1);
+}
+
+.contact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  list-style: none;
+  margin: 1.5rem 0 0;
+  padding: 0;
+}
+
+.footer {
+  padding: 2rem var(--gutter) 3rem;
+  color: var(--sage);
+  font-size: var(--step--1);
+}
+
+.footer a {
+  color: inherit;
+}
+
+/* On narrow screens the hint goes under the name, so names don't wrap. */
+@media (max-width: 40rem) {
+  .nav-result {
+    flex-direction: column;
+    gap: 0.1rem;
+  }
+
+  .nav-result small {
+    text-align: left;
+  }
+}
