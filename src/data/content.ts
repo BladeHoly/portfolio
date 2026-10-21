@@ -70,7 +70,10 @@ export const projects: Project[] = [
 ];
 
 export const stack = [
-  { area: 'Lenguajes', items: ['TypeScript', 'JavaScript', 'Python', 'Rust', 'HTML', 'CSS'] },
+  {
+    area: 'Lenguajes',
+    items: ['TypeScript', 'JavaScript', 'Python', 'Rust', 'Go', 'C++', 'C#', 'HTML', 'CSS'],
+  },
   {
     area: 'IA y voz',
     items: [
@@ -146,5 +149,5 @@ export const stack = [
     ],
   },
   { area: 'Testing', items: ['Vitest', 'Jest', 'Pytest', 'Playwright'] },
-  { area: 'Herramientas', items: ['Git', 'GitHub', 'pnpm'] },
+  { area: 'Herramientas', items: ['Git', 'GitHub', 'pnpm', 'mise'] },
 ];
