@@ -180,7 +180,7 @@ a:hover {
   scale: 0.97;
 }
 
-/* Search: a full glass bar fixed along the top, kube.io's search box. */
+/* Search: a full glass bar fixed along the top, with a crisp rim. */
 .searchbar {
   position: fixed;
   top: 1rem;
@@ -203,7 +203,7 @@ a:hover {
   height: 3.5rem;
   padding: 0 1.25rem;
   border-radius: 999px;
-  /* More tint than kube.io's 5%: page text scrolls under it and the input has to stay readable. */
+  /* A stronger tint than clear glass: page text scrolls under it and the input has to stay readable. */
   background: rgb(236 242 240 / 0.55);
   box-shadow: 0 4px 16px rgb(0 0 0 / 0.16);
 }
