@@ -70,22 +70,35 @@ function rest(f: Face): Pose {
 
 export const STAGES: Pose[] = FACES.map(rest);
 
-/** The camera between stage `i` and `i + 1`, at `t` from 0 to 1: an orbit around the cube. */
-export function poseAt(i: number, t: number): Pose {
+/** The turn from one angle to another, the short way round: -180 to 180. */
+const shortest = (from: number, to: number) => ((((to - from) % 360) + 540) % 360) - 180;
+
+/**
+ * The camera between any two stages, at `t` from 0 to 1: an orbit around the cube, the short
+ * way round. Neighbours make the everyday move; far stages make a direct flight that steps
+ * back further the longer the turn, so it reads as one composed move instead of a tour.
+ */
+export function poseBetween(i: number, j: number, t: number): Pose {
   const a = STAGES[i];
-  const b = STAGES[i + 1];
-  if (!b || t <= 0) return a;
+  const b = STAGES[j];
+  if (i === j || t <= 0) return a;
   if (t >= 1) return b;
   const fa = FACES[i];
-  const fb = FACES[i + 1];
+  const fb = FACES[j];
   // The look-at point travels over the surface; the camera's own angles carry each face's framing.
-  const focus = onSurface(lerp(fa.yaw, fb.yaw, t), lerp(fa.pitch, fb.pitch, t));
+  const focus = onSurface(fa.yaw + shortest(fa.yaw, fb.yaw) * t, lerp(fa.pitch, fb.pitch, t));
   // Step back halfway, more for longer turns, so the corner (or the whole cube) comes into view.
   const back = 0.3 * SIDE * Math.sin(Math.PI * t) * (span(fa, fb) / 90);
   return {
     ...focus,
-    yaw: lerp(a.yaw, b.yaw, t),
+    yaw: a.yaw + shortest(a.yaw, b.yaw) * t,
     pitch: lerp(a.pitch, b.pitch, t),
     dist: lerp(a.dist, b.dist, t) + back,
   };
 }
+
+/** The camera between stage `i` and the next. */
+export const poseAt = (i: number, t: number) => poseBetween(i, i + 1, t);
+
+/** How long a direct flight between two stages takes, in ms: longer turns take longer. */
+export const flightTime = (i: number, j: number) => 520 + 340 * (span(FACES[i], FACES[j]) / 90);

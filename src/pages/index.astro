@@ -63,6 +63,12 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
                   </div>
                 )}
                 {face.door && <span class="seam" aria-hidden="true" />}
+                {/* Contextual navigation: where to go from here. */}
+                <nav class="face-nav" aria-label="Seguir">
+                  {i > 0 && <a class="gm-chip" href={`#cara-${i}`}>↑ {FACES[i - 1].label}</a>}
+                  {i < FACES.length - 1 && <a class="gm-chip" href={`#cara-${i + 2}`}>{FACES[i + 1].label} ↓</a>}
+                  {face.door && <a class="gm-chip" href="#cara-1">Volver arriba</a>}
+                </nav>
               </div>
             </section>
           ))
@@ -70,10 +76,28 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
       </div>
     </div>
 
-    <!-- One snap point per stage. They hold the scroll length; the camera reads it. -->
+    <!-- One snap point per stage. They hold the scroll length, and give each face its address. -->
     <div class="stops" aria-hidden="true">
-      {FACES.map(() => <div class="stop" />)}
+      {FACES.map((_, i) => <div class="stop" id={`cara-${i + 1}`} />)}
     </div>
+
+    <!-- The spatial map: the cube unfolded, in the order of the journey (top, the four sides,
+         the door underneath), on glass-midas glass, marking where you are. -->
+    <nav class="map" aria-label="Mapa del cubo">
+      <gm-surface material="frost" radius="16" class="map-glass">
+        <ol>
+          {
+            FACES.map((face, i) => (
+              <li style={`grid-area: c${i + 1}`}>
+                <a class="gm-chip" href={`#cara-${i + 1}`} data-stage={i} aria-label={face.label}>
+                  {i + 1}
+                </a>
+              </li>
+            ))
+          }
+        </ol>
+      </gm-surface>
+    </nav>
 
     <output class="debug" hidden aria-live="off">Mové la cámara para medir</output>
 

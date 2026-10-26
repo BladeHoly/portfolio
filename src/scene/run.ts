@@ -1,7 +1,7 @@
 import '@glass-midas/components/surface';
 import '@glass-midas/components/button';
-import { worldTransform } from './camera';
-import { PERSPECTIVE, STAGES, poseAt } from './stages';
+import { easeInOutCubic, worldTransform } from './camera';
+import { PERSPECTIVE, STAGES, flightTime, poseAt, poseBetween } from './stages';
 
 // Scroll drives the camera. The page keeps the browser's scroll, with one snap point per stage
 // (`scroll-snap-stop: always`): keys, the scrollbar and assistive tech move it natively, and the
@@ -24,19 +24,30 @@ let drag = 0;
 /** Where the camera should be, in stages: 1.5 is halfway between the second and third. */
 const target = () => clamp(scrollY / step() + drag);
 
+/** A direct flight to a far stage, which the scroll catches up with when it lands. */
+let flight: { from: number; to: number; start: number; ms: number } | null = null;
+
 function render(s: number) {
   const i = Math.min(Math.floor(s), STAGES.length - 2);
   const f = s - i;
   // Reduced motion: no travel at all; the camera cuts to the nearest stage.
   world.style.transform = worldTransform(poseAt(i, reduce.matches ? Math.round(f) : f), PERSPECTIVE);
-  root.dataset.stage = String(Math.round(s));
+  setCurrent(Math.round(s));
 }
 
 let frame = 0;
 function tick(now: number) {
   frame = 0;
-  render(target());
   meter?.sample(now);
+  if (flight) {
+    const k = Math.min(1, (now - flight.start) / flight.ms);
+    world.style.transform = worldTransform(poseBetween(flight.from, flight.to, easeInOutCubic(k)), PERSPECTIVE);
+    if (k < 1) return wake();
+    const to = flight.to;
+    flight = null;
+    scrollTo({ top: to * step(), behavior: 'instant' });
+  }
+  render(target());
 }
 function wake() {
   if (!frame) frame = requestAnimationFrame(tick);
@@ -49,6 +60,41 @@ reduce.addEventListener('change', wake);
 function go(stage: number) {
   stops[stage].scrollIntoView({ behavior: reduce.matches ? 'auto' : 'smooth' });
 }
+
+/** Any stage, from anywhere: a neighbour by the scroll, a far one by a direct flight. */
+function jump(to: number) {
+  const from = Math.round(target());
+  if (to === from || flight) return;
+  if (Math.abs(to - from) === 1 || reduce.matches) return go(to);
+  flight = { from, to, start: performance.now(), ms: flightTime(from, to) };
+  setCurrent(to);
+  wake();
+}
+
+// Where you are: the map's chip for the current face carries `aria-current`, and the address
+// names the face (#cara-3), so it can be shared and opens on that face.
+const marks = [...document.querySelectorAll<HTMLElement>('.map [data-stage]')];
+let current = -1;
+function setCurrent(stage: number) {
+  if (stage === current || (flight && stage !== flight.to)) return;
+  current = stage;
+  root.dataset.stage = String(stage);
+  for (const m of marks) {
+    if (Number(m.dataset.stage) === stage) m.setAttribute('aria-current', 'step');
+    else m.removeAttribute('aria-current');
+  }
+  history.replaceState(null, '', `#${stops[stage].id}`);
+}
+
+// Links to a face (#cara-n), in the faces and on the map, fly there instead of scrolling past
+// every face in between.
+document.addEventListener('click', (e) => {
+  const link = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[href^="#cara-"]');
+  const i = link ? stops.findIndex((s) => `#${s.id}` === link.hash) : -1;
+  if (i < 0) return;
+  e.preventDefault();
+  jump(i);
+});
 
 // The wheel, one stage per gesture. A gesture starts after a pause, on a change of direction,
 // or when the deltas jump up again once a trackpad's momentum has faded. Each one moves one
@@ -63,6 +109,7 @@ addEventListener(
   (e) => {
     if (e.ctrlKey || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
     e.preventDefault();
+    if (flight) return;
     const now = performance.now();
     const dir = Math.sign(e.deltaY);
     const size = Math.abs(e.deltaY);
@@ -103,7 +150,7 @@ let settle = 0;
 addEventListener(
   'touchstart',
   (e) => {
-    if (e.touches.length !== 1) return (touch = null);
+    if (e.touches.length !== 1 || flight) return (touch = null);
     cancelAnimationFrame(settle);
     const t = e.touches[0];
     const from = Math.round(target());
@@ -176,7 +223,7 @@ function ease(start: number, end: number, from: number, to: number) {
 // A keyboard or screen reader moving focus into another face brings the camera to it.
 document.querySelectorAll<HTMLElement>('.face').forEach((face, i) => {
   face.addEventListener('focusin', () => {
-    if (root.dataset.stage !== String(i)) go(i);
+    if (root.dataset.stage !== String(i)) jump(i);
   });
 });
 
@@ -203,5 +250,12 @@ const meter = out && {
     out.textContent = `${fps.toFixed(0)} fps · peor ${worst.toFixed(1)} ms`;
   },
 };
+
+// ?mapa=riel tries the map as a single column instead of the unfolded cube.
+if (new URLSearchParams(location.search).get('mapa') === 'riel') root.dataset.mapa = 'riel';
+
+// Opened on a face's address: start there.
+const opened = stops.findIndex((s) => `#${s.id}` === location.hash);
+if (opened > 0) scrollTo({ top: opened * step(), behavior: 'instant' });
 
 render(target());
