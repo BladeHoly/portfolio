@@ -8,8 +8,8 @@ En el celular, el snap nativo pedía mucha "fuerza": arrastrar media pantalla o 
 
 ## Lo que hay
 
-- **Las seis caras exteriores:** las cuatro laterales, la de abajo y, arriba, la puerta, que por ahora está cerrada (se diseña en la fase 4).
-- **Órbita en 3D:** la cámara gira alrededor del centro del cubo y también sube y baja por las aristas. Se aleja más cuanto más larga es la vuelta; de abajo a la puerta da media vuelta y pasa por la esquina de las caras 4 y 1. Así la forma del cubo se entiende de pasada, sin mostrarla de golpe.
+- **Las seis caras exteriores, en el orden que pidió Renzo:** 1 arriba, 2 a 5 los cuatro lados y 6 abajo, que es la puerta (cerrada; se diseña en la fase 4). El recorrido va en una sola dirección: de arriba hacia abajo, y después hacia adentro. El primer orden (lados, abajo, puerta arriba) se notaba raro, sobre todo en el celular.
+- **Órbita en 3D:** la cámara gira alrededor del centro del cubo y también sube y baja por las aristas. Se aleja más cuanto más larga es la vuelta; de arriba baja por una arista hasta el primer lado, y del último lado baja por otra hasta la puerta. Así la forma del cubo se entiende de pasada, sin mostrarla de golpe.
 - **Caras opacas:** son paredes de hielo con un borde fino. Al moverse, el cubo se ve como un bloque, y lo de una cara no se transparenta en las otras.
 - **Encuadre adaptativo:** se probó mirar la cara 3 en ángulo (24°). Renzo la vio rara: con texto de prueba, la perspectiva parece un error. Todas las caras quedan de frente y en reposo se dibujan 1:1. El mecanismo (`frame` en `stages.ts`) se conserva para cuando alguna cara tenga contenido que se entienda mejor en perspectiva.
 - **Profundidad:** las capas salen de la cara hacia la cámara, nunca hacia dentro del cubo. El vidrio de glass-midas está sobre esas capas.

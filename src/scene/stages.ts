@@ -1,6 +1,7 @@
 import { lerp, type Pose } from './camera';
 
-// The outer journey: the cube's six faces, each a stage the camera rests at. The camera
+// The outer journey: the cube's six faces, each a stage the camera rests at, top first and the
+// door underneath last. The camera
 // orbits from one to the next around the cube's center (chosen in phase 1 over a glide), so
 // it climbs and dives over the edges too; longer turns step back further, which is how the
 // shape of the cube shows itself in passing.
@@ -26,16 +27,18 @@ export interface Face {
 }
 
 export const FACES: Face[] = [
-  { label: 'Cara exterior 1', yaw: 0, pitch: 0 },
-  { label: 'Cara exterior 2', yaw: 90, pitch: 0 },
+  // The journey goes one way, top to bottom and then inside: it starts above the cube, comes
+  // down over an edge, goes around the four sides and ends underneath, at the door.
+  // On top, upright as seen before coming down to the first side.
+  { label: 'Cara exterior 1', yaw: 0, pitch: 90 },
+  { label: 'Cara exterior 2', yaw: 0, pitch: 0 },
   // Framing at an angle (`frame`) read as a mistake on placeholder text; it waits for content
   // that's better seen in perspective.
-  { label: 'Cara exterior 3', yaw: 180, pitch: 0 },
-  { label: 'Cara exterior 4', yaw: 270, pitch: 0 },
-  // Underneath, upright as seen coming down from face 4.
-  { label: 'Cara exterior 5', yaw: 270, pitch: -90 },
-  // On top, upright as seen coming over the corner between faces 4 and 1.
-  { label: 'Puerta', yaw: 360, pitch: 90, door: true },
+  { label: 'Cara exterior 3', yaw: 90, pitch: 0 },
+  { label: 'Cara exterior 4', yaw: 180, pitch: 0 },
+  { label: 'Cara exterior 5', yaw: 270, pitch: 0 },
+  // Underneath, upright as seen coming down from the last side.
+  { label: 'Puerta', yaw: 270, pitch: -90, door: true },
 ];
 
 /** Places a face on the cube: turned and tilted to its normal, then pushed out to the surface. */
