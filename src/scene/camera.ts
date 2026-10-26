@@ -37,4 +37,28 @@ export const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 /** Starts and ends at rest, with a long even middle. */
 export const smootherstep = (t: number) => t * t * t * (t * (t * 6 - 15) + 10);
 
+/**
+ * Warp, then orbit: the speed jumps up within the first eighth, holds, and then the brakes come
+ * on hard, falling off quickly and settling gently, like dropping out of warp into orbit. It's
+ * the position along the move, from 0 to 1.
+ */
+export const warp = (() => {
+  const n = 240;
+  const speed = (u: number) => {
+    const up = smootherstep(Math.min(1, u / 0.12));
+    const x = Math.max(0, (u - 0.62) / 0.38);
+    return up * (1 - x) ** 2;
+  };
+  const table = [0];
+  for (let k = 1; k <= n; k++) table.push(table[k - 1] + speed((k - 0.5) / n));
+  const total = table[n];
+  return (u: number) => {
+    if (u <= 0) return 0;
+    if (u >= 1) return 1;
+    const x = u * n;
+    const k = Math.floor(x);
+    return (table[k] + (table[k + 1] - table[k]) * (x - k)) / total;
+  };
+})();
+
 export const easeInOutCubic = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);

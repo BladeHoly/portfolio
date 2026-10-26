@@ -177,43 +177,140 @@ h2 {
   margin: 0;
 }
 
-/* The door: a face with a seam down the middle, like two shut leaves. The way through is the
-   black hole over the screen (.void); the text fades as it opens. */
-.face.door::after {
-  content: '';
+/* The door: two leaves, each with a raised panel and a handle by the gap, carrying the wall. They
+   swing open towards the camera as --open goes from 0 to 1 (the inside shows behind them); the
+   text rides on the first leaf, clear of the gap. Side by side on wide screens, one above the
+   other on tall ones, so the text always fits on its leaf. */
+.face.door {
+  background: none;
+}
+
+.leaf {
   position: absolute;
-  inset: 0 auto 0 50%;
-  width: 1px;
-  background: var(--line);
+  background: radial-gradient(70% 60% at 35% 30%, #fafcfd, var(--ice) 55%, var(--ice-deep));
+  box-shadow: inset 0 0 0 1px var(--line);
+  /* Drawn once, at rest, and only turned as they swing: redrawn at every angle, Chrome lost
+     their tiles and the door came back half white after a few crossings. */
+  will-change: transform;
 }
 
-/* Flat, so its opacity can fade it (opacity flattens 3D anyway). */
-.door .face-body {
-  transform-style: flat;
-  opacity: calc(1 - var(--hole, 0) * 3);
+.leaf.first {
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  transform-origin: left center;
+  transform: rotateY(calc(var(--open, 0) * -90deg));
 }
 
-/* The door's black hole, over the screen and under the rail: a dark circle with a faint cobalt
-   rim that grows from the middle (--hole, 0 to 1) until it covers everything, then fades
-   (--void) as the camera comes out inside. */
-.void {
-  position: fixed;
-  inset: 0;
-  z-index: 4;
-  background: radial-gradient(
-    circle at 50% 50%,
-    #02060c calc(var(--hole, 0) * 62vmax),
-    rgb(19 38 90 / 0.85) calc(var(--hole, 0) * 70vmax),
-    rgb(2 6 12 / 0) calc(var(--hole, 0) * 84vmax)
-  );
-  opacity: var(--void, 0);
-  pointer-events: none;
+.leaf.second {
+  top: 0;
+  right: 0;
+  width: 50%;
+  height: 100%;
+  transform-origin: right center;
+  transform: rotateY(calc(var(--open, 0) * 90deg));
 }
 
-/* Only the faces the camera can see are painted (see place() in run.ts). The face keeps its
-   box, so the glass inside it stays measured and nothing reflows when it comes back. */
+.panel {
+  position: absolute;
+  inset: 36px;
+  border-radius: 10px;
+  box-shadow:
+    inset 0 0 0 1px var(--line),
+    inset 0 18px 40px rgb(255 255 255 / 0.5);
+}
+
+.handle {
+  position: absolute;
+  top: calc(50% + 240px);
+  width: 8px;
+  height: 120px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #c9d5df, #f6f9fb, #b9c7d3);
+  box-shadow: 0 2px 6px rgb(14 34 51 / 0.25);
+}
+
+.leaf.first .handle {
+  right: 64px;
+}
+
+.leaf.second .handle {
+  left: 64px;
+}
+
+.door-body {
+  position: absolute;
+  top: 50%;
+  right: 120px;
+  width: min(36rem, calc(50vw - 9rem));
+  translate: 0 -50%;
+}
+
+@media (orientation: portrait) {
+  .leaf.first {
+    width: 100%;
+    height: 50%;
+    transform-origin: center top;
+    transform: rotateX(calc(var(--open, 0) * 90deg));
+  }
+
+  .leaf.second {
+    top: auto;
+    bottom: 0;
+    width: 100%;
+    height: 50%;
+    transform-origin: center bottom;
+    transform: rotateX(calc(var(--open, 0) * -90deg));
+  }
+
+  .handle {
+    top: auto;
+    left: calc(50% - 60px);
+    width: 120px;
+    height: 8px;
+    background: linear-gradient(180deg, #c9d5df, #f6f9fb, #b9c7d3);
+  }
+
+  .leaf.first .handle {
+    right: auto;
+    bottom: 64px;
+  }
+
+  .leaf.second .handle {
+    left: calc(50% - 60px);
+    top: 64px;
+  }
+
+  .door-body {
+    top: auto;
+    right: auto;
+    bottom: 110px;
+    left: 50%;
+    width: calc(100vw - 5rem);
+    translate: -50% 0;
+  }
+}
+
+/* With the inside in view, the scene sits on the dark of the cube (see place() in run.ts). */
+:root[data-depth='inside'] .viewport {
+  background: #0d1a27;
+}
+
+/* The inner faces stop short of the cube's edges, so they never touch the door's plane or the
+   outer walls: planes that meet exactly are the ones GPUs sort wrong. */
+.face.inside {
+  top: calc((var(--side) - 16px) / -2);
+  left: calc((var(--side) - 16px) / -2);
+  width: calc(var(--side) - 16px);
+  height: calc(var(--side) - 16px);
+}
+
+/* Only the faces the camera can see are painted (see place() in run.ts). A hidden face is taken
+   out entirely: kept as an invisible layer, Chrome reused tiles it had dropped when the face came
+   back (a white, half-drawn door after leaving the inside). */
 .face[hidden] {
-  visibility: hidden;
+  display: none;
 }
 
 /* Inside: the same walls from within, deeper and darker, with light ink; glass-midas back on

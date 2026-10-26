@@ -1,7 +1,7 @@
 import '@glass-midas/components/surface';
 import '@glass-midas/components/button';
 import { easeInOutCubic, worldTransform, type Pose } from './camera';
-import { PERSPECTIVE, STAGES, holeAt, insideAt, isDoorLeg, legPose, poseAt, route, type Leg } from './stages';
+import { PERSPECTIVE, STAGES, isDoorLeg, legPose, openAt, poseAt, route, seenAt, type Leg } from './stages';
 
 // Scroll drives the camera. The page keeps the browser's scroll, with one snap point per stage
 // (`scroll-snap-stop: always`): keys, the scrollbar and assistive tech move it natively, and the
@@ -28,35 +28,24 @@ const target = () => clamp(scrollY / step() + drag);
 let flight: { to: number; legs: Leg[]; start: number; ms: number } | null = null;
 
 const faces = [...document.querySelectorAll<HTMLElement>('.face')];
-const faceInside = faces.map((f) => f.classList.contains('inside'));
 
-/**
- * Puts the camera where it belongs and the door's black hole over the screen, and paints
- * only the faces the camera can see: `seen` lists them, or is null for every face on its side
- * of the cube (long flights, where the whole cube shows). GPUs don't all sort the planes of a
- * 3D scene the same way, and faces that should have been out of sight got drawn over the ones
- * in view. Outside and inside switch in the dark of the door, where nothing shows.
- */
-function place(pose: Pose, dark: number, hole: number, inside: boolean, seen: number[] | null) {
+/** Puts the camera where it belongs and the door's leaves, and paints only the faces in `seen`. */
+function place(pose: Pose, open: number, seen: number[]) {
   world.style.transform = worldTransform(pose, PERSPECTIVE);
-  root.style.setProperty('--void', String(Math.round(dark * 1000) / 1000));
-  root.style.setProperty('--hole', String(Math.round(hole * 1000) / 1000));
+  world.style.setProperty('--open', String(Math.round(open * 1000) / 1000));
   faces.forEach((face, k) => {
-    const on = faceInside[k] === inside && (!seen || seen.includes(k));
+    const on = seen.includes(k);
     if (face.hidden === on) face.hidden = !on;
   });
+  // Behind an inner face the cube is dark, so the hairline gaps at its corners are too.
+  root.dataset.depth = seen.some((k) => faces[k].classList.contains('inside')) ? 'inside' : 'outside';
 }
 
 function render(s: number) {
   const i = Math.min(Math.floor(s), STAGES.length - 2);
   // Reduced motion: no travel at all; the camera cuts to the nearest stage.
   const f = reduce.matches ? Math.round(s - i) : s - i;
-  // Outside, at rest only the face in front, and between two faces those two: an orbit turns
-  // the rest away. Inside every wall faces the camera, so all of them.
-  const inside = insideAt(i + f);
-  const seen = inside ? null : f === 0 ? [i] : f === 1 ? [i + 1] : [i, i + 1];
-  const { dark, hole } = holeAt(i + f);
-  place(poseAt(i, f), dark, hole, inside, seen);
+  place(poseAt(i, f), openAt(i + f), seenAt(i + f));
   setCurrent(Math.round(s));
 }
 
@@ -66,7 +55,7 @@ function tick(now: number) {
   meter?.sample(now);
   if (flight) {
     // One ease over the whole flight, so the legs run into each other without stopping. A
-    // crossing of the door alone keeps its own pace: the fall speeds up, the way out slows down.
+    // crossing of the door alone keeps its own pace: the leaves open, then warp and the brakes.
     const k = Math.min(1, (now - flight.start) / flight.ms);
     const alone = flight.legs.length === 1 && isDoorLeg(flight.legs[0].from, flight.legs[0].to);
     let at = (alone ? k : easeInOutCubic(k)) * flight.ms;
@@ -75,10 +64,8 @@ function tick(now: number) {
       if (at <= leg.ms) break;
       at -= leg.ms;
     }
-    const { pose, dark, hole, inside } = legPose(leg, Math.min(1, at / leg.ms));
-    // A door crossing alone shows only the door and the first inner face; longer flights may
-    // show the whole cube.
-    place(pose, dark, hole, inside, alone ? [leg.from, leg.to] : null);
+    const { pose, open, seen } = legPose(leg, Math.min(1, at / leg.ms));
+    place(pose, open, seen);
     if (k < 1) return wake();
     const to = flight.to;
     flight = null;

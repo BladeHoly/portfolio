@@ -2,34 +2,34 @@
 
 ## La puerta
 
-Hubo tres versiones, todas ajustadas con Renzo:
+Se ajustó varias veces con Renzo. Lo que quedó:
 
-1. Una trampilla de dos hojas. Era demasiado rápida al abrirse y al cerrarse.
-2. Un agujero negro en lugar de la puerta. El efecto le gustó, pero tenía que seguir siendo una puerta.
-3. **Ahora: la puerta, y del otro lado, la caída del agujero negro.** "Pre agujero estaba bien, pero la animación post agujero es lo bueno".
+- **Una puerta que se lee como puerta**: dos hojas, cada una con un panel en relieve y una manija junto a la abertura. El texto va en la primera hoja, sin que la línea del medio lo cruce, y se va con ella al abrirse. En pantallas anchas las hojas están lado a lado; en pantallas altas (celular), una arriba de la otra.
+- **Se abre hacia la cámara**, y por la abertura se ve el interior del cubo. Nada de efectos negros: "es mejor que se sienta natural".
+- **Warp**: con las hojas abiertas, la cámara sube en línea recta como un cohete, arranca acelerando fuerte y, cerca del techo, frena de golpe y se asienta, "como si estuvieras viajando warp y de repente tenés que frenar porque estás en órbita". La curva (`warp` en `camera.ts`) sube la velocidad en el primer octavo, la mantiene y frena desde el 62 %.
+- **Hacia atrás**: es el mismo camino al revés, y la puerta se cierra detrás.
+- **Su propio tiempo**: cruzar dura 2,4 s con cualquier entrada (30 % para abrir y 70 % de viaje).
 
-Cómo funciona la versión actual (probada en la GPU de Renzo, una AMD Radeon RX 9060 XT con Chrome):
-
-- **La puerta** queda cerrada: es la cara de abajo, con una costura al medio, como dos hojas.
-- **El agujero negro se abre sobre la pantalla, no en la escena**: es un círculo oscuro con un borde cobalto tenue que crece desde el centro de la puerta hasta cubrirlo todo, mientras la cámara se acerca girando. Como no es un plano del cubo, ninguna GPU lo puede ordenar mal.
-- **La salida**: desde lo oscuro, la cámara frena frente a la primera pared interior, girando en el mismo sentido hasta asentarse.
-- **Hacia atrás**: es el mismo camino al revés.
-- **Su propio tiempo**: cruzar dura 2,4 s con cualquier entrada.
-- **La cámara nunca se acerca a menos de la mitad de su distancia**: con la cara aumentada unas 16×, Chrome descartaba tiles y, al volver, la puerta aparecía a parches.
-
-Intentos descartados, con sus causas: hojas que se abrían hacia un abismo oscuro. Un abismo gigante atravesaba todo el cubo y dejaba una franja negra en todo el recorrido. Uno del tamaño de la puerta dejaba, al volver, las hojas a medio abrir y un cuadrado oscuro suelto.
+Intentos descartados: una trampilla demasiado rápida; un agujero negro en lugar de la puerta; un abismo oscuro detrás de las hojas (un abismo gigante atravesaba el cubo entero y dejaba una franja negra en todo el recorrido); un agujero negro dibujado sobre la pantalla ("ya ni parece una puerta").
 
 ## El interior
 
-Es el mismo cubo visto desde dentro: las cuatro paredes y el techo, las cinco capas interiores del plan. Así queda simétrico con el exterior, que va de arriba hacia abajo; el interior da la vuelta por las paredes y termina mirando hacia arriba.
+Es el mismo cubo visto desde dentro, con las cinco capas interiores del plan. **La cara interior 1 es el techo, justo enfrente de la puerta**, así que se va derecho hacia ella. Después, las cuatro paredes.
 
-- **Las paredes interiores** están del lado de adentro de las mismas paredes, más oscuras y con tinta clara. Se nota que cambió el ámbito, pero el espacio es el mismo. glass-midas vuelve ahí a sus valores para fondo oscuro.
-- **El techo** se lee derecho desde la puerta: es lo primero que se ve al entrar.
-- **Entre paredes**, la cámara orbita alrededor del centro igual que afuera. En lugar de alejarse se inclina un poco hacia adentro, porque alejarse la haría atravesar la pared de enfrente.
+- **Las paredes interiores** son más oscuras y tienen tinta clara: se nota que cambió el ámbito, pero el espacio es el mismo. glass-midas vuelve ahí a sus valores para fondo oscuro.
+- **Entre caras**, la cámara orbita alrededor del centro igual que afuera. En lugar de alejarse se inclina un poco hacia adentro, porque alejarse la haría atravesar la pared de enfrente.
+
+## La GPU (probado en la de Renzo, una Radeon RX 9060 XT con Chrome)
+
+- **Solo se pintan las caras visibles**: afuera, la de enfrente o las dos de una transición; en la puerta, la puerta y el interior mientras se abre, y solo el interior desde que la cámara sube. Una vez abiertas, las hojas quedan fuera del cuadro, y pintada, la puerta explotaba de tamaño al cruzar la cámara su plano y perdía tiles. Adentro, todas las interiores.
+- **Las caras ocultas salen del todo** (`display: none`): ocultas pero vivas, Chrome reusaba tiles perdidos al volver a mostrarlas.
+- **Las hojas se dibujan una sola vez** (`will-change: transform`) y solo se giran; redibujadas en cada ángulo, perdían tiles tras unos cruces.
+- **Las caras interiores quedan 8 px antes de las aristas**, para no tocar el plano de la puerta ni las paredes exteriores, y con el interior a la vista el fondo es oscuro, así que esas juntas no se ven.
+- Verificado: 5 cruces seguidos con la rueda y varios saltos del riel a través de la puerta. La puerta vuelve entera siempre.
 
 ## Salir y saltar
 
-- **"Volver afuera"** (en el techo) y los saltos del riel entre adentro y afuera vuelan **a través de la puerta**: van hasta ella, la cruzan y siguen. Nunca atraviesan una pared. El vuelo es una sola curva de principio a fin, así que los tramos se encadenan sin detenerse.
+- **"Volver afuera"** (en la última pared) y los saltos del riel entre adentro y afuera vuelan **a través de la puerta**: van hasta ella, la cruzan y siguen. Nunca atraviesan una pared. El vuelo es una sola curva de principio a fin, así que los tramos se encadenan sin detenerse.
 - **El riel** tiene once marcas: las seis de afuera, una línea y las cinco de adentro. En el celular es más angosto y va en el margen lateral, a media altura, sin tapar texto ni links.
 - **Las direcciones**: `#interior-1` … `#interior-5`.
 
