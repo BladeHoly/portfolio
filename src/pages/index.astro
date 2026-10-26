@@ -81,14 +81,14 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
       {FACES.map((_, i) => <div class="stop" id={`cara-${i + 1}`} />)}
     </div>
 
-    <!-- The spatial map: the cube unfolded, in the order of the journey (top, the four sides,
-         the door underneath), on glass-midas glass, marking where you are. -->
-    <nav class="map" aria-label="Mapa del cubo">
-      <gm-surface material="frost" radius="16" class="map-glass">
+    <!-- The rail: the six stages in the order of the journey, on glass-midas glass, marking
+         where you are. -->
+    <nav class="map" aria-label="Caras">
+      <gm-surface material="frost" radius="999" class="map-glass">
         <ol>
           {
             FACES.map((face, i) => (
-              <li style={`grid-area: c${i + 1}`}>
+              <li>
                 <a class="gm-chip" href={`#cara-${i + 1}`} data-stage={i} aria-label={face.label}>
                   {i + 1}
                 </a>

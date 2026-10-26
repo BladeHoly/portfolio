@@ -71,7 +71,7 @@ function jump(to: number) {
   wake();
 }
 
-// Where you are: the map's chip for the current face carries `aria-current`, and the address
+// Where you are: the rail's chip for the current face carries `aria-current`, and the address
 // names the face (#cara-3), so it can be shared and opens on that face.
 const marks = [...document.querySelectorAll<HTMLElement>('.map [data-stage]')];
 let current = -1;
@@ -86,7 +86,7 @@ function setCurrent(stage: number) {
   history.replaceState(null, '', `#${stops[stage].id}`);
 }
 
-// Links to a face (#cara-n), in the faces and on the map, fly there instead of scrolling past
+// Links to a face (#cara-n), in the faces and on the rail, fly there instead of scrolling past
 // every face in between.
 document.addEventListener('click', (e) => {
   const link = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[href^="#cara-"]');
@@ -250,9 +250,6 @@ const meter = out && {
     out.textContent = `${fps.toFixed(0)} fps · peor ${worst.toFixed(1)} ms`;
   },
 };
-
-// ?mapa=riel tries the map as a single column instead of the unfolded cube.
-if (new URLSearchParams(location.search).get('mapa') === 'riel') root.dataset.mapa = 'riel';
 
 // Opened on a face's address: start there.
 const opened = stops.findIndex((s) => `#${s.id}` === location.hash);

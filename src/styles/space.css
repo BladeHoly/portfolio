@@ -192,7 +192,8 @@ h2 {
   margin-top: 1.5rem;
 }
 
-/* The spatial map: the unfolded cube as a cross of glass-midas chips on its glass. */
+/* The rail: the six stages in a column of glass-midas chips on its glass. Renzo chose it over
+   a map of the unfolded cube. */
 .map {
   position: fixed;
   right: max(16px, env(safe-area-inset-right));
@@ -202,15 +203,11 @@ h2 {
 
 .map-glass {
   display: block;
-  padding: 8px;
+  padding: 6px;
 }
 
 .map ol {
   display: grid;
-  grid-template-areas:
-    'c1 .  .  .'
-    'c2 c3 c4 c5'
-    '.  .  .  c6';
   gap: 4px;
   margin: 0;
   padding: 0;
@@ -220,23 +217,12 @@ h2 {
 .map .gm-chip {
   display: grid;
   place-items: center;
-  width: 26px;
-  height: 26px;
-  padding: 0;
-  border-radius: 7px;
-  font-size: 11px;
-  font-variant-numeric: tabular-nums;
-}
-
-/* ?mapa=riel: the alternative, a single column of the six stages. */
-:root[data-mapa='riel'] .map ol {
-  grid-template-areas: 'c1' 'c2' 'c3' 'c4' 'c5' 'c6';
-}
-
-:root[data-mapa='riel'] .map .gm-chip {
   width: 22px;
   height: 22px;
+  padding: 0;
   border-radius: 999px;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
 }
 
 /* ?debug: the frame meter. */

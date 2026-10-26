@@ -20,6 +20,6 @@ Se puede recorrer el cubo con el scroll o saltar a cualquier cara, y siempre se 
 | Abrir `/#cara-4` | empieza en la cara 4 ✅ |
 | En el celular, los chips de una cara | se ven y se pueden tocar (las capas de profundidad ya no los tapan) ✅ |
 
-## Para decidir
+## Decidido con Renzo
 
-- Mapa en cruz o riel: ¿cuál se entiende mejor y molesta menos?
+El **riel** (una columna con las seis caras) en lugar del mapa del cubo desplegado en cruz. La cruz y `?mapa=riel` se quitaron.
