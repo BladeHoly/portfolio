@@ -10,7 +10,7 @@ export interface Pose {
   fz: number;
   /** Turn around the vertical axis: 0 looks at the face whose normal is +z. */
   yaw: number;
-  /** Tilt: positive looks down. */
+  /** Tilt: positive looks down, at the top face from above at 90. */
   pitch: number;
   /** Distance from the camera to the focus point. */
   dist: number;
@@ -22,7 +22,7 @@ export interface Pose {
  */
 export function worldTransform(p: Pose, perspective: number): string {
   return (
-    `translateZ(${round(perspective - p.dist)}px) rotateX(${round(p.pitch)}deg) ` +
+    `translateZ(${round(perspective - p.dist)}px) rotateX(${round(-p.pitch)}deg) ` +
     `rotateY(${round(-p.yaw)}deg) translate3d(${round(-p.fx)}px, ${round(-p.fy)}px, ${round(-p.fz)}px)`
   );
 }

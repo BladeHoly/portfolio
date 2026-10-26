@@ -29,9 +29,10 @@
   box-sizing: border-box;
 }
 
-/* One snap point per stage, and never past one per gesture. */
+/* One snap point per stage, and no pull-to-refresh or bounce fighting a vertical swipe. */
 html {
   scroll-snap-type: y mandatory;
+  overscroll-behavior: none;
 }
 
 body {
@@ -76,7 +77,8 @@ body {
   backface-visibility: hidden;
 }
 
-/* A face is a square wall of the cube; its hairline edge is how the cube reveals itself in passing. */
+/* A face is a square wall of the cube, opaque like a block of ice, so nothing on the other faces
+   shows through; its hairline edge is how the cube reveals itself in passing. */
 .face {
   position: absolute;
   top: calc(var(--side) / -2);
@@ -85,6 +87,7 @@ body {
   place-items: center;
   width: var(--side);
   height: var(--side);
+  background: radial-gradient(70% 60% at 35% 30%, #fafcfd, var(--ice) 55%, var(--ice-deep));
   box-shadow: inset 0 0 0 1px var(--line);
 }
 
@@ -126,7 +129,8 @@ h2 {
   line-height: 1.5;
 }
 
-/* Planes at different depths, so the camera's travel shows as parallax inside a face. */
+/* Planes standing out from the face towards the camera, so its travel shows as parallax. They
+   never go behind the face's surface: that's inside the cube, behind the wall. */
 .depth {
   position: relative;
   height: 15rem;
@@ -141,23 +145,24 @@ h2 {
 .layer.far {
   inset: 0 40% 10% 0;
   background: linear-gradient(135deg, #9fb9d6, #2f55c9);
-  transform: translateZ(-220px);
+  transform: translateZ(10px);
 }
 
 .layer.mid {
   inset: 20% 10% 0 30%;
   background: linear-gradient(160deg, #e7eef5, #7aa0c4);
-  transform: translateZ(-90px);
+  transform: translateZ(110px);
 }
 
 .layer.near {
   inset: 45% 55% -10% 8%;
   background: var(--ink);
-  transform: translateZ(60px);
+  transform: translateZ(260px);
 }
 
 .probe {
   position: absolute;
+  transform: translateZ(200px);
   right: 4%;
   bottom: 8%;
   display: grid;
@@ -170,48 +175,42 @@ h2 {
   margin: 0;
 }
 
-/* The lab panel: prototype controls, not part of the design. */
-.lab {
+/* Placeholder cards stepping back into the face. */
+.stack {
+  position: relative;
+  display: grid;
+  gap: 0.6rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+  transform-style: preserve-3d;
+}
+
+.stack li {
+  padding: 1rem 1.25rem;
+  border-radius: 18px;
+  background: rgb(255 255 255 / 0.7);
+  box-shadow: inset 0 0 0 1px var(--line);
+  transform: translateZ(var(--z));
+}
+
+/* The door: a seam across the face, shut for now. */
+.seam {
+  height: 1px;
+  margin-top: 2rem;
+  background: linear-gradient(90deg, transparent, var(--ink), transparent);
+}
+
+/* ?debug: the frame meter. */
+.debug {
   position: fixed;
   bottom: 12px;
   left: 12px;
   z-index: 10;
-  display: grid;
-  gap: 6px;
-  padding: 10px 12px;
-  border-radius: 14px;
+  padding: 6px 10px;
+  border-radius: 10px;
   background: rgb(14 34 51 / 0.88);
   color: #fff;
   font: 500 12px/1.2 system-ui, sans-serif;
-}
-
-.lab [role='group'] {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.lab span {
-  width: 3.2rem;
-  opacity: 0.7;
-}
-
-.lab button {
-  padding: 4px 9px;
-  border: 0;
-  border-radius: 999px;
-  background: rgb(255 255 255 / 0.1);
-  color: inherit;
-  font: inherit;
-  cursor: pointer;
-}
-
-.lab button[aria-pressed='true'] {
-  background: #fff;
-  color: var(--ink);
-}
-
-.lab output {
-  opacity: 0.75;
   font-variant-numeric: tabular-nums;
 }

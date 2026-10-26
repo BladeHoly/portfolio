@@ -3,8 +3,9 @@ import '@glass-midas/components/styles.css';
 import '../styles/space.css';
 import { FACES, PERSPECTIVE, SIDE, faceTransform } from '../scene/stages';
 
-// Phase 1 prototype: the camera, the staged scroll and one kind of transition, on placeholder
-// content. Nothing here is final copy; every text is marked as a placeholder on purpose.
+// Phase 2: the whole outer journey on placeholder content. Nothing here is final copy; every
+// text is marked as a placeholder on purpose, and the door stays shut until phase 4.
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 ---
 
 <!doctype html>
@@ -14,7 +15,7 @@ import { FACES, PERSPECTIVE, SIDE, faceTransform } from '../scene/stages';
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Renzo · prototipo espacial</title>
     <meta name="robots" content="noindex" />
-    <link rel="icon" href={`${import.meta.env.BASE_URL.replace(/\/?$/, '/')}favicon.svg`} type="image/svg+xml" />
+    <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -27,35 +28,49 @@ import { FACES, PERSPECTIVE, SIDE, faceTransform } from '../scene/stages';
       <div class="world">
         {
           FACES.map((face, i) => (
-            <section class="face" style={`transform: ${faceTransform(face)}`} aria-label={face.label}>
+            <section
+              class:list={['face', { door: face.door }]}
+              style={`transform: ${faceTransform(face)}`}
+              aria-label={face.label}
+            >
               <div class="face-body">
                 <p class="eyebrow">
                   {face.label} · <span class="placeholder">placeholder</span>
                 </p>
-                <h2>Contenido pendiente</h2>
+                <h2>{face.door ? 'Puerta cerrada' : 'Contenido pendiente'}</h2>
                 <p class="note">
-                  Esta cara existe para probar la cámara. Qué va aquí se decide con Renzo en la fase de
-                  contenido.
+                  {face.door
+                    ? 'Aquí se abre el recorrido interior. La apertura se diseña en la fase 4.'
+                    : 'Esta cara existe para probar la cámara. Qué va aquí se decide con Renzo en la fase de contenido.'}
                 </p>
                 {i === 0 && (
                   <div class="depth">
                     <span class="layer far" aria-hidden="true" />
                     <span class="layer mid" aria-hidden="true" />
                     <gm-surface class="probe" material="frost" radius="22">
-                      <p>Vidrio de prueba sobre capas en profundidad.</p>
+                      <p>Vidrio de glass-midas sobre capas en profundidad.</p>
                       <gm-button>
                         <button type="button">Botón de prueba</button>
                       </gm-button>
                     </gm-surface>
                   </div>
                 )}
-                {i > 0 && (
+                {i === 2 && (
+                  // Cards stepping back towards the face: the angled framing shows them in depth.
+                  <ol class="stack" aria-label="Placeholder en profundidad">
+                    {[1, 2, 3, 4].map((n) => (
+                      <li style={`--z: ${(5 - n) * 60}px`}>Placeholder {n}</li>
+                    ))}
+                  </ol>
+                )}
+                {(i === 1 || i === 3 || i === 4) && (
                   <div class="depth">
                     <span class="layer far" aria-hidden="true" />
                     <span class="layer mid" aria-hidden="true" />
                     <span class="layer near" aria-hidden="true" />
                   </div>
                 )}
+                {face.door && <span class="seam" aria-hidden="true" />}
               </div>
             </section>
           ))
@@ -68,24 +83,7 @@ import { FACES, PERSPECTIVE, SIDE, faceTransform } from '../scene/stages';
       {FACES.map(() => <div class="stop" />)}
     </div>
 
-    <aside class="lab" aria-label="Controles del prototipo">
-      <div role="group" aria-label="Curva">
-        <span>Curva</span>
-        <button type="button" data-key="curve" value="nativa">Nativa</button>
-        <button type="button" data-key="curve" value="suave">Suave</button>
-      </div>
-      <div role="group" aria-label="Trayectoria">
-        <span>Ruta</span>
-        <button type="button" data-key="path" value="orbita">Órbita</button>
-        <button type="button" data-key="path" value="deslizar">Deslizar</button>
-      </div>
-      <div role="group" aria-label="Rueda">
-        <span>Rueda</span>
-        <button type="button" data-key="wheel" value="etapas">Etapas</button>
-        <button type="button" data-key="wheel" value="nativa">Nativa</button>
-      </div>
-      <output aria-live="off">Mové la cámara para medir</output>
-    </aside>
+    <output class="debug" hidden aria-live="off">Mové la cámara para medir</output>
 
     <script>
       import '../scene/run';
