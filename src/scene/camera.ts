@@ -14,6 +14,8 @@ export interface Pose {
   pitch: number;
   /** Distance from the camera to the focus point. */
   dist: number;
+  /** Spin around the line of sight, in degrees. */
+  roll?: number;
 }
 
 /**
@@ -22,7 +24,7 @@ export interface Pose {
  */
 export function worldTransform(p: Pose, perspective: number): string {
   return (
-    `translateZ(${round(perspective - p.dist)}px) rotateX(${round(-p.pitch)}deg) ` +
+    `rotateZ(${round(p.roll ?? 0)}deg) translateZ(${round(perspective - p.dist)}px) rotateX(${round(-p.pitch)}deg) ` +
     `rotateY(${round(-p.yaw)}deg) translate3d(${round(-p.fx)}px, ${round(-p.fy)}px, ${round(-p.fz)}px)`
   );
 }

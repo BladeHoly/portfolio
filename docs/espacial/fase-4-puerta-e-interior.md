@@ -2,13 +2,13 @@
 
 ## La puerta
 
-La cara de abajo está partida en dos hojas que, al seguir avanzando, se abren hacia dentro del cubo como una trampilla.
+Primero fue una trampilla de dos hojas. Renzo la vio demasiado rápida al abrirse y al cerrarse, y pidió algo más parecido a entrar en un agujero negro. Ahora es eso:
 
-- **El primer tramo** (35 % del paso): las hojas se abren y la cámara se acerca un poco. Por la abertura ya se ve el interior.
-- **El resto**: la cámara sube por el centro de la abertura siguiendo una curva y, mientras sube, baja la vista del techo hacia la primera pared interior.
-- **Hacia atrás**: es el mismo camino al revés. La cámara baja, sale y las hojas se cierran detrás.
-
-No es un botón que abre otra página. La puerta es parte de la escena y la apertura la maneja el scroll, igual que el resto del recorrido. El texto de la puerta se desvanece al abrirse las hojas.
+- **Un agujero negro** en el centro de la cara de abajo: un núcleo oscuro y un halo cobalto muy tenue que se pierde en la pared. Es un solo degradado, sin borde. El texto queda arriba del agujero.
+- **La caída** (55 % del paso): el agujero tira de la cámara cada vez más rápido y la hace girar sobre su eje. El agujero crece hasta llenar la pantalla y todo se oscurece.
+- **La salida**: desde lo oscuro, la cámara frena frente a la primera pared interior, girando en el mismo sentido hasta asentarse.
+- **Hacia atrás**: es el mismo camino al revés.
+- **Su propio tiempo**: cruzar la puerta dura 2 s con cualquier entrada (rueda, swipe, chips o riel), así que la velocidad del scroll ya no lo apura. En el celular, la caída sigue desde donde la dejó el dedo. Solo la barra de scroll y el teclado siguen al scroll exacto.
 
 ## El interior
 
@@ -28,14 +28,14 @@ Es el mismo cubo visto desde dentro: las cuatro paredes y el techo, las cinco ca
 
 | Prueba | Resultado |
 | --- | --- |
-| Un paso de rueda en la puerta | entra, la puerta queda abierta (`--open` 1) ✅ |
-| Un paso de rueda hacia atrás | sale, la puerta se cierra ✅ |
+| Un paso de rueda en la puerta | cae por el agujero y llega a la cara interior 1 en 2,0 s ✅ |
+| Un paso de rueda hacia atrás | sale por el mismo camino en 2,0 s ✅ |
 | Abrir `#interior-5` | empieza en el techo ✅ |
-| "Volver afuera" desde el techo | pasa por la puerta (que se cierra durante el vuelo) y termina en la cara 1 ✅ |
+| "Volver afuera" desde el techo | pasa por la puerta y termina en la cara 1 ✅ |
 | Del riel a la cara interior 3 desde afuera | entra por la puerta ✅ |
 | En el celular, el riel frente al texto y los links | no se tocan en ninguna cara ✅ |
 
-Rendimiento (servidor de desarrollo, Chromium, transición de 900 ms):
+Rendimiento (servidor de desarrollo, Chromium, transición de 900 ms; medido con la trampilla):
 
 | Transición | Escritorio, p95 / peor | CPU 4× más lenta, p95 / peor |
 | --- | --- | --- |
@@ -44,5 +44,4 @@ Rendimiento (servidor de desarrollo, Chromium, transición de 900 ms):
 
 ## Pendiente
 
-- El piso interior: desde adentro, la puerta abierta deja un hueco. En reposo nunca se ve; quizás se vea al pasar entre paredes en algún ángulo.
 - Fase 5: decidir con Renzo el contenido real de las diez capas.

@@ -1,7 +1,7 @@
 import '@glass-midas/components/surface';
 import '@glass-midas/components/button';
 import { easeInOutCubic, worldTransform, type Pose } from './camera';
-import { PERSPECTIVE, STAGES, doorOpen, legPose, poseAt, route, type Leg } from './stages';
+import { PERSPECTIVE, STAGES, darkAt, isDoorLeg, legPose, poseAt, route, type Leg } from './stages';
 
 // Scroll drives the camera. The page keeps the browser's scroll, with one snap point per stage
 // (`scroll-snap-stop: always`): keys, the scrollbar and assistive tech move it natively, and the
@@ -27,17 +27,17 @@ const target = () => clamp(scrollY / step() + drag);
 /** A direct flight to a far stage, in legs, which the scroll catches up with when it lands. */
 let flight: { to: number; legs: Leg[]; start: number; ms: number } | null = null;
 
-/** Puts the camera, and the door leaves, where they belong. */
-function place(pose: Pose, open: number) {
+/** Puts the camera where it belongs, and the dark of the door over the screen. */
+function place(pose: Pose, dark: number) {
   world.style.transform = worldTransform(pose, PERSPECTIVE);
-  world.style.setProperty('--open', String(Math.round(open * 1000) / 1000));
+  root.style.setProperty('--void', String(Math.round(dark * 1000) / 1000));
 }
 
 function render(s: number) {
   const i = Math.min(Math.floor(s), STAGES.length - 2);
   // Reduced motion: no travel at all; the camera cuts to the nearest stage.
   const f = reduce.matches ? Math.round(s - i) : s - i;
-  place(poseAt(i, f), doorOpen(i + f));
+  place(poseAt(i, f), darkAt(i + f));
   setCurrent(Math.round(s));
 }
 
@@ -46,16 +46,18 @@ function tick(now: number) {
   frame = 0;
   meter?.sample(now);
   if (flight) {
-    // One ease over the whole flight, so the legs run into each other without stopping.
+    // One ease over the whole flight, so the legs run into each other without stopping. A
+    // crossing of the door alone keeps its own pace: the fall speeds up, the way out slows down.
     const k = Math.min(1, (now - flight.start) / flight.ms);
-    let at = easeInOutCubic(k) * flight.ms;
+    const alone = flight.legs.length === 1 && isDoorLeg(flight.legs[0].from, flight.legs[0].to);
+    let at = (alone ? k : easeInOutCubic(k)) * flight.ms;
     let leg = flight.legs[0];
     for (leg of flight.legs) {
       if (at <= leg.ms) break;
       at -= leg.ms;
     }
-    const { pose, open } = legPose(leg, Math.min(1, at / leg.ms));
-    place(pose, open);
+    const { pose, dark } = legPose(leg, Math.min(1, at / leg.ms));
+    place(pose, dark);
     if (k < 1) return wake();
     const to = flight.to;
     flight = null;
@@ -70,8 +72,22 @@ addEventListener('scroll', wake, { passive: true });
 addEventListener('resize', wake);
 reduce.addEventListener('change', wake);
 
-/** Moves the scroll to a stage; the browser animates it and the camera follows. */
+/** Flies from one stage to another; `done` is how much of it is behind already, 0 to 1. */
+function fly(from: number, to: number, done = 0) {
+  const legs = route(from, to);
+  const ms = legs.reduce((sum, l) => sum + l.ms, 0);
+  flight = { to, legs, start: performance.now() - done * ms, ms };
+  setCurrent(to);
+  wake();
+}
+
+/**
+ * Moves to a neighbouring stage: the browser animates the scroll and the camera follows.
+ * Through the door it's a flight instead, so the fall takes its time whatever the input.
+ */
 function go(stage: number) {
+  const from = Math.round(target());
+  if (!reduce.matches && isDoorLeg(from, stage)) return void (flight || fly(from, stage));
   stops[stage].scrollIntoView({ behavior: reduce.matches ? 'auto' : 'smooth' });
 }
 
@@ -80,10 +96,7 @@ function jump(to: number) {
   const from = Math.round(target());
   if (to === from || flight) return;
   if (Math.abs(to - from) === 1 || reduce.matches) return go(to);
-  const legs = route(from, to);
-  flight = { to, legs, start: performance.now(), ms: legs.reduce((sum, l) => sum + l.ms, 0) };
-  setCurrent(to);
-  wake();
+  fly(from, to);
 }
 
 // Where you are: the rail's chip for the current face carries `aria-current`, and the address
@@ -209,6 +222,12 @@ addEventListener('touchend', () => {
   const speed = t1 > t0 ? (y0 - y1) / (t1 - t0) : 0; // positive: flicking up, towards the next stage
   const dir = Math.abs(drag) > SHORT ? Math.sign(drag) : Math.abs(speed) > FLICK ? Math.sign(speed) : 0;
   const to = clamp(from + dir);
+  // Into or out of the door, the fall carries on from where the finger left it.
+  if (to !== from && isDoorLeg(from, to) && !reduce.matches) {
+    const done = Math.abs(drag);
+    drag = 0;
+    return fly(from, to, done);
+  }
   ease(drag, to - from, from, to);
 });
 addEventListener('touchcancel', () => {

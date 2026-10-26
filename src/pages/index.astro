@@ -33,9 +33,8 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
               style={`transform: ${faceTransform(face)}`}
               aria-label={face.label}
             >
-              {/* The door is two leaves that swing up into the cube, like a trapdoor. */}
-              {face.door && <span class="leaf left" aria-hidden="true" />}
-              {face.door && <span class="leaf right" aria-hidden="true" />}
+              {/* The door: a black hole in the middle of the face, which the camera falls into. */}
+              {face.door && <span class="hole" aria-hidden="true" />}
               <div class="face-body">
                 <p class="eyebrow">
                   {face.label} · <span class="placeholder">placeholder</span>
@@ -43,7 +42,7 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
                 <h2>{face.door ? 'Puerta' : 'Contenido pendiente'}</h2>
                 <p class="note">
                   {face.door
-                    ? 'Seguí y se abre: el recorrido continúa dentro del cubo.'
+                    ? 'Seguí: el recorrido continúa dentro del cubo.'
                     : 'Esta cara existe para probar la cámara. Qué va aquí se decide con Renzo en la fase de contenido.'}
                 </p>
                 {i === 0 && (
@@ -78,6 +77,9 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
         }
       </div>
     </div>
+
+    <!-- The dark inside the door, over the whole screen while the camera falls through it. -->
+    <div class="void" aria-hidden="true"></div>
 
     <!-- One snap point per stage. They hold the scroll length, and give each face its address. -->
     <div class="stops" aria-hidden="true">
