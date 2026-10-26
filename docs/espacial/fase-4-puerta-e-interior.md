@@ -42,6 +42,15 @@ Rendimiento (servidor de desarrollo, Chromium, transición de 900 ms; medido con
 | A través de la puerta | 7,0 / 7,1 ms | 7,1 / 14,1 ms |
 | Entre paredes interiores | 7,0 / 7,1 ms | 7,1 / 7,2 ms |
 
+## Corregido en una GPU real
+
+Renzo lo abrió en Brave, con GPU y en una pantalla de 1920×950, y estaba roto. Por la puerta cerrada se veían las paredes interiores y el techo, la puerta aparecía a parches y su texto quedaba detrás. Además, a los lados y abajo había franjas blancas. El navegador emulado de las pruebas dibuja por software y ordenaba bien los planos, así que no mostraba nada de esto.
+
+- **Solo se pinta el lado del cubo donde está la cámara.** Desde afuera, las caras interiores tienen `visibility: hidden`, y desde adentro, las exteriores. El cambio se hace en lo más oscuro del agujero (55 % del paso), donde no se ve. Así ya nada puede transparentarse, dibuje la GPU los planos en el orden que sea, y hay la mitad de planos para pintar.
+- **El cubo mide ahora 2400 px de lado**, en lugar de 1600, así que en reposo una cara cubre hasta una pantalla de 2560 px.
+
+Esto no se puede reproducir sin una GPU real; queda pendiente que Renzo lo confirme.
+
 ## Pendiente
 
 - Fase 5: decidir con Renzo el contenido real de las diez capas.

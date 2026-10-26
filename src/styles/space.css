@@ -213,6 +213,12 @@ h2 {
   pointer-events: none;
 }
 
+/* Only the side of the cube the camera is on is painted (see place() in run.ts). */
+:root[data-side='outside'] .face.inside,
+:root[data-side='inside'] .face:not(.inside) {
+  visibility: hidden;
+}
+
 /* Inside: the same walls from within, deeper and darker, with light ink; glass-midas back on
    its own dark-surface values. */
 .face.inside {

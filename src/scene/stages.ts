@@ -5,8 +5,8 @@ import { lerp, smootherstep, type Pose } from './camera';
 // Between neighbours the camera orbits around the cube's center, outside or in; between the
 // door and the first inner wall it falls through the door, a black hole.
 
-/** The cube's side, in CSS pixels. Wider than most screens, so a face's neighbours stay out of frame at rest. */
-export const SIDE = 1600;
+/** The cube's side, in CSS pixels. Wider than big screens (2560 px), so a face at rest always fills the frame. */
+export const SIDE = 2400;
 /** The viewport's perspective. Equal to the resting distance, so a frontal face renders 1:1. */
 export const PERSPECTIVE = 1400;
 
@@ -130,22 +130,27 @@ function doorPose(t: number): { pose: Pose; dark: number } {
   const b = STAGES[DOOR + 1];
   if (t <= 0) return { pose: a, dark: 0 };
   if (t >= 1) return { pose: b, dark: 0 };
-  const fall = 0.55;
   const spin = 40;
-  if (t < fall) {
-    const u = t / fall;
+  if (t < FALL) {
+    const u = t / FALL;
     return {
       pose: { ...a, dist: a.dist * (1 - 0.94 * u ** 2.6), roll: spin * u ** 2 },
       dark: smootherstep(clamp01((u - 0.55) / 0.45)),
     };
   }
-  const u = (t - fall) / (1 - fall);
+  const u = (t - FALL) / (1 - FALL);
   const out = 1 - (1 - u) ** 3;
   return {
     pose: { ...b, dist: lerp(PERSPECTIVE * 0.2, b.dist, out), roll: -spin * (1 - out) },
     dark: 1 - smootherstep(clamp01(u / 0.55)),
   };
 }
+
+/** Where in the crossing the screen is fully dark, and the camera goes from outside to inside. */
+const FALL = 0.55;
+
+/** Whether the camera at `s` stages is inside the cube: past the dark of the door. */
+export const insideAt = (s: number) => s > DOOR + FALL;
 
 /** How dark the screen is with the camera at `s` stages: only ever inside the door. */
 export const darkAt = (s: number) => (s > DOOR && s < DOOR + 1 ? doorPose(s - DOOR).dark : 0);
@@ -187,8 +192,11 @@ export function route(from: number, to: number): Leg[] {
   return legs;
 }
 
-/** Where a leg puts the camera at `t`, and how dark the screen is. */
-export function legPose(leg: Leg, t: number): { pose: Pose; dark: number } {
-  if (isDoorLeg(leg.from, leg.to)) return doorPose(leg.to > leg.from ? t : 1 - t);
-  return { pose: poseBetween(leg.from, leg.to, t), dark: 0 };
+/** Where a leg puts the camera at `t`, how dark the screen is, and whether it's inside. */
+export function legPose(leg: Leg, t: number): { pose: Pose; dark: number; inside: boolean } {
+  if (isDoorLeg(leg.from, leg.to)) {
+    const k = leg.to > leg.from ? t : 1 - t;
+    return { ...doorPose(k), inside: k > FALL };
+  }
+  return { pose: poseBetween(leg.from, leg.to, t), dark: 0, inside: leg.from > DOOR };
 }
