@@ -1,10 +1,10 @@
 ---
 import '@glass-midas/components/styles.css';
 import '../styles/space.css';
-import { FACES, PERSPECTIVE, SIDE, faceTransform } from '../scene/stages';
+import { DOOR, FACES, PERSPECTIVE, SIDE, faceTransform } from '../scene/stages';
 
-// Phase 2: the whole outer journey on placeholder content. Nothing here is final copy; every
-// text is marked as a placeholder on purpose, and the door stays shut until phase 4.
+// The whole journey, outside and in, on placeholder content. Nothing here is final copy;
+// every text is marked as a placeholder on purpose.
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 ---
 
@@ -29,18 +29,21 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
         {
           FACES.map((face, i) => (
             <section
-              class:list={['face', { door: face.door }]}
+              class:list={['face', { door: face.door, inside: face.inside }]}
               style={`transform: ${faceTransform(face)}`}
               aria-label={face.label}
             >
+              {/* The door is two leaves that swing up into the cube, like a trapdoor. */}
+              {face.door && <span class="leaf left" aria-hidden="true" />}
+              {face.door && <span class="leaf right" aria-hidden="true" />}
               <div class="face-body">
                 <p class="eyebrow">
                   {face.label} · <span class="placeholder">placeholder</span>
                 </p>
-                <h2>{face.door ? 'Puerta cerrada' : 'Contenido pendiente'}</h2>
+                <h2>{face.door ? 'Puerta' : 'Contenido pendiente'}</h2>
                 <p class="note">
                   {face.door
-                    ? 'Debajo del cubo se abre el recorrido interior. La apertura se diseña en la fase 4.'
+                    ? 'Seguí y se abre: el recorrido continúa dentro del cubo.'
                     : 'Esta cara existe para probar la cámara. Qué va aquí se decide con Renzo en la fase de contenido.'}
                 </p>
                 {i === 0 && (
@@ -62,12 +65,12 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
                     <span class="layer near" aria-hidden="true" />
                   </div>
                 )}
-                {face.door && <span class="seam" aria-hidden="true" />}
                 {/* Contextual navigation: where to go from here. */}
                 <nav class="face-nav" aria-label="Seguir">
-                  {i > 0 && <a class="gm-chip" href={`#cara-${i}`}>↑ {FACES[i - 1].label}</a>}
-                  {i < FACES.length - 1 && <a class="gm-chip" href={`#cara-${i + 2}`}>{FACES[i + 1].label} ↓</a>}
-                  {face.door && <a class="gm-chip" href="#cara-1">Volver arriba</a>}
+                  {i > 0 && <a class="gm-chip" href={`#${FACES[i - 1].id}`}>↑ {FACES[i - 1].label}</a>}
+                  {i < FACES.length - 1 && <a class="gm-chip" href={`#${FACES[i + 1].id}`}>{FACES[i + 1].label} ↓</a>}
+                  {face.door && <a class="gm-chip" href={`#${FACES[0].id}`}>Volver arriba</a>}
+                  {i === FACES.length - 1 && <a class="gm-chip" href={`#${FACES[0].id}`}>Volver afuera</a>}
                 </nav>
               </div>
             </section>
@@ -78,21 +81,24 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 
     <!-- One snap point per stage. They hold the scroll length, and give each face its address. -->
     <div class="stops" aria-hidden="true">
-      {FACES.map((_, i) => <div class="stop" id={`cara-${i + 1}`} />)}
+      {FACES.map((face) => <div class="stop" id={face.id} />)}
     </div>
 
-    <!-- The rail: the six stages in the order of the journey, on glass-midas glass, marking
-         where you are. -->
+    <!-- The rail: every stage in the order of the journey, outside then inside, on glass-midas
+         glass, marking where you are. -->
     <nav class="map" aria-label="Caras">
       <gm-surface material="frost" radius="999" class="map-glass">
         <ol>
           {
             FACES.map((face, i) => (
-              <li>
-                <a class="gm-chip" href={`#cara-${i + 1}`} data-stage={i} aria-label={face.label}>
-                  {i + 1}
-                </a>
-              </li>
+              <>
+                {face.inside && !FACES[i - 1].inside && <li class="map-gap" aria-hidden="true" />}
+                <li>
+                  <a class="gm-chip" href={`#${face.id}`} data-stage={i} aria-label={face.label}>
+                    {face.inside ? i - DOOR : i + 1}
+                  </a>
+                </li>
+              </>
             ))
           }
         </ol>

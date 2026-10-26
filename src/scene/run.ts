@@ -1,7 +1,7 @@
 import '@glass-midas/components/surface';
 import '@glass-midas/components/button';
-import { easeInOutCubic, worldTransform } from './camera';
-import { PERSPECTIVE, STAGES, flightTime, poseAt, poseBetween } from './stages';
+import { easeInOutCubic, worldTransform, type Pose } from './camera';
+import { PERSPECTIVE, STAGES, doorOpen, legPose, poseAt, route, type Leg } from './stages';
 
 // Scroll drives the camera. The page keeps the browser's scroll, with one snap point per stage
 // (`scroll-snap-stop: always`): keys, the scrollbar and assistive tech move it natively, and the
@@ -24,14 +24,20 @@ let drag = 0;
 /** Where the camera should be, in stages: 1.5 is halfway between the second and third. */
 const target = () => clamp(scrollY / step() + drag);
 
-/** A direct flight to a far stage, which the scroll catches up with when it lands. */
-let flight: { from: number; to: number; start: number; ms: number } | null = null;
+/** A direct flight to a far stage, in legs, which the scroll catches up with when it lands. */
+let flight: { to: number; legs: Leg[]; start: number; ms: number } | null = null;
+
+/** Puts the camera, and the door leaves, where they belong. */
+function place(pose: Pose, open: number) {
+  world.style.transform = worldTransform(pose, PERSPECTIVE);
+  world.style.setProperty('--open', String(Math.round(open * 1000) / 1000));
+}
 
 function render(s: number) {
   const i = Math.min(Math.floor(s), STAGES.length - 2);
-  const f = s - i;
   // Reduced motion: no travel at all; the camera cuts to the nearest stage.
-  world.style.transform = worldTransform(poseAt(i, reduce.matches ? Math.round(f) : f), PERSPECTIVE);
+  const f = reduce.matches ? Math.round(s - i) : s - i;
+  place(poseAt(i, f), doorOpen(i + f));
   setCurrent(Math.round(s));
 }
 
@@ -40,8 +46,16 @@ function tick(now: number) {
   frame = 0;
   meter?.sample(now);
   if (flight) {
+    // One ease over the whole flight, so the legs run into each other without stopping.
     const k = Math.min(1, (now - flight.start) / flight.ms);
-    world.style.transform = worldTransform(poseBetween(flight.from, flight.to, easeInOutCubic(k)), PERSPECTIVE);
+    let at = easeInOutCubic(k) * flight.ms;
+    let leg = flight.legs[0];
+    for (leg of flight.legs) {
+      if (at <= leg.ms) break;
+      at -= leg.ms;
+    }
+    const { pose, open } = legPose(leg, Math.min(1, at / leg.ms));
+    place(pose, open);
     if (k < 1) return wake();
     const to = flight.to;
     flight = null;
@@ -66,13 +80,14 @@ function jump(to: number) {
   const from = Math.round(target());
   if (to === from || flight) return;
   if (Math.abs(to - from) === 1 || reduce.matches) return go(to);
-  flight = { from, to, start: performance.now(), ms: flightTime(from, to) };
+  const legs = route(from, to);
+  flight = { to, legs, start: performance.now(), ms: legs.reduce((sum, l) => sum + l.ms, 0) };
   setCurrent(to);
   wake();
 }
 
 // Where you are: the rail's chip for the current face carries `aria-current`, and the address
-// names the face (#cara-3), so it can be shared and opens on that face.
+// names the face (#cara-3, #interior-2), so it can be shared and opens on that face.
 const marks = [...document.querySelectorAll<HTMLElement>('.map [data-stage]')];
 let current = -1;
 function setCurrent(stage: number) {
@@ -86,10 +101,10 @@ function setCurrent(stage: number) {
   history.replaceState(null, '', `#${stops[stage].id}`);
 }
 
-// Links to a face (#cara-n), in the faces and on the rail, fly there instead of scrolling past
-// every face in between.
+// Links to a face, in the faces and on the rail, fly there instead of scrolling past every face
+// in between.
 document.addEventListener('click', (e) => {
-  const link = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[href^="#cara-"]');
+  const link = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[href^="#cara-"], a[href^="#interior-"]');
   const i = link ? stops.findIndex((s) => `#${s.id}` === link.hash) : -1;
   if (i < 0) return;
   e.preventDefault();
