@@ -8,14 +8,16 @@ Hubo tres versiones, todas ajustadas con Renzo:
 2. Un agujero negro en lugar de la puerta. El efecto le gustó, pero tenía que seguir siendo una puerta.
 3. **Ahora: la puerta, y del otro lado, la caída del agujero negro.** "Pre agujero estaba bien, pero la animación post agujero es lo bueno".
 
-Cómo funciona la versión actual:
+Cómo funciona la versión actual (probada en la GPU de Renzo, una AMD Radeon RX 9060 XT con Chrome):
 
-- **La puerta**: la cara de abajo tiene dos hojas que se abren despacio hacia dentro del cubo. Detrás no hay sala, sino un abismo oscuro con un brillo cobalto profundo en el centro. El texto se desvanece al separarse las hojas.
-- **La caída**: con las hojas bien abiertas, el abismo tira de la cámara cada vez más rápido y la hace girar sobre su eje, hasta que todo se oscurece.
+- **La puerta** queda cerrada: es la cara de abajo, con una costura al medio, como dos hojas.
+- **El agujero negro se abre sobre la pantalla, no en la escena**: es un círculo oscuro con un borde cobalto tenue que crece desde el centro de la puerta hasta cubrirlo todo, mientras la cámara se acerca girando. Como no es un plano del cubo, ninguna GPU lo puede ordenar mal.
 - **La salida**: desde lo oscuro, la cámara frena frente a la primera pared interior, girando en el mismo sentido hasta asentarse.
-- **Hacia atrás**: es el mismo camino al revés; la puerta se cierra detrás.
-- **Su propio tiempo**: cruzar dura 2,4 s con cualquier entrada (rueda, swipe, chips o riel). En el celular, sigue desde donde lo dejó el dedo. Solo la barra de scroll y el teclado siguen al scroll exacto.
-- **Para la GPU**: el abismo mide exactamente lo que la cara y está pegado detrás de ella, y las hojas se abren hacia la cámara, alejándose del abismo. Ningún plano cruza a otro ni sale de la cara. Un primer intento con un abismo gigante dentro del cubo lo atravesaba entero y dejaba una franja negra en todo el recorrido; Renzo: "quedó todo mucho peor".
+- **Hacia atrás**: es el mismo camino al revés.
+- **Su propio tiempo**: cruzar dura 2,4 s con cualquier entrada.
+- **La cámara nunca se acerca a menos de la mitad de su distancia**: con la cara aumentada unas 16×, Chrome descartaba tiles y, al volver, la puerta aparecía a parches.
+
+Intentos descartados, con sus causas: hojas que se abrían hacia un abismo oscuro. Un abismo gigante atravesaba todo el cubo y dejaba una franja negra en todo el recorrido. Uno del tamaño de la puerta dejaba, al volver, las hojas a medio abrir y un cuadrado oscuro suelto.
 
 ## El interior
 
@@ -57,7 +59,7 @@ Renzo lo abrió en Brave, con GPU y en una pantalla de 1920×950, y estaba roto.
 - **Además, solo el lado del cubo donde está la cámara.** Desde afuera, las caras interiores tienen `visibility: hidden`, y desde adentro, las exteriores. El cambio se hace en lo más oscuro del agujero (55 % del paso), donde no se ve. Así ya nada puede transparentarse, dibuje la GPU los planos en el orden que sea, y hay la mitad de planos para pintar.
 - **El cubo mide ahora 2400 px de lado**, en lugar de 1600, así que en reposo una cara cubre hasta una pantalla de 2560 px.
 
-Esto no se puede reproducir sin una GPU real; queda pendiente que Renzo lo confirme.
+Desde entonces las pruebas también se hacen en un Chrome visible con la GPU de la máquina, el mismo camino de dibujo que usa el Brave de Renzo.
 
 ## Pendiente
 

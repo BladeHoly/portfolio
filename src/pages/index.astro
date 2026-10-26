@@ -33,10 +33,6 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
               style={`transform: ${faceTransform(face)}`}
               aria-label={face.label}
             >
-              {/* The door: two leaves over a dark abyss, which the camera falls into. */}
-              {face.door && <span class="abyss" aria-hidden="true" />}
-              {face.door && <span class="leaf left" aria-hidden="true" />}
-              {face.door && <span class="leaf right" aria-hidden="true" />}
               <div class="face-body">
                 <p class="eyebrow">
                   {face.label} · <span class="placeholder">placeholder</span>
@@ -80,7 +76,7 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
       </div>
     </div>
 
-    <!-- The dark inside the door, over the whole screen while the camera falls through it. -->
+    <!-- The door's black hole: it opens over the screen while the camera falls through. -->
     <div class="void" aria-hidden="true"></div>
 
     <!-- One snap point per stage. They hold the scroll length, and give each face its address. -->

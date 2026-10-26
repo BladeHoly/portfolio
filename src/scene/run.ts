@@ -1,7 +1,7 @@
 import '@glass-midas/components/surface';
 import '@glass-midas/components/button';
 import { easeInOutCubic, worldTransform, type Pose } from './camera';
-import { PERSPECTIVE, STAGES, darkAt, insideAt, isDoorLeg, legPose, openAt, poseAt, route, type Leg } from './stages';
+import { PERSPECTIVE, STAGES, holeAt, insideAt, isDoorLeg, legPose, poseAt, route, type Leg } from './stages';
 
 // Scroll drives the camera. The page keeps the browser's scroll, with one snap point per stage
 // (`scroll-snap-stop: always`): keys, the scrollbar and assistive tech move it natively, and the
@@ -31,16 +31,16 @@ const faces = [...document.querySelectorAll<HTMLElement>('.face')];
 const faceInside = faces.map((f) => f.classList.contains('inside'));
 
 /**
- * Puts the camera where it belongs, the door's leaves, and its dark over the screen, and paints
+ * Puts the camera where it belongs and the door's black hole over the screen, and paints
  * only the faces the camera can see: `seen` lists them, or is null for every face on its side
  * of the cube (long flights, where the whole cube shows). GPUs don't all sort the planes of a
  * 3D scene the same way, and faces that should have been out of sight got drawn over the ones
  * in view. Outside and inside switch in the dark of the door, where nothing shows.
  */
-function place(pose: Pose, dark: number, open: number, inside: boolean, seen: number[] | null) {
+function place(pose: Pose, dark: number, hole: number, inside: boolean, seen: number[] | null) {
   world.style.transform = worldTransform(pose, PERSPECTIVE);
   root.style.setProperty('--void', String(Math.round(dark * 1000) / 1000));
-  world.style.setProperty('--open', String(Math.round(open * 1000) / 1000));
+  root.style.setProperty('--hole', String(Math.round(hole * 1000) / 1000));
   faces.forEach((face, k) => {
     const on = faceInside[k] === inside && (!seen || seen.includes(k));
     if (face.hidden === on) face.hidden = !on;
@@ -55,7 +55,8 @@ function render(s: number) {
   // the rest away. Inside every wall faces the camera, so all of them.
   const inside = insideAt(i + f);
   const seen = inside ? null : f === 0 ? [i] : f === 1 ? [i + 1] : [i, i + 1];
-  place(poseAt(i, f), darkAt(i + f), openAt(i + f), inside, seen);
+  const { dark, hole } = holeAt(i + f);
+  place(poseAt(i, f), dark, hole, inside, seen);
   setCurrent(Math.round(s));
 }
 
@@ -74,10 +75,10 @@ function tick(now: number) {
       if (at <= leg.ms) break;
       at -= leg.ms;
     }
-    const { pose, dark, open, inside } = legPose(leg, Math.min(1, at / leg.ms));
+    const { pose, dark, hole, inside } = legPose(leg, Math.min(1, at / leg.ms));
     // A door crossing alone shows only the door and the first inner face; longer flights may
     // show the whole cube.
-    place(pose, dark, open, inside, alone ? [leg.from, leg.to] : null);
+    place(pose, dark, hole, inside, alone ? [leg.from, leg.to] : null);
     if (k < 1) return wake();
     const to = flight.to;
     flight = null;

@@ -94,7 +94,7 @@ body {
 .face-body {
   display: grid;
   gap: 1rem;
-  width: min(56rem, 86vw);
+  width: min(44rem, 86vw);
 }
 
 .eyebrow {
@@ -115,7 +115,7 @@ body {
 
 h2 {
   margin: 0;
-  font-size: clamp(2.2rem, 6vw, 4.5rem);
+  font-size: clamp(2rem, 4.5vw, 3.4rem);
   font-weight: 640;
   font-variation-settings: 'wdth' 88;
   line-height: 0.95;
@@ -133,7 +133,7 @@ h2 {
    never go behind the face's surface: that's inside the cube, behind the wall. */
 .depth {
   position: relative;
-  height: 15rem;
+  height: 11rem;
   /* The near layers look bigger than their box; this keeps them off what follows. */
   margin: 1rem 0 3rem;
 }
@@ -147,24 +147,24 @@ h2 {
 .layer.far {
   inset: 0 40% 10% 0;
   background: linear-gradient(135deg, #9fb9d6, #2f55c9);
-  transform: translateZ(10px);
+  transform: translateZ(6px);
 }
 
 .layer.mid {
   inset: 20% 10% 0 30%;
   background: linear-gradient(160deg, #e7eef5, #7aa0c4);
-  transform: translateZ(110px);
+  transform: translateZ(50px);
 }
 
 .layer.near {
   inset: 45% 55% -10% 8%;
   background: var(--ink);
-  transform: translateZ(260px);
+  transform: translateZ(120px);
 }
 
 .probe {
   position: absolute;
-  transform: translateZ(200px);
+  transform: translateZ(90px);
   right: 4%;
   bottom: 8%;
   display: grid;
@@ -177,55 +177,35 @@ h2 {
   margin: 0;
 }
 
-/* The door: the face is only an edge; two leaves carry the wall and swing open towards the
-   camera as --open goes from 0 to 1, onto a dark abyss with a deep cobalt glow at its heart.
-   The abyss is exactly the face, right behind it, and the leaves open away from it, so no
-   plane ever crosses another or leaves the face. */
-.face.door {
-  background: none;
-}
-
-.abyss {
+/* The door: a face with a seam down the middle, like two shut leaves. The way through is the
+   black hole over the screen (.void); the text fades as it opens. */
+.face.door::after {
+  content: '';
   position: absolute;
-  inset: 0;
-  background: radial-gradient(closest-side, #13265a, #02060c 70%);
-  transform: translateZ(-4px);
+  inset: 0 auto 0 50%;
+  width: 1px;
+  background: var(--line);
 }
 
-.leaf {
-  position: absolute;
-  top: 0;
-  width: 50%;
-  height: 100%;
-  background: radial-gradient(70% 60% at 35% 30%, #fafcfd, var(--ice) 55%, var(--ice-deep));
-  box-shadow: inset 0 0 0 1px var(--line);
-}
-
-.leaf.left {
-  left: 0;
-  transform-origin: left center;
-  transform: rotateY(calc(var(--open, 0) * -90deg));
-}
-
-.leaf.right {
-  right: 0;
-  transform-origin: right center;
-  transform: rotateY(calc(var(--open, 0) * 90deg));
-}
-
-/* A hair in front of the leaves, which share its plane and would otherwise cover it. */
+/* Flat, so its opacity can fade it (opacity flattens 3D anyway). */
 .door .face-body {
   transform-style: flat;
-  transform: translateZ(2px);
-  opacity: calc(1 - var(--open, 0) * 2.5);
+  opacity: calc(1 - var(--hole, 0) * 3);
 }
 
-/* The dark inside the door: over the screen, under the rail. */
+/* The door's black hole, over the screen and under the rail: a dark circle with a faint cobalt
+   rim that grows from the middle (--hole, 0 to 1) until it covers everything, then fades
+   (--void) as the camera comes out inside. */
 .void {
   position: fixed;
   inset: 0;
   z-index: 4;
-  background: #02060c;
+  background: radial-gradient(
+    circle at 50% 50%,
+    #02060c calc(var(--hole, 0) * 62vmax),
+    rgb(19 38 90 / 0.85) calc(var(--hole, 0) * 70vmax),
+    rgb(2 6 12 / 0) calc(var(--hole, 0) * 84vmax)
+  );
   opacity: var(--void, 0);
   pointer-events: none;
 }
