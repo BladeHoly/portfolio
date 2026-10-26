@@ -15,7 +15,7 @@ Cómo funciona la versión actual:
 - **La salida**: desde lo oscuro, la cámara frena frente a la primera pared interior, girando en el mismo sentido hasta asentarse.
 - **Hacia atrás**: es el mismo camino al revés; la puerta se cierra detrás.
 - **Su propio tiempo**: cruzar dura 2,4 s con cualquier entrada (rueda, swipe, chips o riel). En el celular, sigue desde donde lo dejó el dedo. Solo la barra de scroll y el teclado siguen al scroll exacto.
-- **Para la GPU**: el abismo está más hondo de lo que llegan las hojas abiertas (media arista más 100 px), así que ningún plano cruza a otro. Es opaco de punta a punta.
+- **Para la GPU**: el abismo mide exactamente lo que la cara y está pegado detrás de ella, y las hojas se abren hacia la cámara, alejándose del abismo. Ningún plano cruza a otro ni sale de la cara. Un primer intento con un abismo gigante dentro del cubo lo atravesaba entero y dejaba una franja negra en todo el recorrido; Renzo: "quedó todo mucho peor".
 
 ## El interior
 
@@ -53,7 +53,8 @@ Rendimiento (servidor de desarrollo, Chromium, transición de 900 ms; medido con
 
 Renzo lo abrió en Brave, con GPU y en una pantalla de 1920×950, y estaba roto. Por la puerta cerrada se veían las paredes interiores y el techo, la puerta aparecía a parches y su texto quedaba detrás. Además, a los lados y abajo había franjas blancas. El navegador emulado de las pruebas dibuja por software y ordenaba bien los planos, así que no mostraba nada de esto.
 
-- **Solo se pinta el lado del cubo donde está la cámara.** Desde afuera, las caras interiores tienen `visibility: hidden`, y desde adentro, las exteriores. El cambio se hace en lo más oscuro del agujero (55 % del paso), donde no se ve. Así ya nada puede transparentarse, dibuje la GPU los planos en el orden que sea, y hay la mitad de planos para pintar.
+- **Solo se pintan las caras que la cámara puede ver.** Afuera, en reposo, la cara de enfrente, y entre dos caras, esas dos (al orbitar, las demás quedan de espaldas). En los vuelos largos, todas las de afuera. Adentro, todas las interiores, porque en una sala todas las paredes miran a la cámara.
+- **Además, solo el lado del cubo donde está la cámara.** Desde afuera, las caras interiores tienen `visibility: hidden`, y desde adentro, las exteriores. El cambio se hace en lo más oscuro del agujero (55 % del paso), donde no se ve. Así ya nada puede transparentarse, dibuje la GPU los planos en el orden que sea, y hay la mitad de planos para pintar.
 - **El cubo mide ahora 2400 px de lado**, en lugar de 1600, así que en reposo una cara cubre hasta una pantalla de 2560 px.
 
 Esto no se puede reproducir sin una GPU real; queda pendiente que Renzo lo confirme.

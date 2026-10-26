@@ -27,24 +27,35 @@ const target = () => clamp(scrollY / step() + drag);
 /** A direct flight to a far stage, in legs, which the scroll catches up with when it lands. */
 let flight: { to: number; legs: Leg[]; start: number; ms: number } | null = null;
 
+const faces = [...document.querySelectorAll<HTMLElement>('.face')];
+const faceInside = faces.map((f) => f.classList.contains('inside'));
+
 /**
- * Puts the camera where it belongs, the door's leaves, and its dark over the screen. Only the side
- * of the cube the camera is on gets painted: GPUs don't all sort the planes of a 3D scene the
- * same way, and some drew the inner walls over the closed door. The switch happens in the dark
- * of the door, where nothing shows.
+ * Puts the camera where it belongs, the door's leaves, and its dark over the screen, and paints
+ * only the faces the camera can see: `seen` lists them, or is null for every face on its side
+ * of the cube (long flights, where the whole cube shows). GPUs don't all sort the planes of a
+ * 3D scene the same way, and faces that should have been out of sight got drawn over the ones
+ * in view. Outside and inside switch in the dark of the door, where nothing shows.
  */
-function place(pose: Pose, dark: number, open: number, inside: boolean) {
+function place(pose: Pose, dark: number, open: number, inside: boolean, seen: number[] | null) {
   world.style.transform = worldTransform(pose, PERSPECTIVE);
   root.style.setProperty('--void', String(Math.round(dark * 1000) / 1000));
   world.style.setProperty('--open', String(Math.round(open * 1000) / 1000));
-  root.dataset.side = inside ? 'inside' : 'outside';
+  faces.forEach((face, k) => {
+    const on = faceInside[k] === inside && (!seen || seen.includes(k));
+    if (face.hidden === on) face.hidden = !on;
+  });
 }
 
 function render(s: number) {
   const i = Math.min(Math.floor(s), STAGES.length - 2);
   // Reduced motion: no travel at all; the camera cuts to the nearest stage.
   const f = reduce.matches ? Math.round(s - i) : s - i;
-  place(poseAt(i, f), darkAt(i + f), openAt(i + f), insideAt(i + f));
+  // Outside, at rest only the face in front, and between two faces those two: an orbit turns
+  // the rest away. Inside every wall faces the camera, so all of them.
+  const inside = insideAt(i + f);
+  const seen = inside ? null : f === 0 ? [i] : f === 1 ? [i + 1] : [i, i + 1];
+  place(poseAt(i, f), darkAt(i + f), openAt(i + f), inside, seen);
   setCurrent(Math.round(s));
 }
 
@@ -64,7 +75,9 @@ function tick(now: number) {
       at -= leg.ms;
     }
     const { pose, dark, open, inside } = legPose(leg, Math.min(1, at / leg.ms));
-    place(pose, dark, open, inside);
+    // A door crossing alone shows only the door and the first inner face; longer flights may
+    // show the whole cube.
+    place(pose, dark, open, inside, alone ? [leg.from, leg.to] : null);
     if (k < 1) return wake();
     const to = flight.to;
     flight = null;

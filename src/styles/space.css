@@ -177,21 +177,19 @@ h2 {
   margin: 0;
 }
 
-/* The door: the face is only an edge; two leaves carry the wall and swing into the cube as
-   --open goes from 0 to 1, onto a dark abyss with a faint glow at its heart. The text is on
-   the leaves' plane and fades as they part. */
+/* The door: the face is only an edge; two leaves carry the wall and swing open towards the
+   camera as --open goes from 0 to 1, onto a dark abyss with a deep cobalt glow at its heart.
+   The abyss is exactly the face, right behind it, and the leaves open away from it, so no
+   plane ever crosses another or leaves the face. */
 .face.door {
   background: none;
 }
 
-/* Deeper than the open leaves reach (half the side), so no plane ever crosses another, and
-   wider, so it still fills the whole opening from that far. */
 .abyss {
   position: absolute;
-  inset: -60%;
-  /* Opaque all the way: a see-through glow let the light page show at its heart. */
-  background: radial-gradient(closest-side, #13265a, #02060c 45%);
-  transform: translateZ(calc(var(--side) / -2 - 100px));
+  inset: 0;
+  background: radial-gradient(closest-side, #13265a, #02060c 70%);
+  transform: translateZ(-4px);
 }
 
 .leaf {
@@ -206,13 +204,13 @@ h2 {
 .leaf.left {
   left: 0;
   transform-origin: left center;
-  transform: rotateY(calc(var(--open, 0) * 90deg));
+  transform: rotateY(calc(var(--open, 0) * -90deg));
 }
 
 .leaf.right {
   right: 0;
   transform-origin: right center;
-  transform: rotateY(calc(var(--open, 0) * -90deg));
+  transform: rotateY(calc(var(--open, 0) * 90deg));
 }
 
 /* A hair in front of the leaves, which share its plane and would otherwise cover it. */
@@ -232,9 +230,9 @@ h2 {
   pointer-events: none;
 }
 
-/* Only the side of the cube the camera is on is painted (see place() in run.ts). */
-:root[data-side='outside'] .face.inside,
-:root[data-side='inside'] .face:not(.inside) {
+/* Only the faces the camera can see are painted (see place() in run.ts). The face keeps its
+   box, so the glass inside it stays measured and nothing reflows when it comes back. */
+.face[hidden] {
   visibility: hidden;
 }
 
