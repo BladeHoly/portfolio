@@ -16,7 +16,7 @@ En el celular, el snap nativo pedía mucha "fuerza": arrastrar media pantalla o 
 
 ## Mediciones
 
-Servidor de desarrollo (sin minificar), Chromium. Cada medición es una transición de 900 ms.
+Servidor de desarrollo (sin minificar), Chromium. Cada medición es una transición de 900 ms, con el primer orden de caras; la más larga era la media vuelta hasta la puerta, que con el orden nuevo ya no existe.
 
 | Transición | Escritorio, p95 / peor | Móvil 4×, p95 / peor |
 | --- | --- | --- |
