@@ -28,8 +28,9 @@ export interface Face {
 export const FACES: Face[] = [
   { label: 'Cara exterior 1', yaw: 0, pitch: 0 },
   { label: 'Cara exterior 2', yaw: 90, pitch: 0 },
-  // Seen at an angle, to try framing that uses the perspective instead of facing it.
-  { label: 'Cara exterior 3', yaw: 180, pitch: 0, frame: { yaw: -24, dist: 1.12 } },
+  // Framing at an angle (`frame`) read as a mistake on placeholder text; it waits for content
+  // that's better seen in perspective.
+  { label: 'Cara exterior 3', yaw: 180, pitch: 0 },
   { label: 'Cara exterior 4', yaw: 270, pitch: 0 },
   // Underneath, upright as seen coming down from face 4.
   { label: 'Cara exterior 5', yaw: 270, pitch: -90 },

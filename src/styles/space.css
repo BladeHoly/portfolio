@@ -175,25 +175,6 @@ h2 {
   margin: 0;
 }
 
-/* Placeholder cards stepping back into the face. */
-.stack {
-  position: relative;
-  display: grid;
-  gap: 0.6rem;
-  margin: 1rem 0 0;
-  padding: 0;
-  list-style: none;
-  transform-style: preserve-3d;
-}
-
-.stack li {
-  padding: 1rem 1.25rem;
-  border-radius: 18px;
-  background: rgb(255 255 255 / 0.7);
-  box-shadow: inset 0 0 0 1px var(--line);
-  transform: translateZ(var(--z));
-}
-
 /* The door: a seam across the face, shut for now. */
 .seam {
   height: 1px;
