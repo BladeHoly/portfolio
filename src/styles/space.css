@@ -1,0 +1,217 @@
+/* Phase 1 prototype. Ice: cold paper, deep ink, one cobalt accent. */
+:root {
+  --ice: #eef3f7;
+  --ice-deep: #dde6ee;
+  --ink: #0e2233;
+  --ink-muted: rgb(14 34 51 / 0.66);
+  --line: rgb(14 34 51 / 0.16);
+  --cobalt: #2f55c9;
+  /* glass-midas for a light page: the token values of its own light theme (the docs'). */
+  --gm-ink: var(--ink);
+  --gm-ink-muted: var(--ink-muted);
+  --gm-ink-inverse: #fff;
+  --gm-tint-light: rgb(255 255 255 / 0.42);
+  --gm-tint-solid: rgb(250 248 244 / 0.96);
+  --gm-frost-tint: rgb(255 255 255 / 0.45);
+  --gm-highlight-glow: rgb(255 255 255 / 0.55);
+  --gm-rim: inset 0 0 0 0.5px rgb(14 34 51 / 0.16), inset 0 1px 0 rgb(255 255 255 / 0.8);
+  --gm-lift: 0 10px 30px rgb(14 34 51 / 0.12);
+  --gm-chip-fill: rgb(14 34 51 / 0.05);
+  --gm-chip-fill-hover: rgb(14 34 51 / 0.09);
+  --gm-chip-fill-on: rgb(255 255 255 / 0.75);
+  --gm-focus: 0 0 0 2px var(--cobalt);
+  color-scheme: light;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* One snap point per stage, and never past one per gesture. */
+html {
+  scroll-snap-type: y mandatory;
+}
+
+body {
+  margin: 0;
+  background: radial-gradient(120% 90% at 30% 20%, #fafcfd 0%, var(--ice) 45%, var(--ice-deep) 100%)
+    fixed;
+  color: var(--ink);
+  font-family: 'Archivo', system-ui, sans-serif;
+  font-variation-settings: 'wdth' 100;
+}
+
+.stop {
+  height: 100svh;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+/* The camera's frame: fixed over the scroll, with the perspective of one resting distance. */
+.viewport {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  perspective: var(--perspective);
+}
+
+.world {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.face,
+.face-body,
+.depth {
+  transform-style: preserve-3d;
+}
+
+.face,
+.face * {
+  backface-visibility: hidden;
+}
+
+/* A face is a square wall of the cube; its hairline edge is how the cube reveals itself in passing. */
+.face {
+  position: absolute;
+  top: calc(var(--side) / -2);
+  left: calc(var(--side) / -2);
+  display: grid;
+  place-items: center;
+  width: var(--side);
+  height: var(--side);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+
+.face-body {
+  display: grid;
+  gap: 1rem;
+  width: min(56rem, 86vw);
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--ink-muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.placeholder {
+  padding: 0.1em 0.45em;
+  border-radius: 999px;
+  background: rgb(47 85 201 / 0.12);
+  color: var(--cobalt);
+}
+
+h2 {
+  margin: 0;
+  font-size: clamp(2.2rem, 6vw, 4.5rem);
+  font-weight: 640;
+  font-variation-settings: 'wdth' 88;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+}
+
+.note {
+  max-width: 44ch;
+  margin: 0;
+  color: var(--ink-muted);
+  line-height: 1.5;
+}
+
+/* Planes at different depths, so the camera's travel shows as parallax inside a face. */
+.depth {
+  position: relative;
+  height: 15rem;
+  margin-top: 1rem;
+}
+
+.layer {
+  position: absolute;
+  border-radius: 28px;
+}
+
+.layer.far {
+  inset: 0 40% 10% 0;
+  background: linear-gradient(135deg, #9fb9d6, #2f55c9);
+  transform: translateZ(-220px);
+}
+
+.layer.mid {
+  inset: 20% 10% 0 30%;
+  background: linear-gradient(160deg, #e7eef5, #7aa0c4);
+  transform: translateZ(-90px);
+}
+
+.layer.near {
+  inset: 45% 55% -10% 8%;
+  background: var(--ink);
+  transform: translateZ(60px);
+}
+
+.probe {
+  position: absolute;
+  right: 4%;
+  bottom: 8%;
+  display: grid;
+  gap: 0.75rem;
+  max-width: 22rem;
+  padding: 1.25rem 1.4rem;
+}
+
+.probe p {
+  margin: 0;
+}
+
+/* The lab panel: prototype controls, not part of the design. */
+.lab {
+  position: fixed;
+  bottom: 12px;
+  left: 12px;
+  z-index: 10;
+  display: grid;
+  gap: 6px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgb(14 34 51 / 0.88);
+  color: #fff;
+  font: 500 12px/1.2 system-ui, sans-serif;
+}
+
+.lab [role='group'] {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.lab span {
+  width: 3.2rem;
+  opacity: 0.7;
+}
+
+.lab button {
+  padding: 4px 9px;
+  border: 0;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.1);
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.lab button[aria-pressed='true'] {
+  background: #fff;
+  color: var(--ink);
+}
+
+.lab output {
+  opacity: 0.75;
+  font-variant-numeric: tabular-nums;
+}

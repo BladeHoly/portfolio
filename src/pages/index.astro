@@ -1,181 +1,94 @@
 ---
-import Backdrop from '../components/Backdrop';
-import GlassBox from '../components/GlassBox';
-import GlassScrollbar from '../components/GlassScrollbar';
-import Motion from '../components/Motion';
-import Navbar, { slug } from '../components/Navbar';
-import { contact, jobs, projects, stack } from '../data/content';
-import '../styles/global.css';
+import '@glass-midas/components/styles.css';
+import '../styles/space.css';
+import { FACES, PERSPECTIVE, SIDE, faceTransform } from '../scene/stages';
 
-// BASE_URL has no trailing slash when a base path is set.
-const base = import.meta.env.BASE_URL.endsWith('/')
-  ? import.meta.env.BASE_URL
-  : `${import.meta.env.BASE_URL}/`;
-
-// Large panels barely move against what's behind them and cover most of the page, so they use
-// the browser's own blur with a CSS rim (see .panel in the stylesheet). Full refraction is kept
-// for the small, interactive glass: the navbar, search, scroll thumb and buttons.
-const lite = { tier: 'blur', blur: '14px' } as const;
-
-const STATUS = {
-  público: 'Código abierto',
-  'pronto público': 'Código abierto pronto',
-  privado: 'Código privado',
-} as const;
+// Phase 1 prototype: the camera, the staged scroll and one kind of transition, on placeholder
+// content. Nothing here is final copy; every text is marked as a placeholder on purpose.
 ---
 
 <!doctype html>
-<html lang="es">
+<html lang="es" style={`--side: ${SIDE}px; --perspective: ${PERSPECTIVE}px`}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Renzo, desarrollador</title>
-    <meta
-      name="description"
-      content="Renzo, desarrollador en Paysandú, Uruguay. Proyectos en TypeScript y Rust, y glass-midas, vidrio líquido para la web."
-    />
-    <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
+    <title>Renzo · prototipo espacial</title>
+    <meta name="robots" content="noindex" />
+    <link rel="icon" href={`${import.meta.env.BASE_URL.replace(/\/?$/, '/')}favicon.svg`} type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=JetBrains+Mono:wght@400&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap"
     />
   </head>
   <body>
-    <a class="skip" href="#trabajo">Saltar al contenido</a>
-    <Backdrop client:only="react" />
-    <Navbar client:load projects={projects} />
-    <GlassScrollbar client:only="react" />
-    <Motion client:only="react" />
-
-    <header id="top" class="hero">
-      <h1>Renzo</h1>
-      <p class="intro">
-        Desarrollador en Paysandú, Uruguay. Trabajo en Mozart Fintech, y en mi tiempo libre construyo
-        herramientas: desde desarmar los archivos de un videojuego hasta vidrio que refracta en el
-        navegador.
-      </p>
-      <div class="actions">
-        <GlassBox client:load as="a" href="#proyectos" className="button" glass={{ radius: 999 }}>
-          Ver proyectos
-        </GlassBox>
-        <GlassBox
-          client:load
-          as="a"
-          href={`mailto:${contact.email}`}
-          className="button"
-          glass={{ radius: 999 }}
-        >
-          Escribime
-        </GlassBox>
+    <div class="viewport">
+      <div class="world">
+        {
+          FACES.map((face, i) => (
+            <section class="face" style={`transform: ${faceTransform(face)}`} aria-label={face.label}>
+              <div class="face-body">
+                <p class="eyebrow">
+                  {face.label} · <span class="placeholder">placeholder</span>
+                </p>
+                <h2>Contenido pendiente</h2>
+                <p class="note">
+                  Esta cara existe para probar la cámara. Qué va aquí se decide con Renzo en la fase de
+                  contenido.
+                </p>
+                {i === 0 && (
+                  <div class="depth">
+                    <span class="layer far" aria-hidden="true" />
+                    <span class="layer mid" aria-hidden="true" />
+                    <gm-surface class="probe" material="frost" radius="22">
+                      <p>Vidrio de prueba sobre capas en profundidad.</p>
+                      <gm-button>
+                        <button type="button">Botón de prueba</button>
+                      </gm-button>
+                    </gm-surface>
+                  </div>
+                )}
+                {i > 0 && (
+                  <div class="depth">
+                    <span class="layer far" aria-hidden="true" />
+                    <span class="layer mid" aria-hidden="true" />
+                    <span class="layer near" aria-hidden="true" />
+                  </div>
+                )}
+              </div>
+            </section>
+          ))
+        }
       </div>
-    </header>
+    </div>
 
-    <main>
-      <section id="trabajo" aria-labelledby="trabajo-titulo">
-        <h2 id="trabajo-titulo">Trabajo</h2>
-        <ol class="jobs">
-          {
-            jobs.map((job) => (
-              <li>
-                <GlassBox client:visible as="article" className="panel job" glass={lite}>
-                  <p class="job-dates">
-                    Desde {job.start}
-                    {job.end && ` hasta ${job.end}`}
-                  </p>
-                  <h3>
-                    {job.role ? `${job.role} en ` : ''}
-                    {job.company}
-                  </h3>
-                  {job.summary && <p>{job.summary}</p>}
-                </GlassBox>
-              </li>
-            ))
-          }
-        </ol>
-      </section>
+    <!-- One snap point per stage. They hold the scroll length; the camera reads it. -->
+    <div class="stops" aria-hidden="true">
+      {FACES.map(() => <div class="stop" />)}
+    </div>
 
-      <section id="proyectos" aria-labelledby="proyectos-titulo">
-        <h2 id="proyectos-titulo">Proyectos</h2>
-        <ul class="projects">
-          {
-            projects.map((p, i) => (
-              <li class={i === 0 ? 'featured' : undefined}>
-                <GlassBox
-                  client:visible
-                  as="article"
-                  id={`proyecto-${slug(p.name)}`}
-                  className="panel project"
-                  glass={lite}
-                >
-                  <h3>
-                    {p.url ? (
-                      <a href={p.url} target="_blank" rel="noopener noreferrer">
-                        {p.name}
-                      </a>
-                    ) : (
-                      p.name
-                    )}
-                  </h3>
-                  <p>{p.what}</p>
-                  <p class="project-meta">
-                    <span>{p.stack.join(', ')}</span>
-                    <span class={p.status === 'público' ? 'status-open' : undefined}>
-                      {STATUS[p.status]}
-                    </span>
-                  </p>
-                </GlassBox>
-              </li>
-            ))
-          }
-        </ul>
-      </section>
+    <aside class="lab" aria-label="Controles del prototipo">
+      <div role="group" aria-label="Curva">
+        <span>Curva</span>
+        <button type="button" data-key="curve" value="nativa">Nativa</button>
+        <button type="button" data-key="curve" value="suave">Suave</button>
+      </div>
+      <div role="group" aria-label="Trayectoria">
+        <span>Ruta</span>
+        <button type="button" data-key="path" value="orbita">Órbita</button>
+        <button type="button" data-key="path" value="deslizar">Deslizar</button>
+      </div>
+      <div role="group" aria-label="Rueda">
+        <span>Rueda</span>
+        <button type="button" data-key="wheel" value="etapas">Etapas</button>
+        <button type="button" data-key="wheel" value="nativa">Nativa</button>
+      </div>
+      <output aria-live="off">Mové la cámara para medir</output>
+    </aside>
 
-      <section id="stack" aria-labelledby="stack-titulo">
-        <h2 id="stack-titulo">Stack</h2>
-        <GlassBox client:visible className="panel" glass={lite}>
-          <dl class="stack">
-            {
-              stack.map((group) => (
-                <div>
-                  <dt>{group.area}</dt>
-                  <dd>{group.items.join(', ')}</dd>
-                </div>
-              ))
-            }
-          </dl>
-        </GlassBox>
-      </section>
-
-      <section id="contacto" aria-labelledby="contacto-titulo">
-        <h2 id="contacto-titulo">Contacto</h2>
-        <p class="contact-lead">¿Un proyecto, una pregunta o una oferta? Escribime y te respondo.</p>
-        <ul class="contact">
-          <li>
-            <GlassBox client:visible as="a" href={`mailto:${contact.email}`} className="button" glass={{ radius: 999 }}>
-              {contact.email}
-            </GlassBox>
-          </li>
-          <li>
-            <GlassBox client:visible as="a" href={contact.github} className="button" glass={{ radius: 999 }}>
-              GitHub
-            </GlassBox>
-          </li>
-          <li>
-            <GlassBox client:visible as="a" href={contact.linkedin} className="button" glass={{ radius: 999 }}>
-              LinkedIn
-            </GlassBox>
-          </li>
-        </ul>
-      </section>
-    </main>
-
-    <footer class="footer">
-      <p>
-        Hecho con <a href="https://github.com/BladeHoly/glass-midas">glass-midas</a>. Cada vidrio de
-        esta página refracta de verdad lo que tiene detrás.
-      </p>
-    </footer>
+    <script>
+      import '../scene/run';
+    </script>
   </body>
 </html>
