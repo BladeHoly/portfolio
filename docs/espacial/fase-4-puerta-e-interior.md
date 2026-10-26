@@ -2,13 +2,20 @@
 
 ## La puerta
 
-Primero fue una trampilla de dos hojas. Renzo la vio demasiado rápida al abrirse y al cerrarse, y pidió algo más parecido a entrar en un agujero negro. Ahora es eso:
+Hubo tres versiones, todas ajustadas con Renzo:
 
-- **Un agujero negro** en el centro de la cara de abajo: un núcleo oscuro y un halo cobalto muy tenue que se pierde en la pared. Es un solo degradado, sin borde. El texto queda arriba del agujero.
-- **La caída** (55 % del paso): el agujero tira de la cámara cada vez más rápido y la hace girar sobre su eje. El agujero crece hasta llenar la pantalla y todo se oscurece.
+1. Una trampilla de dos hojas. Era demasiado rápida al abrirse y al cerrarse.
+2. Un agujero negro en lugar de la puerta. El efecto le gustó, pero tenía que seguir siendo una puerta.
+3. **Ahora: la puerta, y del otro lado, la caída del agujero negro.** "Pre agujero estaba bien, pero la animación post agujero es lo bueno".
+
+Cómo funciona la versión actual:
+
+- **La puerta**: la cara de abajo tiene dos hojas que se abren despacio hacia dentro del cubo. Detrás no hay sala, sino un abismo oscuro con un brillo cobalto profundo en el centro. El texto se desvanece al separarse las hojas.
+- **La caída**: con las hojas bien abiertas, el abismo tira de la cámara cada vez más rápido y la hace girar sobre su eje, hasta que todo se oscurece.
 - **La salida**: desde lo oscuro, la cámara frena frente a la primera pared interior, girando en el mismo sentido hasta asentarse.
-- **Hacia atrás**: es el mismo camino al revés.
-- **Su propio tiempo**: cruzar la puerta dura 2 s con cualquier entrada (rueda, swipe, chips o riel), así que la velocidad del scroll ya no lo apura. En el celular, la caída sigue desde donde la dejó el dedo. Solo la barra de scroll y el teclado siguen al scroll exacto.
+- **Hacia atrás**: es el mismo camino al revés; la puerta se cierra detrás.
+- **Su propio tiempo**: cruzar dura 2,4 s con cualquier entrada (rueda, swipe, chips o riel). En el celular, sigue desde donde lo dejó el dedo. Solo la barra de scroll y el teclado siguen al scroll exacto.
+- **Para la GPU**: el abismo está más hondo de lo que llegan las hojas abiertas (media arista más 100 px), así que ningún plano cruza a otro. Es opaco de punta a punta.
 
 ## El interior
 
@@ -28,8 +35,8 @@ Es el mismo cubo visto desde dentro: las cuatro paredes y el techo, las cinco ca
 
 | Prueba | Resultado |
 | --- | --- |
-| Un paso de rueda en la puerta | cae por el agujero y llega a la cara interior 1 en 2,0 s ✅ |
-| Un paso de rueda hacia atrás | sale por el mismo camino en 2,0 s ✅ |
+| Un paso de rueda en la puerta | abre la puerta, cae y llega a la cara interior 1 en 2,4 s ✅ |
+| Un paso de rueda hacia atrás | sale por el mismo camino en 2,4 s y la puerta queda cerrada ✅ |
 | Abrir `#interior-5` | empieza en el techo ✅ |
 | "Volver afuera" desde el techo | pasa por la puerta y termina en la cara 1 ✅ |
 | Del riel a la cara interior 3 desde afuera | entra por la puerta ✅ |

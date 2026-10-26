@@ -3,7 +3,7 @@ import { lerp, smootherstep, type Pose } from './camera';
 // The journey: the cube's six outer faces, top first and the door underneath last, then its
 // five inner faces, the four walls and the ceiling. Each face is a stage the camera rests at.
 // Between neighbours the camera orbits around the cube's center, outside or in; between the
-// door and the first inner wall it falls through the door, a black hole.
+// door and the first inner wall the door opens onto a dark abyss and the camera falls into it.
 
 /** The cube's side, in CSS pixels. Wider than big screens (2560 px), so a face at rest always fills the frame. */
 export const SIDE = 2400;
@@ -27,7 +27,7 @@ export interface Face {
   pitch: number;
   /** An inner face: on a wall's inside, facing the center. */
   inside?: boolean;
-  /** The bottom face: a black hole into the inside. */
+  /** The bottom face opens onto a dark abyss that leads inside. */
   door?: boolean;
   /** Adaptive framing: how the camera looks at this face, relative to straight on. */
   frame?: { yaw?: number; pitch?: number; dist?: number };
@@ -119,23 +119,27 @@ export function poseBetween(i: number, j: number, t: number): Pose {
 }
 
 /**
- * Through the door, a black hole in the bottom face, at `t` from 0 (under it) to 1 (facing the
- * first inner wall). The camera is pulled into the hole faster and faster, spinning, until it
- * fills the screen and all goes dark; out of the dark it slows down in front of the wall, still
- * turning the same way until it settles. Backwards, the same path takes it out. `dark` is how
- * much of the screen the dark covers, 0 to 1.
+ * Through the door, at `t` from 0 (under it) to 1 (facing the first inner wall). Its two leaves
+ * swing open onto a dark abyss; the camera, still at first, is then pulled into the dark faster
+ * and faster, spinning, until it fills the screen. Out of the dark it slows down in front of the
+ * wall, still turning the same way until it settles. Backwards, the same path takes it out and
+ * the leaves close behind it. `open` is how far the leaves have swung, `dark` how much of the
+ * screen the dark covers, both 0 to 1.
  */
-function doorPose(t: number): { pose: Pose; dark: number } {
+function doorPose(t: number): { pose: Pose; dark: number; open: number } {
   const a = STAGES[DOOR];
   const b = STAGES[DOOR + 1];
-  if (t <= 0) return { pose: a, dark: 0 };
-  if (t >= 1) return { pose: b, dark: 0 };
+  if (t <= 0) return { pose: a, dark: 0, open: 0 };
+  if (t >= 1) return { pose: b, dark: 0, open: 1 };
   const spin = 40;
   if (t < FALL) {
     const u = t / FALL;
+    // The pull starts once the leaves are well apart.
+    const pull = clamp01((u - 0.3) / 0.7);
     return {
-      pose: { ...a, dist: a.dist * (1 - 0.94 * u ** 2.6), roll: spin * u ** 2 },
-      dark: smootherstep(clamp01((u - 0.55) / 0.45)),
+      pose: { ...a, dist: a.dist * (1 - 0.94 * pull ** 2.6), roll: spin * pull ** 2 },
+      dark: smootherstep(clamp01((u - 0.7) / 0.3)),
+      open: smootherstep(clamp01(u / 0.55)),
     };
   }
   const u = (t - FALL) / (1 - FALL);
@@ -143,6 +147,7 @@ function doorPose(t: number): { pose: Pose; dark: number } {
   return {
     pose: { ...b, dist: lerp(PERSPECTIVE * 0.2, b.dist, out), roll: -spin * (1 - out) },
     dark: 1 - smootherstep(clamp01(u / 0.55)),
+    open: 1,
   };
 }
 
@@ -155,8 +160,11 @@ export const insideAt = (s: number) => s > DOOR + FALL;
 /** How dark the screen is with the camera at `s` stages: only ever inside the door. */
 export const darkAt = (s: number) => (s > DOOR && s < DOOR + 1 ? doorPose(s - DOOR).dark : 0);
 
+/** How far the door's leaves have swung with the camera at `s` stages. */
+export const openAt = (s: number) => (s <= DOOR ? 0 : s >= DOOR + 1 ? 1 : doorPose(s - DOOR).open);
+
 /** Crossing the door takes its own time, whatever the input, so it never rushes. */
-export const DOOR_MS = 2000;
+export const DOOR_MS = 2400;
 
 /** The camera between stage `i` and the next. */
 export const poseAt = (i: number, t: number) => (i === DOOR ? doorPose(t).pose : poseBetween(i, i + 1, t));
@@ -192,11 +200,12 @@ export function route(from: number, to: number): Leg[] {
   return legs;
 }
 
-/** Where a leg puts the camera at `t`, how dark the screen is, and whether it's inside. */
-export function legPose(leg: Leg, t: number): { pose: Pose; dark: number; inside: boolean } {
+/** Where a leg puts the camera at `t`, how dark the screen is, how open the door, and which side it's on. */
+export function legPose(leg: Leg, t: number): { pose: Pose; dark: number; open: number; inside: boolean } {
   if (isDoorLeg(leg.from, leg.to)) {
     const k = leg.to > leg.from ? t : 1 - t;
     return { ...doorPose(k), inside: k > FALL };
   }
-  return { pose: poseBetween(leg.from, leg.to, t), dark: 0, inside: leg.from > DOOR };
+  const inside = leg.from > DOOR;
+  return { pose: poseBetween(leg.from, leg.to, t), dark: 0, open: inside ? 1 : 0, inside };
 }

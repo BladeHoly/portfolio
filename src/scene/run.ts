@@ -1,7 +1,7 @@
 import '@glass-midas/components/surface';
 import '@glass-midas/components/button';
 import { easeInOutCubic, worldTransform, type Pose } from './camera';
-import { PERSPECTIVE, STAGES, darkAt, insideAt, isDoorLeg, legPose, poseAt, route, type Leg } from './stages';
+import { PERSPECTIVE, STAGES, darkAt, insideAt, isDoorLeg, legPose, openAt, poseAt, route, type Leg } from './stages';
 
 // Scroll drives the camera. The page keeps the browser's scroll, with one snap point per stage
 // (`scroll-snap-stop: always`): keys, the scrollbar and assistive tech move it natively, and the
@@ -28,14 +28,15 @@ const target = () => clamp(scrollY / step() + drag);
 let flight: { to: number; legs: Leg[]; start: number; ms: number } | null = null;
 
 /**
- * Puts the camera where it belongs, and the dark of the door over the screen. Only the side
+ * Puts the camera where it belongs, the door's leaves, and its dark over the screen. Only the side
  * of the cube the camera is on gets painted: GPUs don't all sort the planes of a 3D scene the
  * same way, and some drew the inner walls over the closed door. The switch happens in the dark
  * of the door, where nothing shows.
  */
-function place(pose: Pose, dark: number, inside: boolean) {
+function place(pose: Pose, dark: number, open: number, inside: boolean) {
   world.style.transform = worldTransform(pose, PERSPECTIVE);
   root.style.setProperty('--void', String(Math.round(dark * 1000) / 1000));
+  world.style.setProperty('--open', String(Math.round(open * 1000) / 1000));
   root.dataset.side = inside ? 'inside' : 'outside';
 }
 
@@ -43,7 +44,7 @@ function render(s: number) {
   const i = Math.min(Math.floor(s), STAGES.length - 2);
   // Reduced motion: no travel at all; the camera cuts to the nearest stage.
   const f = reduce.matches ? Math.round(s - i) : s - i;
-  place(poseAt(i, f), darkAt(i + f), insideAt(i + f));
+  place(poseAt(i, f), darkAt(i + f), openAt(i + f), insideAt(i + f));
   setCurrent(Math.round(s));
 }
 
@@ -62,8 +63,8 @@ function tick(now: number) {
       if (at <= leg.ms) break;
       at -= leg.ms;
     }
-    const { pose, dark, inside } = legPose(leg, Math.min(1, at / leg.ms));
-    place(pose, dark, inside);
+    const { pose, dark, open, inside } = legPose(leg, Math.min(1, at / leg.ms));
+    place(pose, dark, open, inside);
     if (k < 1) return wake();
     const to = flight.to;
     flight = null;
