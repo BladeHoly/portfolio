@@ -1,0 +1,29 @@
+---
+import { projects, statusLabel } from '../data/content';
+import { FACES } from '../scene/stages';
+
+// Each project has its own face inside the cube, in the same order; this face lists them and
+// sends you through the door to the one you pick.
+const inside = FACES.filter((f) => f.inside);
+const firstSentence = (text: string) => text.split(/(?<=\.)\s/)[0];
+---
+
+<h2>Proyectos</h2>
+<ul class="project-list">
+  {
+    projects.map((p, i) => (
+      <li>
+        <div>
+          <h3>{p.name}</h3>
+          <p>{firstSentence(p.what)}</p>
+        </div>
+        <span class="gm-badge" data-tone={statusLabel[p.status].tone}>
+          {statusLabel[p.status].text}
+        </span>
+        <a class="gm-chip" href={`#${inside[i].id}`} aria-label={`Ver más de ${p.name}`}>
+          Ver más
+        </a>
+      </li>
+    ))
+  }
+</ul>

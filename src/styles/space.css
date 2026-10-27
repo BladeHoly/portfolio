@@ -67,8 +67,7 @@ body {
 }
 
 .face,
-.face-body,
-.depth {
+.face-body {
   transform-style: preserve-3d;
 }
 
@@ -106,13 +105,6 @@ body {
   text-transform: uppercase;
 }
 
-.placeholder {
-  padding: 0.1em 0.45em;
-  border-radius: 999px;
-  background: rgb(47 85 201 / 0.12);
-  color: var(--cobalt);
-}
-
 h2 {
   margin: 0;
   font-size: clamp(2rem, 4.5vw, 3.4rem);
@@ -127,54 +119,6 @@ h2 {
   margin: 0;
   color: var(--ink-muted);
   line-height: 1.5;
-}
-
-/* Planes standing out from the face towards the camera, so its travel shows as parallax. They
-   never go behind the face's surface: that's inside the cube, behind the wall. */
-.depth {
-  position: relative;
-  height: 11rem;
-  /* The near layers look bigger than their box; this keeps them off what follows. */
-  margin: 1rem 0 3rem;
-}
-
-.layer {
-  position: absolute;
-  border-radius: 28px;
-  pointer-events: none;
-}
-
-.layer.far {
-  inset: 0 40% 10% 0;
-  background: linear-gradient(135deg, #9fb9d6, #2f55c9);
-  transform: translateZ(6px);
-}
-
-.layer.mid {
-  inset: 20% 10% 0 30%;
-  background: linear-gradient(160deg, #e7eef5, #7aa0c4);
-  transform: translateZ(50px);
-}
-
-.layer.near {
-  inset: 45% 55% -10% 8%;
-  background: var(--ink);
-  transform: translateZ(120px);
-}
-
-.probe {
-  position: absolute;
-  transform: translateZ(90px);
-  right: 4%;
-  bottom: 8%;
-  display: grid;
-  gap: 0.75rem;
-  max-width: 22rem;
-  padding: 1.25rem 1.4rem;
-}
-
-.probe p {
-  margin: 0;
 }
 
 /* The door: two leaves, each with a raised panel and a handle by the gap, carrying the wall. They
@@ -331,11 +275,6 @@ h2 {
   color: var(--ink);
 }
 
-.face.inside .placeholder {
-  background: rgb(143 176 255 / 0.18);
-  color: #a9c2ff;
-}
-
 /* Contextual navigation at the foot of a face. Chips from glass-midas. */
 .face-nav {
   display: flex;
@@ -428,4 +367,160 @@ h2 {
   color: #fff;
   font: 500 12px/1.2 system-ui, sans-serif;
   font-variant-numeric: tabular-nums;
+}
+
+/* The content. Type and spacing from the page's scale; colours and fills from glass-midas tokens,
+   so the same rules read on the light outside and the dark inside. */
+.name {
+  margin: 0;
+  font-size: clamp(3.2rem, 9vw, 6.5rem);
+  font-weight: 700;
+  font-variation-settings: 'wdth' 82;
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+}
+
+.lead {
+  max-width: 48ch;
+  margin: 0;
+  color: var(--ink-muted);
+  font-size: clamp(1.02rem, 1.6vw, 1.2rem);
+  line-height: 1.55;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+}
+
+h3 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 650;
+}
+
+.job {
+  display: grid;
+  gap: 0.5rem;
+  padding: 1.5rem 1.75rem;
+}
+
+.job p {
+  margin: 0;
+  line-height: 1.55;
+}
+
+.job .meta {
+  color: var(--ink-muted);
+  font-size: 0.9rem;
+}
+
+.project-list {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.project-list li {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.9rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.project-list li:last-child {
+  border-bottom: 0;
+}
+
+.project-list p {
+  margin: 0.2rem 0 0;
+  color: var(--ink-muted);
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.stack {
+  width: 100%;
+}
+
+.stack summary .count {
+  margin-left: auto;
+  color: var(--ink-muted);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Wide screens: the areas side by side, every one open. */
+@media (min-width: 900px) and (min-height: 700px) {
+  .face-body:has(.stack) {
+    width: min(64rem, 86vw);
+  }
+
+  .stack {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0 1.5rem;
+  }
+
+  .stack details,
+  .stack details:last-child {
+    border-bottom: 0;
+  }
+
+  .stack summary {
+    pointer-events: none;
+  }
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: 0 0 0.75rem;
+  padding: 0;
+  list-style: none;
+}
+
+.tags .gm-chip {
+  padding: 0.25em 0.7em;
+  font-size: 0.8rem;
+}
+
+.email {
+  color: var(--ink);
+  font-size: clamp(1.4rem, 4vw, 2.6rem);
+  font-weight: 650;
+  font-variation-settings: 'wdth' 88;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+.email:hover {
+  color: var(--cobalt);
+}
+
+@media (max-width: 640px) {
+  .project-list li {
+    grid-template-columns: 1fr auto;
+  }
+
+  .project-list .gm-badge {
+    grid-row: 2;
+    justify-self: start;
+  }
+
+  /* On a phone the list keeps names, status and the way in; the full description is inside. */
+  .project-list p {
+    display: none;
+  }
+
+  .project-list li {
+    padding: 0.6rem 0;
+  }
 }

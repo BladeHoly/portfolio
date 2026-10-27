@@ -1,0 +1,36 @@
+---
+import { projects, statusLabel, type Project } from '../data/content';
+
+interface Props {
+  project: Project;
+}
+
+const { project: p } = Astro.props;
+const n = projects.indexOf(p) + 1;
+---
+
+<p class="eyebrow">Proyecto {n} de {projects.length}</p>
+<h2>{p.name}</h2>
+<p class="lead">{p.what}</p>
+<ul class="tags" aria-label="Hecho con">
+  {p.stack.map((item) => <li class="gm-chip gm-chip-plain">{item}</li>)}
+</ul>
+<div class="actions">
+  <span class="gm-badge" data-tone={statusLabel[p.status].tone}>{statusLabel[p.status].text}</span>
+  {
+    p.url && (
+      <gm-button>
+        <a href={p.url} target="_blank" rel="noopener noreferrer">
+          Código en GitHub
+        </a>
+      </gm-button>
+    )
+  }
+  {
+    p.site && (
+      <a class="gm-chip" href={p.site} target="_blank" rel="noopener noreferrer">
+        Documentación
+      </a>
+    )
+  }
+</div>

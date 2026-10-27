@@ -15,7 +15,7 @@ const rad = (deg: number) => (deg * Math.PI) / 180;
 const clamp01 = (n: number) => Math.min(1, Math.max(0, n));
 
 export interface Face {
-  /** Placeholder label; the real content is decided later, with Renzo. */
+  /** What's on it: the rail and the links between faces say this. */
   label: string;
   /** Its address: #cara-1 … #interior-5. */
   id: string;
@@ -37,19 +37,19 @@ export const FACES: Face[] = [
   // Outside, one way: on top, down over an edge, around the four sides, underneath to the door.
   // Framing at an angle (`frame`) read as a mistake on placeholder text; it waits for content
   // that's better seen in perspective.
-  { label: 'Cara exterior 1', id: 'cara-1', yaw: 0, pitch: 90 },
-  { label: 'Cara exterior 2', id: 'cara-2', yaw: 0, pitch: 0 },
-  { label: 'Cara exterior 3', id: 'cara-3', yaw: 90, pitch: 0 },
-  { label: 'Cara exterior 4', id: 'cara-4', yaw: 180, pitch: 0 },
-  { label: 'Cara exterior 5', id: 'cara-5', yaw: 270, pitch: 0 },
+  { label: 'Renzo', id: 'cara-1', yaw: 0, pitch: 90 },
+  { label: 'Trabajo', id: 'cara-2', yaw: 0, pitch: 0 },
+  { label: 'Proyectos', id: 'cara-3', yaw: 90, pitch: 0 },
+  { label: 'Stack', id: 'cara-4', yaw: 180, pitch: 0 },
+  { label: 'Contacto', id: 'cara-5', yaw: 270, pitch: 0 },
   { label: 'Puerta', id: 'cara-6', yaw: 270, pitch: -90, door: true },
   // Inside: straight up from the door to the ceiling right in front of it, then down to the
   // walls and around them. The ceiling reads upright as seen from the door.
-  { label: 'Cara interior 1', id: 'interior-1', yaw: 270, pitch: -90, inside: true },
-  { label: 'Cara interior 2', id: 'interior-2', yaw: 270, pitch: 0, inside: true },
-  { label: 'Cara interior 3', id: 'interior-3', yaw: 360, pitch: 0, inside: true },
-  { label: 'Cara interior 4', id: 'interior-4', yaw: 450, pitch: 0, inside: true },
-  { label: 'Cara interior 5', id: 'interior-5', yaw: 540, pitch: 0, inside: true },
+  { label: 'glass-midas', id: 'interior-1', yaw: 270, pitch: -90, inside: true },
+  { label: 'qpck-tools', id: 'interior-2', yaw: 270, pitch: 0, inside: true },
+  { label: 'Migrador IMAP a Gmail', id: 'interior-3', yaw: 360, pitch: 0, inside: true },
+  { label: 'Juampi Deals', id: 'interior-4', yaw: 450, pitch: 0, inside: true },
+  { label: 'Calculadora de interés compuesto', id: 'interior-5', yaw: 540, pitch: 0, inside: true },
 ];
 
 /** The door's stage; the first inner face is the next one. */

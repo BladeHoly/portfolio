@@ -1,11 +1,19 @@
 ---
 import '@glass-midas/components/styles.css';
 import '../styles/space.css';
+import { person, projects } from '../data/content';
+import Contact from '../faces/Contact.astro';
+import Intro from '../faces/Intro.astro';
+import Project from '../faces/Project.astro';
+import Projects from '../faces/Projects.astro';
+import Stack from '../faces/Stack.astro';
+import Work from '../faces/Work.astro';
 import { DOOR, FACES, PERSPECTIVE, SIDE, faceTransform } from '../scene/stages';
 
-// The whole journey, outside and in, on placeholder content. Nothing here is final copy;
-// every text is marked as a placeholder on purpose.
+// Outside, the overview: who Renzo is, his work, his projects at a glance, his stack and how to
+// reach him. Through the door, one project per face, the ceiling first.
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+const insideProject = (i: number) => projects[i - DOOR - 1];
 ---
 
 <!doctype html>
@@ -13,8 +21,8 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Renzo · prototipo espacial</title>
-    <meta name="robots" content="noindex" />
+    <title>Renzo, desarrollador</title>
+    <meta name="description" content={person.description} />
     <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -36,14 +44,6 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
                 {i === FACES.length - 1 && <a class="gm-chip" href={`#${FACES[0].id}`}>Volver afuera</a>}
               </nav>
             );
-            const heading = (
-              <>
-                <p class="eyebrow">
-                  {face.label} · <span class="placeholder">placeholder</span>
-                </p>
-                <h2>{face.door ? 'Puerta' : 'Contenido pendiente'}</h2>
-              </>
-            );
             return (
               <section
                 class:list={['face', { door: face.door, inside: face.inside }]}
@@ -58,8 +58,9 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
                       <span class="panel" aria-hidden="true" />
                       <span class="handle" aria-hidden="true" />
                       <div class="face-body door-body">
-                        {heading}
-                        <p class="note">Seguí: la puerta se abre y el recorrido continúa dentro del cubo.</p>
+                        <p class="eyebrow">Proyectos</p>
+                        <h2>En profundidad</h2>
+                        <p class="note">Detrás de esta puerta, cada proyecto en detalle.</p>
                         {nav}
                       </div>
                     </div>
@@ -70,29 +71,12 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
                   </>
                 ) : (
                   <div class="face-body">
-                    {heading}
-                    <p class="note">
-                      Esta cara existe para probar la cámara. Qué va aquí se decide con Renzo en la fase de contenido.
-                    </p>
-                    {i === 0 && (
-                      <div class="depth">
-                        <span class="layer far" aria-hidden="true" />
-                        <span class="layer mid" aria-hidden="true" />
-                        <gm-surface class="probe" material="frost" radius="22">
-                          <p>Vidrio de glass-midas sobre capas en profundidad.</p>
-                          <gm-button>
-                            <button type="button">Botón de prueba</button>
-                          </gm-button>
-                        </gm-surface>
-                      </div>
-                    )}
-                    {i > 0 && (
-                      <div class="depth">
-                        <span class="layer far" aria-hidden="true" />
-                        <span class="layer mid" aria-hidden="true" />
-                        <span class="layer near" aria-hidden="true" />
-                      </div>
-                    )}
+                    {face.id === 'cara-1' && <Intro />}
+                    {face.id === 'cara-2' && <Work />}
+                    {face.id === 'cara-3' && <Projects />}
+                    {face.id === 'cara-4' && <Stack />}
+                    {face.id === 'cara-5' && <Contact />}
+                    {face.inside && <Project project={insideProject(i)} />}
                     {nav}
                   </div>
                 )}
