@@ -298,3 +298,5 @@ const opened = stops.findIndex((s) => `#${s.id}` === location.hash);
 if (opened > 0) scrollTo({ top: opened * step(), behavior: 'instant' });
 
 render(target());
+// The scene shows only now, with the camera in place and only the faces in view painted.
+root.dataset.ready = '';

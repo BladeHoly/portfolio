@@ -58,6 +58,12 @@ body {
   perspective: var(--perspective);
 }
 
+/* Hidden until the script has placed the camera: before that every face would be drawn at
+   once, flat on top of each other. */
+:root:not([data-ready]) .world {
+  visibility: hidden;
+}
+
 .world {
   position: absolute;
   top: 50%;
