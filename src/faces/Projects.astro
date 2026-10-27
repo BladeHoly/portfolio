@@ -1,14 +1,21 @@
 ---
-import { projects, statusLabel } from '../data/content';
+import { data, ui, type Lang } from '../data/i18n';
 import { FACES } from '../scene/stages';
+
+interface Props {
+  lang: Lang;
+}
 
 // Each project has its own face inside the cube, in the same order; this face lists them and
 // sends you through the door to the one you pick.
+const { lang } = Astro.props;
+const { projects, statusLabel } = data[lang];
+const t = ui[lang];
 const inside = FACES.filter((f) => f.inside);
 const firstSentence = (text: string) => text.split(/(?<=\.)\s/)[0];
 ---
 
-<h2>Proyectos</h2>
+<h2>{t.faces['cara-3']}</h2>
 <ul class="project-list">
   {
     projects.map((p, i) => (
@@ -20,8 +27,8 @@ const firstSentence = (text: string) => text.split(/(?<=\.)\s/)[0];
         <span class="gm-badge" data-tone={statusLabel[p.status].tone}>
           {statusLabel[p.status].text}
         </span>
-        <a class="gm-chip" href={`#${inside[i].id}`} aria-label={`Ver más de ${p.name}`}>
-          Ver más
+        <a class="gm-chip" href={`#${inside[i].id}`} aria-label={t.moreAbout(p.name)}>
+          {t.more}
         </a>
       </li>
     ))

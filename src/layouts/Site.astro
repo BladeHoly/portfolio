@@ -1,0 +1,164 @@
+---
+// Only the glass-midas sheets this page uses: base (tokens, chips), surface, badge, accordion.
+import '@glass-midas/components/css/base.css';
+import '@glass-midas/components/css/surface.css';
+import '@glass-midas/components/css/badge.css';
+import '@glass-midas/components/css/accordion.css';
+import '../styles/space.css';
+import { data, ui, type Lang } from '../data/i18n';
+import Art from '../faces/Art.astro';
+import Contact from '../faces/Contact.astro';
+import Intro from '../faces/Intro.astro';
+import Project from '../faces/Project.astro';
+import Projects from '../faces/Projects.astro';
+import Stack from '../faces/Stack.astro';
+import Work from '../faces/Work.astro';
+import { DOOR, FACES, PERSPECTIVE, SIDE, faceTransform } from '../scene/stages';
+
+// The whole site, in one language: `/` is Spanish, `/en/` English.
+// Outside, the overview: who Renzo is, his work, his projects at a glance, his stack and how to
+// reach him. Through the door, one project per face, the ceiling first.
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const { person, projects } = data[lang];
+const t = ui[lang];
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+const home = new URL(base, Astro.site).href;
+const site = lang === 'es' ? home : `${home}en/`;
+const insideProject = (i: number) => projects[i - DOOR - 1];
+// A face's name: the outside ones from the words of the page, the inside ones from their project.
+const label = (i: number) => (FACES[i].inside ? insideProject(i).name : t.faces[FACES[i].id]);
+---
+
+<!doctype html>
+<html lang={t.htmlLang} style={`--side: ${SIDE}px; --perspective: ${PERSPECTIVE}px`}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{t.title}</title>
+    <meta name="description" content={person.description} />
+    <link rel="canonical" href={site} />
+    <link rel="alternate" hreflang="es" href={home} />
+    <link rel="alternate" hreflang="en" href={`${home}en/`} />
+    <link rel="alternate" hreflang="x-default" href={home} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={site} />
+    <meta property="og:title" content={t.title} />
+    <meta property="og:description" content={person.description} />
+    <meta property="og:image" content={`${home}${lang === 'es' ? 'og.png' : 'og-en.png'}`} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content={t.locale} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="theme-color" content="#eef3f7" />
+    <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
+    <!-- Without JavaScript there's no camera: the faces read as one plain page, in order. -->
+    <noscript><link rel="stylesheet" href={`${base}flat.css`} /></noscript>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap"
+    />
+  </head>
+  <body>
+    <div class="viewport">
+      <div class="world">
+        {
+          FACES.map((face, i) => {
+            const nav = (
+              <nav class="face-nav" aria-label={t.faceNav}>
+                {i > 0 && <a class="gm-chip" href={`#${FACES[i - 1].id}`}>↑ {label(i - 1)}</a>}
+                {i < FACES.length - 1 && <a class="gm-chip" href={`#${FACES[i + 1].id}`}>{label(i + 1)} ↓</a>}
+                {face.door && <a class="gm-chip" href={`#${FACES[0].id}`}>{t.backToTop}</a>}
+                {i === FACES.length - 1 && <a class="gm-chip" href={`#${FACES[0].id}`}>{t.backOutside}</a>}
+              </nav>
+            );
+            return (
+              <section
+                class:list={['face', { door: face.door, inside: face.inside }]}
+                style={`transform: ${faceTransform(face)}`}
+                aria-label={label(i)}
+              >
+                {face.door ? (
+                  // Two leaves with panels and handles; the text rides on the first one and swings
+                  // away with it. They open towards the camera, onto the inside of the cube.
+                  <>
+                    <div class="leaf first">
+                      <span class="panel" aria-hidden="true" />
+                      <span class="handle" aria-hidden="true" />
+                      <div class="face-body door-body">
+                        <p class="eyebrow">{t.door.eyebrow}</p>
+                        <h2>{t.door.title}</h2>
+                        <p class="note">{t.door.note}</p>
+                        {nav}
+                      </div>
+                    </div>
+                    <div class="leaf second">
+                      <span class="panel" aria-hidden="true" />
+                      <span class="handle" aria-hidden="true" />
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <Art seed={i} />
+                    <div class="face-body">
+                      {face.id === 'cara-2' ? (
+                        // Its card is the glass already; a pane around it would be glass in glass.
+                        <Work lang={lang} />
+                      ) : (
+                        <gm-surface class="pane" material="frost" radius="32" tier="blur">
+                          {face.id === 'cara-1' && <Intro lang={lang} />}
+                          {face.id === 'cara-3' && <Projects lang={lang} />}
+                          {face.id === 'cara-4' && <Stack lang={lang} />}
+                          {face.id === 'cara-5' && <Contact lang={lang} />}
+                          {face.inside && <Project lang={lang} project={insideProject(i)} />}
+                        </gm-surface>
+                      )}
+                      {nav}
+                    </div>
+                  </>
+                )}
+              </section>
+            );
+          })
+        }
+      </div>
+    </div>
+
+    <!-- One snap point per stage. They hold the scroll length, and give each face its address. -->
+    <div class="stops" aria-hidden="true">
+      {FACES.map((face) => <div class="stop" id={face.id} />)}
+    </div>
+
+    <!-- The rail: every stage in the order of the journey, outside then inside, on glass-midas
+         glass, marking where you are. -->
+    <nav class="map" aria-label={t.rail}>
+      <gm-surface material="frost" radius="999" class="map-glass">
+        <ol>
+          {
+            FACES.map((face, i) => (
+              <>
+                {face.inside && !FACES[i - 1].inside && <li class="map-gap" aria-hidden="true" />}
+                <li>
+                  <a class="gm-chip" href={`#${face.id}`} data-stage={i} aria-label={label(i)}>
+                    {face.inside ? i - DOOR : i + 1}
+                  </a>
+                </li>
+              </>
+            ))
+          }
+        </ol>
+      </gm-surface>
+    </nav>
+
+    <output class="debug" hidden aria-live="off"></output>
+
+    <script>
+      import '../scene/run';
+    </script>
+  </body>
+</html>

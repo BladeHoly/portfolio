@@ -36,3 +36,7 @@ Cada cara tiene detrás unos charcos de color (`src/faces/Art.astro`), en el pla
 ## Redes sociales
 
 `og.png` (1200×630, la cara "Renzo"), Open Graph y Twitter card, canonical y `theme-color`.
+
+## Inglés
+
+`/` en español y `/en/` en inglés, con la misma experiencia. El layout `src/layouts/Site.astro` recibe el idioma. Los datos traducidos están en `src/data/content.en.ts` (la misma forma que `content.ts`) y las palabras de la página en `src/data/i18n.ts`. Las caras ya no tienen nombres en `stages.ts`: la página los toma de su idioma. Cada versión enlaza a la otra (en la cara "Renzo", con `hreflang`) y declara su alternativa con `<link rel="alternate">`. La imagen para compartir en inglés es `og-en.png`.

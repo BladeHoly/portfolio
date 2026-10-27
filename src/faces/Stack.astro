@@ -1,5 +1,11 @@
 ---
-import { stack } from '../data/content';
+import { data, type Lang } from '../data/i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { stack } = data[Astro.props.lang];
 ---
 
 <h2>Stack</h2>

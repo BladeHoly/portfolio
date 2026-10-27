@@ -587,3 +587,8 @@ h3 {
 .face-body > .pane > :is(h1, h2, p, ul, div):first-child {
   margin-top: 0;
 }
+
+/* The other language, set apart from the links to reach Renzo. */
+.lang-switch {
+  margin-left: auto;
+}

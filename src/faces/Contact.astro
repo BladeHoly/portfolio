@@ -1,8 +1,16 @@
 ---
-import { contact } from '../data/content';
+import { data, ui, type Lang } from '../data/i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const { contact } = data[lang];
+const t = ui[lang];
 ---
 
-<h2>Contacto</h2>
+<h2>{t.faces['cara-5']}</h2>
 <a class="email" href={`mailto:${contact.email}`}>{contact.email}</a>
 <div class="actions">
   <a class="gm-chip gm-chip-primary" href={contact.github} target="_blank" rel="noopener noreferrer">GitHub</a>
