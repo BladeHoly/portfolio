@@ -1,11 +1,23 @@
 ---
-import { contact, person } from '../data/content';
+import { data, ui, type Lang } from '../data/i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const { contact, person } = data[lang];
+const t = ui[lang];
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 ---
 
 <h1 class="name">{person.name}</h1>
 <p class="lead">{person.intro}</p>
 <div class="actions">
-  <a class="gm-chip gm-chip-primary" href={`mailto:${contact.email}`}>Escribime</a>
+  <a class="gm-chip gm-chip-primary" href={`mailto:${contact.email}`}>{t.emailMe}</a>
   <a class="gm-chip" href={contact.github} target="_blank" rel="noopener noreferrer">GitHub</a>
   <a class="gm-chip" href={contact.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a>
+  <a class="gm-chip gm-chip-plain lang-switch" href={`${base}${t.other.path}`} hreflang={t.other.lang} lang={t.other.lang}>
+    {t.other.name}
+  </a>
 </div>

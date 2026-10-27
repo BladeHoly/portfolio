@@ -1,31 +1,37 @@
 ---
-import { projects, statusLabel, type Project } from '../data/content';
+import type { Project } from '../data/content';
+import { data, ui, type Lang } from '../data/i18n';
 
 interface Props {
+  lang: Lang;
   project: Project;
 }
 
-const { project: p } = Astro.props;
+const { lang, project: p } = Astro.props;
+const { projects, statusLabel } = data[lang];
+const t = ui[lang];
 const n = projects.indexOf(p) + 1;
 ---
 
-<p class="eyebrow">Proyecto {n} de {projects.length}</p>
+<p class="eyebrow">{t.projectOf(n, projects.length)}</p>
 <h2>{p.name}</h2>
 <p class="lead">{p.what}</p>
-<ul class="tags" aria-label="Hecho con">
+<ul class="tags" aria-label={t.builtWith}>
   {p.stack.map((item) => <li class="gm-chip gm-chip-plain">{item}</li>)}
 </ul>
 <div class="actions">
   <span class="gm-badge" data-tone={statusLabel[p.status].tone}>{statusLabel[p.status].text}</span>
   {
     p.url && (
-      <a class="gm-chip gm-chip-primary" href={p.url} target="_blank" rel="noopener noreferrer">Código en GitHub</a>
+      <a class="gm-chip gm-chip-primary" href={p.url} target="_blank" rel="noopener noreferrer">
+        {t.code}
+      </a>
     )
   }
   {
     p.site && (
       <a class="gm-chip" href={p.site} target="_blank" rel="noopener noreferrer">
-        Documentación
+        {t.docs}
       </a>
     )
   }
