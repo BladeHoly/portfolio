@@ -1,0 +1,11 @@
+---
+import { contact, person } from '../data/content';
+---
+
+<h1 class="name">{person.name}</h1>
+<p class="lead">{person.intro}</p>
+<div class="actions">
+  <a class="gm-chip gm-chip-primary" href={`mailto:${contact.email}`}>Escribime</a>
+  <a class="gm-chip" href={contact.github} target="_blank" rel="noopener noreferrer">GitHub</a>
+  <a class="gm-chip" href={contact.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a>
+</div>

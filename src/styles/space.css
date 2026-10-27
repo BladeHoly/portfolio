@@ -1,0 +1,589 @@
+/* Phase 1 prototype. Ice: cold paper, deep ink, one cobalt accent. */
+:root {
+  --ice: #eef3f7;
+  --ice-deep: #dde6ee;
+  --ink: #0e2233;
+  --ink-muted: rgb(14 34 51 / 0.76);
+  --line: rgb(14 34 51 / 0.16);
+  --cobalt: #2f55c9;
+  /* glass-midas for a light page: the token values of its own light theme (the docs'). */
+  --gm-ink: var(--ink);
+  --gm-ink-muted: var(--ink-muted);
+  --gm-ink-inverse: #fff;
+  --gm-tint-light: rgb(255 255 255 / 0.42);
+  --gm-tint-solid: rgb(250 248 244 / 0.96);
+  --gm-frost-tint: rgb(255 255 255 / 0.45);
+  --gm-highlight-glow: rgb(255 255 255 / 0.55);
+  --gm-rim: inset 0 0 0 0.5px rgb(14 34 51 / 0.16), inset 0 1px 0 rgb(255 255 255 / 0.8);
+  --gm-lift: 0 10px 30px rgb(14 34 51 / 0.12);
+  --gm-chip-fill: rgb(14 34 51 / 0.05);
+  --gm-chip-fill-hover: rgb(14 34 51 / 0.09);
+  --gm-chip-fill-on: rgb(255 255 255 / 0.75);
+  --gm-focus: 0 0 0 2px var(--cobalt);
+  color-scheme: light;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* One snap point per stage, and no pull-to-refresh or bounce fighting a vertical swipe. */
+html {
+  scroll-snap-type: y mandatory;
+  overscroll-behavior: none;
+}
+
+body {
+  margin: 0;
+  background: radial-gradient(120% 90% at 30% 20%, #fafcfd 0%, var(--ice) 45%, var(--ice-deep) 100%)
+    fixed;
+  color: var(--ink);
+  font-family: 'Archivo', system-ui, sans-serif;
+  font-variation-settings: 'wdth' 100;
+}
+
+.stop {
+  height: 100svh;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+/* The camera's frame: fixed over the scroll, with the perspective of one resting distance. */
+.viewport {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  perspective: var(--perspective);
+}
+
+/* Hidden until the script has placed the camera: before that every face would be drawn at
+   once, flat on top of each other. */
+:root:not([data-ready]) .world {
+  visibility: hidden;
+}
+
+.world {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.face,
+.face-body {
+  transform-style: preserve-3d;
+}
+
+/* On the faces, not what's inside them: on the glass of a rotated inner face, Chrome took the
+   backdrop-filtered layer for a back face and let clicks pass through it. */
+.face {
+  backface-visibility: hidden;
+}
+
+/* A face is a square wall of the cube, opaque like a block of ice, so nothing on the other faces
+   shows through; its hairline edge is how the cube reveals itself in passing. */
+.face {
+  position: absolute;
+  top: calc(var(--side) / -2);
+  left: calc(var(--side) / -2);
+  display: grid;
+  place-items: center;
+  width: var(--side);
+  height: var(--side);
+  background: radial-gradient(70% 60% at 35% 30%, #fafcfd, var(--ice) 55%, var(--ice-deep));
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+
+.face-body {
+  display: grid;
+  gap: 1rem;
+  width: min(44rem, 86vw);
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--ink-muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+h2 {
+  margin: 0;
+  font-size: clamp(2rem, 4.5vw, 3.4rem);
+  font-weight: 640;
+  font-variation-settings: 'wdth' 88;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+}
+
+.note {
+  max-width: 44ch;
+  margin: 0;
+  color: var(--ink-muted);
+  line-height: 1.5;
+}
+
+/* The door: two leaves, each with a raised panel and a handle by the gap, carrying the wall. They
+   swing open towards the camera as --open goes from 0 to 1 (the inside shows behind them); the
+   text rides on the first leaf, clear of the gap. Side by side on wide screens, one above the
+   other on tall ones, so the text always fits on its leaf. */
+.face.door {
+  background: none;
+}
+
+.leaf {
+  position: absolute;
+  background: radial-gradient(70% 60% at 35% 30%, #fafcfd, var(--ice) 55%, var(--ice-deep));
+  box-shadow: inset 0 0 0 1px var(--line);
+  /* Drawn once, at rest, and only turned as they swing: redrawn at every angle, Chrome lost
+     their tiles and the door came back half white after a few crossings. */
+  will-change: transform;
+}
+
+.leaf.first {
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  transform-origin: left center;
+  transform: rotateY(calc(var(--open, 0) * -90deg));
+}
+
+.leaf.second {
+  top: 0;
+  right: 0;
+  width: 50%;
+  height: 100%;
+  transform-origin: right center;
+  transform: rotateY(calc(var(--open, 0) * 90deg));
+}
+
+.panel {
+  position: absolute;
+  inset: 36px;
+  border-radius: 10px;
+  box-shadow:
+    inset 0 0 0 1px var(--line),
+    inset 0 18px 40px rgb(255 255 255 / 0.5);
+}
+
+.handle {
+  position: absolute;
+  top: calc(50% + 240px);
+  width: 8px;
+  height: 120px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #c9d5df, #f6f9fb, #b9c7d3);
+  box-shadow: 0 2px 6px rgb(14 34 51 / 0.25);
+}
+
+.leaf.first .handle {
+  right: 64px;
+}
+
+.leaf.second .handle {
+  left: 64px;
+}
+
+.door-body {
+  position: absolute;
+  top: 50%;
+  right: 120px;
+  width: min(36rem, calc(50vw - 9rem));
+  translate: 0 -50%;
+}
+
+@media (orientation: portrait) {
+  .leaf.first {
+    width: 100%;
+    height: 50%;
+    transform-origin: center top;
+    transform: rotateX(calc(var(--open, 0) * 90deg));
+  }
+
+  .leaf.second {
+    top: auto;
+    bottom: 0;
+    width: 100%;
+    height: 50%;
+    transform-origin: center bottom;
+    transform: rotateX(calc(var(--open, 0) * -90deg));
+  }
+
+  .handle {
+    top: auto;
+    left: calc(50% - 60px);
+    width: 120px;
+    height: 8px;
+    background: linear-gradient(180deg, #c9d5df, #f6f9fb, #b9c7d3);
+  }
+
+  .leaf.first .handle {
+    right: auto;
+    bottom: 64px;
+  }
+
+  .leaf.second .handle {
+    left: calc(50% - 60px);
+    top: 64px;
+  }
+
+  .door-body {
+    top: auto;
+    right: auto;
+    bottom: 110px;
+    left: 50%;
+    width: calc(100vw - 5rem);
+    translate: -50% 0;
+  }
+}
+
+/* With the inside in view, the scene sits on the dark of the cube (see place() in run.ts). */
+:root[data-depth='inside'] .viewport {
+  background: #0d1a27;
+}
+
+/* The inner faces stop short of the cube's edges, so they never touch the door's plane or the
+   outer walls: planes that meet exactly are the ones GPUs sort wrong. */
+.face.inside {
+  top: calc((var(--side) - 16px) / -2);
+  left: calc((var(--side) - 16px) / -2);
+  width: calc(var(--side) - 16px);
+  height: calc(var(--side) - 16px);
+}
+
+/* Only the faces the camera can see are painted (see place() in run.ts). A hidden face is taken
+   out entirely: kept as an invisible layer, Chrome reused tiles it had dropped when the face came
+   back (a white, half-drawn door after leaving the inside). */
+.face[hidden] {
+  display: none;
+}
+
+/* Inside: the same walls from within, deeper and darker, with light ink; glass-midas back on
+   its own dark-surface values. */
+.face.inside {
+  --ink: #e8eff5;
+  --ink-muted: rgb(232 239 245 / 0.78);
+  --line: rgb(232 239 245 / 0.14);
+  --gm-ink: var(--ink);
+  --gm-ink-muted: var(--ink-muted);
+  /* Text on a primary chip, whose fill is the light ink in here. */
+  --gm-ink-inverse: #0d1a27;
+  --gm-tint-light: rgb(255 255 255 / 0.18);
+  --gm-frost-tint: rgb(20 20 28 / 0.32);
+  --gm-rim: inset 0 0 0 0.5px rgb(255 255 255 / 0.55);
+  --gm-chip-fill: rgb(255 255 255 / 0.1);
+  --gm-chip-fill-hover: rgb(255 255 255 / 0.16);
+  --gm-chip-fill-on: rgb(255 255 255 / 0.22);
+  background: radial-gradient(70% 60% at 35% 30%, #2a4258, #17283a 55%, #0d1a27);
+  color: var(--ink);
+}
+
+/* Contextual navigation at the foot of a face. Chips from glass-midas. */
+.face-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+/* The rail: the stages in a column of glass-midas chips on its glass. Renzo chose it over
+   a map of the unfolded cube. */
+.map {
+  position: fixed;
+  right: max(16px, env(safe-area-inset-right));
+  bottom: max(16px, env(safe-area-inset-bottom));
+  z-index: 5;
+}
+
+.map-glass {
+  display: block;
+  padding: 6px;
+}
+
+.map ol {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* A little air between the outside and the inside. */
+.map-gap {
+  height: 1px;
+  margin: 3px 4px;
+  background: var(--line);
+}
+
+.map .gm-chip {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border-radius: 999px;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* On a phone the rail fits in the side margin, clear of the faces' text and links. */
+@media (max-width: 640px) {
+  .face-body {
+    width: calc(100vw - 5rem);
+  }
+
+  .map {
+    right: max(4px, env(safe-area-inset-right));
+    bottom: auto;
+    top: 50%;
+    translate: 0 -50%;
+  }
+
+  .map-glass {
+    padding: 4px;
+  }
+
+  .map ol {
+    gap: 2px;
+  }
+
+  .map .gm-chip {
+    width: 16px;
+    height: 16px;
+    font-size: 9px;
+  }
+
+  .map-gap {
+    margin: 2px 3px;
+  }
+}
+
+/* ?debug: the frame meter. */
+.debug {
+  position: fixed;
+  bottom: 12px;
+  left: 12px;
+  z-index: 10;
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: rgb(14 34 51 / 0.88);
+  color: #fff;
+  font: 500 12px/1.2 system-ui, sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+
+/* The content. Type and spacing from the page's scale; colours and fills from glass-midas tokens,
+   so the same rules read on the light outside and the dark inside. */
+.name {
+  margin: 0;
+  font-size: clamp(3.2rem, 9vw, 6.5rem);
+  font-weight: 700;
+  font-variation-settings: 'wdth' 82;
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+}
+
+.lead {
+  max-width: 48ch;
+  margin: 0;
+  color: var(--ink-muted);
+  font-size: clamp(1.02rem, 1.6vw, 1.2rem);
+  line-height: 1.55;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+}
+
+h3 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 650;
+}
+
+.job {
+  display: grid;
+  gap: 0.5rem;
+  padding: 1.5rem 1.75rem;
+}
+
+.job p {
+  margin: 0;
+  line-height: 1.55;
+}
+
+.job .meta {
+  color: var(--ink-muted);
+  font-size: 0.9rem;
+}
+
+.project-list {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.project-list li {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.9rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.project-list li:last-child {
+  border-bottom: 0;
+}
+
+.project-list p {
+  margin: 0.2rem 0 0;
+  color: var(--ink-muted);
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.stack {
+  width: 100%;
+}
+
+.stack summary .count {
+  margin-left: auto;
+  color: var(--ink-muted);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Wide screens: the areas side by side, every one open. */
+@media (min-width: 900px) and (min-height: 700px) {
+  .face-body:has(.stack) {
+    width: min(64rem, 86vw);
+  }
+
+  .stack {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0 1.5rem;
+  }
+
+  .stack details,
+  .stack details:last-child {
+    border-bottom: 0;
+  }
+
+  .stack summary {
+    pointer-events: none;
+  }
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: 0 0 0.75rem;
+  padding: 0;
+  list-style: none;
+}
+
+.tags .gm-chip {
+  padding: 0.25em 0.7em;
+  font-size: 0.8rem;
+}
+
+.email {
+  color: var(--ink);
+  font-size: clamp(1.4rem, 4vw, 2.6rem);
+  font-weight: 650;
+  font-variation-settings: 'wdth' 88;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+.email:hover {
+  color: var(--cobalt);
+}
+
+@media (max-width: 640px) {
+  .project-list li {
+    grid-template-columns: 1fr auto;
+  }
+
+  .project-list .gm-badge {
+    grid-row: 2;
+    justify-self: start;
+  }
+
+  /* On a phone the list keeps names, status and the way in; the full description is inside. */
+  .project-list p {
+    display: none;
+  }
+
+  .project-list li {
+    padding: 0.6rem 0;
+  }
+}
+
+/* What the glass bends: pools of colour on every face, in its own plane (nothing in depth, so no
+   GPU can sort it wrong). Cobalt, sky, mint and lilac outside; deeper glows inside. */
+.art {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.pool {
+  position: absolute;
+  border-radius: 50%;
+  translate: -50% -50%;
+  filter: blur(40px);
+  opacity: 0.85;
+}
+
+.tone-0 {
+  background: radial-gradient(closest-side, #2f55c9, rgb(47 85 201 / 0));
+}
+
+.tone-1 {
+  background: radial-gradient(closest-side, #6fa8e8, rgb(111 168 232 / 0));
+}
+
+.tone-2 {
+  background: radial-gradient(closest-side, #72cdb8, rgb(114 205 184 / 0));
+}
+
+.tone-3 {
+  background: radial-gradient(closest-side, #a993ec, rgb(169 147 236 / 0));
+}
+
+.face.inside .pool {
+  opacity: 0.7;
+}
+
+/* The pane: glass-midas frost over the pools, with a crisp rim. A stronger frost than the
+   default so text keeps its contrast over any colour. */
+.pane {
+  --gm-frost-tint: rgb(255 255 255 / 0.62);
+  display: grid;
+  gap: 1rem;
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.face.inside .pane {
+  --gm-frost-tint: rgb(13 26 39 / 0.6);
+}
+
+.face-body > .pane > :is(h1, h2, p, ul, div):first-child {
+  margin-top: 0;
+}

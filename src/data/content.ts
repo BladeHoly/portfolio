@@ -1,5 +1,13 @@
 // Everything the page says, in one place.
 
+export const person = {
+  name: 'Renzo',
+  intro:
+    'Desarrollador en Paysandú, Uruguay. Trabajo en Mozart Fintech, y en mi tiempo libre construyo herramientas: desde desarmar los archivos de un videojuego hasta vidrio que refracta en el navegador.',
+  description:
+    'Renzo, desarrollador en Paysandú, Uruguay. Proyectos en TypeScript y Rust, y glass-midas, vidrio líquido para la web.',
+};
+
 export const contact = {
   email: 'renzohpg@gmail.com',
   github: 'https://github.com/BladeHoly',
@@ -31,6 +39,8 @@ export interface Project {
   stack: string[];
   /** Public repository; private projects have none. */
   url?: string;
+  /** Its own site, when it has one. */
+  site?: string;
   status: 'público' | 'privado' | 'pronto público';
 }
 
@@ -40,6 +50,7 @@ export const projects: Project[] = [
     what: 'Un sistema de estilos de vidrio líquido para la web. Refracta lo que hay detrás con óptica real, en SVG o WebGL, y se adapta a lo que cada navegador puede dibujar. Este sitio está hecho con él.',
     stack: ['TypeScript', 'WebGL', 'SVG', 'Astro'],
     url: 'https://github.com/BladeHoly/glass-midas',
+    site: 'https://bladeholy.github.io/glass-midas/',
     status: 'público',
   },
   {
@@ -151,3 +162,10 @@ export const stack = [
   { area: 'Testing', items: ['Vitest', 'Jest', 'Pytest', 'Playwright'] },
   { area: 'Herramientas', items: ['Git', 'GitHub', 'pnpm', 'mise'] },
 ];
+
+/** How each status reads, and its badge tone. */
+export const statusLabel: Record<Project['status'], { text: string; tone?: 'success' | 'info' }> = {
+  público: { text: 'Código abierto', tone: 'success' },
+  'pronto público': { text: 'Código abierto pronto', tone: 'info' },
+  privado: { text: 'Código privado' },
+};

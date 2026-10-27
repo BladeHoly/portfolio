@@ -1,0 +1,29 @@
+---
+import { stack } from '../data/content';
+---
+
+<h2>Stack</h2>
+<!-- glass-midas's accordion: all open where there's room, folded on a phone so the face fits. -->
+<div class="gm-accordion stack">
+  {
+    stack.map((group) => (
+      <details>
+        <summary>
+          {group.area} <span class="count">{group.items.length}</span>
+        </summary>
+        <ul class="tags">
+          {group.items.map((item) => (
+            <li class="gm-chip gm-chip-plain">{item}</li>
+          ))}
+        </ul>
+      </details>
+    ))
+  }
+</div>
+
+<script>
+  // Open every area on screens with room for them all; a phone keeps them folded.
+  if (matchMedia('(min-width: 900px) and (min-height: 700px)').matches) {
+    document.querySelectorAll<HTMLDetailsElement>('.stack details').forEach((d) => (d.open = true));
+  }
+</script>
