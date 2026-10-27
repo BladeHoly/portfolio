@@ -77,8 +77,9 @@ body {
   transform-style: preserve-3d;
 }
 
-.face,
-.face * {
+/* On the faces, not what's inside them: on the glass of a rotated inner face, Chrome took the
+   backdrop-filtered layer for a back face and let clicks pass through it. */
+.face {
   backface-visibility: hidden;
 }
 
