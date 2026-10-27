@@ -19,11 +19,7 @@ const n = projects.indexOf(p) + 1;
   <span class="gm-badge" data-tone={statusLabel[p.status].tone}>{statusLabel[p.status].text}</span>
   {
     p.url && (
-      <gm-button>
-        <a href={p.url} target="_blank" rel="noopener noreferrer">
-          Código en GitHub
-        </a>
-      </gm-button>
+      <a class="gm-chip gm-chip-primary" href={p.url} target="_blank" rel="noopener noreferrer">Código en GitHub</a>
     )
   }
   {

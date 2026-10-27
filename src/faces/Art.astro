@@ -1,0 +1,29 @@
+---
+// What each face's glass has to bend: soft pools of colour in the face's own plane, placed
+// differently on every face from its number, so no two walls look alike. Pure CSS, no images.
+interface Props {
+  seed: number;
+}
+
+const { seed } = Astro.props;
+// A small, steady pseudo-random sequence from the face's number.
+let state = (seed + 1) * 9301 + 49297;
+const rand = () => ((state = (state * 9301 + 49297) % 233280) / 233280);
+const pools = Array.from({ length: 4 }, (_, k) => ({
+  x: Math.round(10 + rand() * 80),
+  y: Math.round(10 + rand() * 80),
+  size: Math.round(28 + rand() * 26),
+  tone: (seed + k) % 4,
+}));
+---
+
+<div class="art" aria-hidden="true">
+  {
+    pools.map((p) => (
+      <span
+        class={`pool tone-${p.tone}`}
+        style={`left: ${p.x}%; top: ${p.y}%; width: ${p.size}%; height: ${p.size}%`}
+      />
+    ))
+  }
+</div>

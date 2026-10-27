@@ -5,10 +5,6 @@ import { contact } from '../data/content';
 <h2>Contacto</h2>
 <a class="email" href={`mailto:${contact.email}`}>{contact.email}</a>
 <div class="actions">
-  <gm-button>
-    <a href={contact.github} target="_blank" rel="noopener noreferrer">GitHub</a>
-  </gm-button>
-  <gm-button>
-    <a href={contact.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a>
-  </gm-button>
+  <a class="gm-chip gm-chip-primary" href={contact.github} target="_blank" rel="noopener noreferrer">GitHub</a>
+  <a class="gm-chip gm-chip-primary" href={contact.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a>
 </div>

@@ -1,5 +1,4 @@
 import '@glass-midas/components/surface';
-import '@glass-midas/components/button';
 import { easeInOutCubic, worldTransform, type Pose } from './camera';
 import { PERSPECTIVE, STAGES, isDoorLeg, legPose, openAt, poseAt, route, seenAt, type Leg } from './stages';
 

@@ -1,7 +1,12 @@
 ---
-import '@glass-midas/components/styles.css';
+// Only the glass-midas sheets this page uses: base (tokens, chips), surface, badge, accordion.
+import '@glass-midas/components/css/base.css';
+import '@glass-midas/components/css/surface.css';
+import '@glass-midas/components/css/badge.css';
+import '@glass-midas/components/css/accordion.css';
 import '../styles/space.css';
 import { person, projects } from '../data/content';
+import Art from '../faces/Art.astro';
 import Contact from '../faces/Contact.astro';
 import Intro from '../faces/Intro.astro';
 import Project from '../faces/Project.astro';
@@ -13,6 +18,7 @@ import { DOOR, FACES, PERSPECTIVE, SIDE, faceTransform } from '../scene/stages';
 // Outside, the overview: who Renzo is, his work, his projects at a glance, his stack and how to
 // reach him. Through the door, one project per face, the ceiling first.
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+const site = new URL(base, Astro.site).href;
 const insideProject = (i: number) => projects[i - DOOR - 1];
 ---
 
@@ -23,7 +29,20 @@ const insideProject = (i: number) => projects[i - DOOR - 1];
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Renzo, desarrollador</title>
     <meta name="description" content={person.description} />
+    <link rel="canonical" href={site} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={site} />
+    <meta property="og:title" content="Renzo, desarrollador" />
+    <meta property="og:description" content={person.description} />
+    <meta property="og:image" content={`${site}og.png`} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="es_UY" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="theme-color" content="#eef3f7" />
     <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
+    <!-- Without JavaScript there's no camera: the faces read as one plain page, in order. -->
+    <noscript><link rel="stylesheet" href={`${base}flat.css`} /></noscript>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -70,15 +89,24 @@ const insideProject = (i: number) => projects[i - DOOR - 1];
                     </div>
                   </>
                 ) : (
-                  <div class="face-body">
-                    {face.id === 'cara-1' && <Intro />}
-                    {face.id === 'cara-2' && <Work />}
-                    {face.id === 'cara-3' && <Projects />}
-                    {face.id === 'cara-4' && <Stack />}
-                    {face.id === 'cara-5' && <Contact />}
-                    {face.inside && <Project project={insideProject(i)} />}
-                    {nav}
-                  </div>
+                  <>
+                    <Art seed={i} />
+                    <div class="face-body">
+                      {face.id === 'cara-2' ? (
+                        // Its card is the glass already; a pane around it would be glass in glass.
+                        <Work />
+                      ) : (
+                        <gm-surface class="pane" material="frost" radius="32" tier="blur">
+                          {face.id === 'cara-1' && <Intro />}
+                          {face.id === 'cara-3' && <Projects />}
+                          {face.id === 'cara-4' && <Stack />}
+                          {face.id === 'cara-5' && <Contact />}
+                          {face.inside && <Project project={insideProject(i)} />}
+                        </gm-surface>
+                      )}
+                      {nav}
+                    </div>
+                  </>
                 )}
               </section>
             );

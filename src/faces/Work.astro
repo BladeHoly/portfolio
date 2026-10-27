@@ -5,7 +5,7 @@ import { jobs } from '../data/content';
 <h2>Trabajo</h2>
 {
   jobs.map((job) => (
-    <gm-surface class="job" material="frost" radius="24">
+    <gm-surface class="job pane" material="frost" radius="32" tier="blur">
       <h3>{job.company}</h3>
       <p class="meta">
         {job.role && `${job.role} · `}desde {job.start}

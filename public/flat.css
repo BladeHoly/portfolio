@@ -1,0 +1,59 @@
+/* Without JavaScript there's no camera to move, so the cube unfolds into a plain page: every face
+   in order, flat, one after another, with the door's text and the inside after it. Every rule
+   is !important: the page's own styles load after this sheet and would win otherwise. */
+html {
+  scroll-snap-type: none !important;
+}
+
+.viewport {
+  position: static !important;
+  overflow: visible !important;
+  perspective: none !important;
+}
+
+.world,
+:root:not([data-ready]) .world {
+  position: static !important;
+  visibility: visible !important;
+  transform: none !important;
+}
+
+.face,
+.face.inside {
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  width: auto !important;
+  height: auto !important;
+  min-height: 100vh !important;
+  padding: 4rem 1rem !important;
+  transform: none !important;
+}
+
+.face.door {
+  background: radial-gradient(70% 60% at 35% 30%, #fafcfd, #eef3f7 55%, #dde6ee) !important;
+}
+
+.leaf.first {
+  position: static !important;
+  width: auto !important;
+  height: auto !important;
+  background: none !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.leaf.second,
+.panel,
+.handle,
+.stops,
+.map {
+  display: none !important;
+}
+
+.door-body {
+  position: static !important;
+  translate: none !important;
+  width: min(44rem, 86vw) !important;
+  margin: 0 auto !important;
+}

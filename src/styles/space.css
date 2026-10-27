@@ -3,7 +3,7 @@
   --ice: #eef3f7;
   --ice-deep: #dde6ee;
   --ink: #0e2233;
-  --ink-muted: rgb(14 34 51 / 0.66);
+  --ink-muted: rgb(14 34 51 / 0.76);
   --line: rgb(14 34 51 / 0.16);
   --cobalt: #2f55c9;
   /* glass-midas for a light page: the token values of its own light theme (the docs'). */
@@ -268,10 +268,12 @@ h2 {
    its own dark-surface values. */
 .face.inside {
   --ink: #e8eff5;
-  --ink-muted: rgb(232 239 245 / 0.7);
+  --ink-muted: rgb(232 239 245 / 0.78);
   --line: rgb(232 239 245 / 0.14);
   --gm-ink: var(--ink);
   --gm-ink-muted: var(--ink-muted);
+  /* Text on a primary chip, whose fill is the light ink in here. */
+  --gm-ink-inverse: #0d1a27;
   --gm-tint-light: rgb(255 255 255 / 0.18);
   --gm-frost-tint: rgb(20 20 28 / 0.32);
   --gm-rim: inset 0 0 0 0.5px rgb(255 255 255 / 0.55);
@@ -530,4 +532,58 @@ h3 {
   .project-list li {
     padding: 0.6rem 0;
   }
+}
+
+/* What the glass bends: pools of colour on every face, in its own plane (nothing in depth, so no
+   GPU can sort it wrong). Cobalt, sky, mint and lilac outside; deeper glows inside. */
+.art {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.pool {
+  position: absolute;
+  border-radius: 50%;
+  translate: -50% -50%;
+  filter: blur(40px);
+  opacity: 0.85;
+}
+
+.tone-0 {
+  background: radial-gradient(closest-side, #2f55c9, rgb(47 85 201 / 0));
+}
+
+.tone-1 {
+  background: radial-gradient(closest-side, #6fa8e8, rgb(111 168 232 / 0));
+}
+
+.tone-2 {
+  background: radial-gradient(closest-side, #72cdb8, rgb(114 205 184 / 0));
+}
+
+.tone-3 {
+  background: radial-gradient(closest-side, #a993ec, rgb(169 147 236 / 0));
+}
+
+.face.inside .pool {
+  opacity: 0.7;
+}
+
+/* The pane: glass-midas frost over the pools, with a crisp rim. A stronger frost than the
+   default so text keeps its contrast over any colour. */
+.pane {
+  --gm-frost-tint: rgb(255 255 255 / 0.62);
+  display: grid;
+  gap: 1rem;
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.face.inside .pane {
+  --gm-frost-tint: rgb(13 26 39 / 0.6);
+}
+
+.face-body > .pane > :is(h1, h2, p, ul, div):first-child {
+  margin-top: 0;
 }
